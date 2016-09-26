@@ -35,18 +35,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        listViewMain = (ListView) findViewById(R.id.listViewMain);
-
         dbHelper = new DbHelper(getApplicationContext());
         dbHelper.sqLiteDatabase = dbHelper.getWritableDatabase();
 
-        dbHelper.onUpgrade(dbHelper.sqLiteDatabase, 2, 3);
+        //dbHelper.onUpgrade(dbHelper.sqLiteDatabase, 2, 3);
         //dbHelper.onCreate(dbHelper.sqLiteDatabase);
 
         TextView textViewMain = (TextView) findViewById(R.id.textViewMain);
 
         textViewMain.setText(dbHelper.getDatabaseName());
 
+        listViewMain = (ListView) findViewById(R.id.listViewMain);
         String[] fromComp = new String[]{
                 Contract.CompetitionEntry.COLUMN_NAME,
                 Contract.CompetitionEntry.COLUMN_PLACE,
@@ -63,21 +62,10 @@ public class MainActivity extends AppCompatActivity
                 R.id.textViewItemCompRank,
         };
 
-        String where = "";
-        String[] whereArgs = new String[] {};
         Cursor cursorComp = dbHelper.sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
 
         SimpleCursorAdapter cursorAdapterComp = new SimpleCursorAdapter(this, R.layout.item_competition, cursorComp, fromComp, toComp, 1);
         listViewMain.setAdapter(cursorAdapterComp);
-
-//        ContentValues cv = new ContentValues();
-//        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Male");
-//        long newRowId;
-//        newRowId = sqLiteDatabase.insert(
-//                Contract.GenderEntry.TABLE_NAME,
-//                null,
-//                cv);
-
 
         // FAB
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -140,7 +128,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.

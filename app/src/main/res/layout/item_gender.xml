@@ -14,44 +14,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
-            android:id="@+id/textViewGenderId" />
+            android:id="@+id/textViewGenderId"
+            android:layout_marginRight="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/textViewGenderName" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:ems="10"
-            android:id="@+id/editTextGenderAddDelete"
-            android:layout_weight="3" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Добавить"
-            android:id="@+id/buttonGenderAdd"
-            android:layout_weight="1"
-            android:onClick="addGender" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Удалить"
-            android:id="@+id/buttonGenderDelete"
-            android:layout_weight="1"
-            android:onClick="deleteGender" />
     </LinearLayout>
 
 </LinearLayout>
