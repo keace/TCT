@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Время дистанции"
+        android:id="@+id/textViewInputTime"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Минуты"
+            android:id="@+id/textViewInputMinutes"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Секунды"
+            android:id="@+id/textViewInputSeconds"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="МиллиС"
+            android:id="@+id/textViewInputMillis"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:id="@+id/inputMinutes"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="0"
+            android:focusable="true"
+            android:nextFocusDown="@+id/inputSeconds"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:id="@+id/inputSeconds"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="0"
+            android:focusable="true"
+            android:nextFocusDown="@+id/inputMillis"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:id="@+id/inputMillis"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="0"
+            android:focusable="true"
+            android:nextFocusDown="@+id/inputDistancePenalty"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сумма штрафов"
+        android:id="@+id/textViewDistancePenalty"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:ems="10"
+        android:id="@+id/inputDistancePenalty"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:hint="0"
+        android:focusable="true"
+        android:nextFocusDown="@+id/buttonGetResultTime"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Стоимость штрафа, секунд"
+        android:id="@+id/textViewPenaltyCost"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberSigned"
+        android:ems="10"
+        android:id="@+id/penaltyCost"
+        android:layout_gravity="center_horizontal"
+        android:text="5"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Сбросить"
+            android:id="@+id/buttonClear"
+            android:layout_gravity="center_horizontal"
+            android:onClick="clearFields"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Посчитать"
+            android:id="@+id/buttonGetResultTime"
+            android:layout_gravity="center_horizontal"
+            android:onClick="takeResult"
+            android:focusable="true"
+            android:layout_weight="5"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Результат (время с учтом штрафов)"
+        android:id="@+id/textViewResultTime"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="...нажмите посчитать..."
+        android:id="@+id/timeWithPenalty"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:textAppearanceLarge"/>
+
+</LinearLayout>
