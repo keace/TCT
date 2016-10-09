@@ -21,6 +21,9 @@
         <activity android:name=".CalculatorActivity" />
         <activity android:name=".NewCompetitionActivity" />
         <activity android:name=".DBHelpActivity" />
+        <activity android:name=".AddStageActivity" />
+        <activity android:name=".StagesOnCompetitionActivity" />
+        <activity android:name=".MembersOnCompetitionActivity" />
     </application>
 
 </manifest>

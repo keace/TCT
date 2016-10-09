@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import ua.kyslytsia.tct.MainActivity;
+import ua.kyslytsia.tct.mocks.Competition;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -101,19 +102,54 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public String findTypeNameById (int id) {
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         //Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.TypeEntry.TABLE_NAME + " WHERE " + Contract.TypeEntry._ID + "=" + id + ";", null);
 
         // Only for Training:
         Cursor c = sqLiteDatabase.query(Contract.TypeEntry.TABLE_NAME, null, Contract.TypeEntry._ID + "=?", new String[] {String.valueOf(id)}, null, null, null);
         c.moveToFirst();
-        return c.getString(c.getColumnIndex(Contract.TypeEntry.COLUMN_NAME));
+        String result = c.getString(c.getColumnIndex(Contract.TypeEntry.COLUMN_NAME));
+        c.close();
+        sqLiteDatabase.close();
+        return result;
     }
 
     public String findDistanceById(int id) {
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.DistanceEntry.TABLE_NAME + " WHERE " + Contract.DistanceEntry._ID + "=" + id + ";", null);
         c.moveToFirst();
-        return c.getString(c.getColumnIndex(Contract.DistanceEntry.COLUMN_DISTANCE_NAME));
+        String result = c.getString(c.getColumnIndex(Contract.DistanceEntry.COLUMN_DISTANCE_NAME));
+        c.close();
+        sqLiteDatabase.close();
+        return result;
+    }
+
+    public String findStageNameById(int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageEntry.TABLE_NAME + " WHERE " + Contract.StageEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        String result = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME));
+        c.close();
+        sqLiteDatabase.close();
+        return result;
+    }
+
+    public Competition findCompetitionById (int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.CompetitionEntry.TABLE_NAME + " WHERE " + Contract.CompetitionEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        Competition competition = new Competition(
+                c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)),
+                c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)),
+                c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PLACE)),
+                c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_TYPE_ID)),
+                c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID)),
+                c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)),
+                c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_TIME)),
+                c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
+        Log.d(LOG, competition.toString());
+        c.close();
+        sqLiteDatabase.close();
+        return competition;
     }
 }
