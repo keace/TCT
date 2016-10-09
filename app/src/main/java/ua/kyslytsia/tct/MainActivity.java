@@ -18,14 +18,16 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import ua.kyslytsia.tct.adapter.CompetitionCursorAdapter;
 import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
+import ua.kyslytsia.tct.database.TctDb;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static DbHelper dbHelper;
-//    public static SQLiteDatabase sqLiteDatabase;
+    public SQLiteDatabase sqLiteDatabase;
     ListView listViewMain;
 
     @Override
@@ -35,18 +37,19 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        dbHelper = new DbHelper(getApplicationContext());
-        dbHelper.sqLiteDatabase = dbHelper.getWritableDatabase();
+        dbHelper = new DbHelper(this);
+        sqLiteDatabase = dbHelper.getWritableDatabase();
 
-        //dbHelper.onUpgrade(dbHelper.sqLiteDatabase, 2, 3);
-        //dbHelper.onCreate(dbHelper.sqLiteDatabase);
+//        dbHelper.onUpgrade(dbHelper.sqLiteDatabase, 3, 4);
+//        dbHelper.onCreate(dbHelper.sqLiteDatabase);
 
         TextView textViewMain = (TextView) findViewById(R.id.textViewMain);
 
         textViewMain.setText(dbHelper.getDatabaseName());
 
         listViewMain = (ListView) findViewById(R.id.listViewMain);
-        String[] fromComp = new String[]{
+        /*String[] fromComp = new String[]{
+                Contract.CompetitionEntry.COLUMN_DATE,
                 Contract.CompetitionEntry.COLUMN_NAME,
                 Contract.CompetitionEntry.COLUMN_PLACE,
                 Contract.CompetitionEntry.COLUMN_TYPE_ID,
@@ -55,17 +58,20 @@ public class MainActivity extends AppCompatActivity
                 Contract.CompetitionEntry.COLUMN_RANK};
 
         int[] toComp = new int[] {
+                R.id.textViewItemCompDate,
                 R.id.textViewItemCompName,
                 R.id.textViewItemCompPlace,
                 R.id.textViewItemCompType,
                 R.id.textViewItemCompDist,
                 R.id.textViewItemCompRank,
         };
-
-        Cursor cursorComp = dbHelper.sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
-
+*/
+        Cursor cursorComp = sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
+/*
         SimpleCursorAdapter cursorAdapterComp = new SimpleCursorAdapter(this, R.layout.item_competition, cursorComp, fromComp, toComp, 1);
-        listViewMain.setAdapter(cursorAdapterComp);
+       */
+        CompetitionCursorAdapter competitionCursorAdapter = new CompetitionCursorAdapter(this, cursorComp, true);
+        listViewMain.setAdapter(competitionCursorAdapter);
 
         // FAB
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

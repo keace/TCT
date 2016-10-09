@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +20,7 @@ import ua.kyslytsia.tct.database.DbHelper;
 
 public class NewCompetitionActivity extends AppCompatActivity {
 
-    private EditText name, place, rank, penalty;
+    private EditText date, name, place, rank, penalty;
     private Spinner type, distance;
     private Button buttonSaveToStage, buttonSaveToMembers;
 
@@ -29,11 +30,15 @@ public class NewCompetitionActivity extends AppCompatActivity {
 
     static SimpleCursorAdapter adapterDistance;
 
+    DbHelper dbHelper;
+    SQLiteDatabase sqLiteDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_competition);
 
+        date = (EditText) findViewById(R.id.newCompetitionDate);
         name = (EditText) findViewById(R.id.newCompetitionName);
         place = (EditText) findViewById(R.id.newCompetitionPlace);
         rank = (EditText) findViewById(R.id.newDistanceRank);
@@ -45,8 +50,11 @@ public class NewCompetitionActivity extends AppCompatActivity {
         buttonSaveToStage = (Button) findViewById(R.id.buttonNewCompetitionSaveToStage);
         buttonSaveToMembers = (Button) findViewById(R.id.buttonNewCompetitionSaveToMembers);
 
+        dbHelper = new DbHelper(this);
+        sqLiteDatabase = dbHelper.getWritableDatabase();
+
         // spinner Type
-        Cursor cursorType = DbHelper.sqLiteDatabase.query(Contract.TypeEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursorType = sqLiteDatabase.query(Contract.TypeEntry.TABLE_NAME, null, null, null, null, null, null);
         String[] fromType = new String[]{Contract.TypeEntry.COLUMN_NAME};
         int[] toType = new int[]{R.id.textViewItemType};
         final SimpleCursorAdapter adapterType = new SimpleCursorAdapter(this, R.layout.item_type, cursorType, fromType, toType, 1);
@@ -72,7 +80,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
         //String selection = Contract.DistanceEntry.COLUMN_TYPE_ID + " = ?";
         //String[] selectionArgs = new String[]{String.valueOf(selectedTypeId)};
         //String[] selectionArgs = new String[]{"1"};
-        Cursor cursorDistance = DbHelper.sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
         String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_DISTANCE_NAME};
         int[] toDistance = new int[]{R.id.textViewItemDistance};
         adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
@@ -84,7 +92,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
                 String selection = Contract.DistanceEntry.COLUMN_TYPE_ID + " = ?";
                 String[] selectionArgs = new String[]{String.valueOf(selectedTypeId)};
                 Toast.makeText(NewCompetitionActivity.this, "TYPE_ID = " + String.valueOf(selectedTypeId), Toast.LENGTH_SHORT).show();
-                Cursor cursorDistance = DbHelper.sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+                Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
                 String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_DISTANCE_NAME};
                 int[] toDistance = new int[]{R.id.textViewItemDistance};
                 adapterDistance = new SimpleCursorAdapter(NewCompetitionActivity.this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
@@ -146,15 +154,17 @@ public class NewCompetitionActivity extends AppCompatActivity {
 
         //inserting to DB
         else {
-        cv.put(Contract.CompetitionEntry.COLUMN_NAME, name.getText().toString());
-        cv.put(Contract.CompetitionEntry.COLUMN_PLACE, place.getText().toString());
-        cv.put(Contract.CompetitionEntry.COLUMN_TYPE_ID, selectedTypeId);
-        cv.put(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, selectedDistanceId);
-        cv.put(Contract.CompetitionEntry.COLUMN_RANK, rank.getText().toString());
-        cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_TIME, Integer.valueOf(penalty.getText().toString()));
-        cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
-        DbHelper.sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
-        }
+            cv.put(Contract.CompetitionEntry.COLUMN_DATE, date.getText().toString());
+            cv.put(Contract.CompetitionEntry.COLUMN_NAME, name.getText().toString());
+            cv.put(Contract.CompetitionEntry.COLUMN_PLACE, place.getText().toString());
+            cv.put(Contract.CompetitionEntry.COLUMN_TYPE_ID, selectedTypeId);
+            cv.put(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, selectedDistanceId);
+            cv.put(Contract.CompetitionEntry.COLUMN_RANK, rank.getText().toString());
+            cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_TIME, Integer.valueOf(penalty.getText().toString()));
+            cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
+            sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
+            }
         return true;
     }
+
 }

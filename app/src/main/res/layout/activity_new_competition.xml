@@ -19,6 +19,29 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:text="Дата"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewNewCompetitionDate"
+            android:layout_weight="1" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="date"
+            android:ems="10"
+            android:id="@+id/newCompetitionDate"
+            android:layout_weight="1"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Название"
@@ -27,7 +50,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/newCompetitionName" />
+            android:id="@+id/newCompetitionName"
+            android:inputType="text" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +68,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/newCompetitionPlace" />
+            android:id="@+id/newCompetitionPlace"
+            android:inputType="text" />
     </LinearLayout>
 
     <LinearLayout

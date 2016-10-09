@@ -2,6 +2,7 @@ package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,10 +19,16 @@ public class DBHelpActivity extends AppCompatActivity {
     ListView gender, type, distance, stage, competition, person, judge, member, attempt, stageOnCompetition, StageOnAttempt;
     CursorAdapter adapterGender;
 
+    DbHelper dbHelper;
+    SQLiteDatabase sqLiteDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dbhelp);
+
+        dbHelper = new DbHelper(this);
+        sqLiteDatabase = dbHelper.getWritableDatabase();
 
         // Gender Table Use
         gender = (ListView) findViewById(R.id.listViewGender);
@@ -29,7 +36,7 @@ public class DBHelpActivity extends AppCompatActivity {
         String[] fromGender = new String[]{Contract.GenderEntry._ID.toString(), Contract.GenderEntry.COLUMN_GENDER.toString()};
         int[] toGender = new int[]{R.id.textViewGenderId, R.id.textViewGenderName};
 
-        Cursor cursorGender = DbHelper.sqLiteDatabase.query(Contract.GenderEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursorGender = sqLiteDatabase.query(Contract.GenderEntry.TABLE_NAME, null, null, null, null, null, null);
         adapterGender = new SimpleCursorAdapter(this, R.layout.item_gender, cursorGender, fromGender, toGender, 1);
         gender.setAdapter(adapterGender);
 
@@ -40,7 +47,7 @@ public class DBHelpActivity extends AppCompatActivity {
         distance = (ListView) findViewById(R.id.listViewDistance);
         String[] fromDistance = new String[] {Contract.DistanceEntry._ID, Contract.DistanceEntry.COLUMN_DISTANCE_NAME, Contract.DistanceEntry.COLUMN_TYPE_ID};
         int[] toDistance = new int[]{R.id.textViewDistHelpId, R.id.textViewDistHelpName, R.id.textViewDistHelpTypeId};
-        Cursor c = DbHelper.sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor c = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
         SimpleCursorAdapter adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance_help, c, fromDistance, toDistance, 1);
         distance.setAdapter(adapterDistance);
 
@@ -50,7 +57,7 @@ public class DBHelpActivity extends AppCompatActivity {
     public void addGender(View v) {
         ContentValues cv = new ContentValues();
         cv.put(Contract.GenderEntry.COLUMN_GENDER, "Female");
-        DbHelper.sqLiteDatabase.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
+        sqLiteDatabase.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
     }
 
     public void deleteGender(View v) {

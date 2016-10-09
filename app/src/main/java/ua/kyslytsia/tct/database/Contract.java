@@ -46,6 +46,7 @@ public class Contract {
 
     public static final class CompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "competition";
+        public static final String COLUMN_DATE = "date";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_PLACE = "place";
         public static final String COLUMN_TYPE_ID = "type_id";
@@ -137,6 +138,7 @@ public class Contract {
 
     public static final String SQL_CREATE_COMPETITION_TABLE = CREATE_TABLE + CompetitionEntry.TABLE_NAME + SPACE_BRACKET +
             CompetitionEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
+            CompetitionEntry.COLUMN_DATE + TEXT + NOT_NULL + COMMA_SPACE +
             CompetitionEntry.COLUMN_NAME + TEXT + NOT_NULL + COMMA_SPACE +
             CompetitionEntry.COLUMN_PLACE + TEXT + COMMA_SPACE +
             CompetitionEntry.COLUMN_TYPE_ID + INTEGER + NOT_NULL + REFERENCES + TypeEntry.TABLE_NAME + "(" + TypeEntry._ID + ")" + COMMA_SPACE + //FK OK

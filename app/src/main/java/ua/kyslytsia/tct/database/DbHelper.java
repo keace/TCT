@@ -12,10 +12,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "LOG! DbHelper";
 
-    //public static DbHelper dbHelper;
-    public static SQLiteDatabase sqLiteDatabase;
-
-    public static final int DB_VERSION = 3;
+    public static final int DB_VERSION = 4;
     public static final String DB_NAME = "tct.db";
 
     private static ContentValues cv = new ContentValues();
@@ -25,8 +22,26 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate(SQLiteDatabase db) {
+
+        Log.d(LOG, "DB TEST PATH: " + db.getPath());
+
         Log.d(LOG, Contract.SQL_CREATE_GENDER_TABLE);
+        db.execSQL(Contract.SQL_CREATE_GENDER_TABLE);
+
+        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Муж");
+        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Жен");
+        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
         Log.d(LOG, Contract.SQL_CREATE_TYPE_TABLE);
+        db.execSQL(Contract.SQL_CREATE_TYPE_TABLE);
+        cv.put(Contract.TypeEntry.COLUMN_NAME, "Велосипедный");
+        db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.TypeEntry.COLUMN_NAME, "Горный");
+        db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
         Log.d(LOG, Contract.SQL_CREATE_DISTANCE_TABLE);
         Log.d(LOG, Contract.SQL_CREATE_STAGE_TABLE);
         Log.d(LOG, Contract.SQL_CREATE_COMPETITION_TABLE);
@@ -36,21 +51,6 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(LOG, Contract.SQL_CREATE_ATTEMPT_TABLE);
         Log.d(LOG, Contract.SQL_CREATE_STAGE_ON_COMPETITION_TABLE);
         Log.d(LOG, Contract.SQL_CREATE_STAGE_ON_ATTEMPT_TABLE);
-
-        db.execSQL(Contract.SQL_CREATE_GENDER_TABLE);
-
-        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Муж");
-        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
-        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Жен");
-        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
-        cv.clear();
-
-        db.execSQL(Contract.SQL_CREATE_TYPE_TABLE);
-        cv.put(Contract.TypeEntry.COLUMN_NAME, "Велосипедный");
-        db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
-        cv.put(Contract.TypeEntry.COLUMN_NAME, "Горный");
-        db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
-        cv.clear();
 
         db.execSQL(Contract.SQL_CREATE_DISTANCE_TABLE);
         cv.put(Contract.DistanceEntry.COLUMN_DISTANCE_NAME, "Фигурка");
@@ -84,23 +84,36 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.GenderEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.TypeEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.DistanceEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.StageEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.CompetitionEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.PersonEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.JudgeEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.MemberEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.AttemptEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + Contract.StageOnCompetitionEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.StageOnAttemptEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.StageOnCompetitionEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.AttemptEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.MemberEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.JudgeEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.PersonEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.CompetitionEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.StageEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.DistanceEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.TypeEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.GenderEntry.TABLE_NAME);
+        Log.d(LOG, "ALL TABLE DROPPED");
 
-        onCreate(sqLiteDatabase);
+        onCreate(db);
     }
 
     public String findTypeNameById (int id) {
-        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.TypeEntry.TABLE_NAME + " WHERE " + Contract.TypeEntry._ID + "=" + id + ";", null);
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        //Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.TypeEntry.TABLE_NAME + " WHERE " + Contract.TypeEntry._ID + "=" + id + ";", null);
+
+        // Only for Training:
+        Cursor c = sqLiteDatabase.query(Contract.TypeEntry.TABLE_NAME, null, Contract.TypeEntry._ID + "=?", new String[] {String.valueOf(id)}, null, null, null);
+        c.moveToFirst();
         return c.getString(c.getColumnIndex(Contract.TypeEntry.COLUMN_NAME));
+    }
+
+    public String findDistanceById(int id) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.DistanceEntry.TABLE_NAME + " WHERE " + Contract.DistanceEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        return c.getString(c.getColumnIndex(Contract.DistanceEntry.COLUMN_DISTANCE_NAME));
     }
 }
