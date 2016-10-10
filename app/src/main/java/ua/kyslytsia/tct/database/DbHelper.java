@@ -6,12 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
+
+import ua.kyslytsia.tct.AddStageActivity;
 import ua.kyslytsia.tct.MainActivity;
 import ua.kyslytsia.tct.mocks.Competition;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    private static final String LOG = "LOG! DbHelper";
+    private static final String LOG = "LOG DB-HELPER";
 
     public static final int DB_VERSION = 4;
     public static final String DB_NAME = "tct.db";
@@ -151,5 +154,26 @@ public class DbHelper extends SQLiteOpenHelper {
         c.close();
         sqLiteDatabase.close();
         return competition;
+    }
+
+    public void addStageOnCompetition (int compId, int stageId) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "=" + compId + " AND " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + stageId + ";", null);
+
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            Log.d(LOG, "NOT INSERTED because such record already exists, c.getCount = " + c.getCount());
+            //Log.d(LOG, "Содержимое первой строки первого столбца: " + c.getInt(0));
+            c.close();
+            return;
+        } else {
+            if (cv.size() != 0){
+                cv.clear(); }
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, compId);
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageId);
+            sqLiteDatabase.insert(Contract.StageOnCompetitionEntry.TABLE_NAME, null, cv);
+            Log.d(LOG, "INSERTED CompId = " + compId + ", StageId = " + stageId);
+        }
+        cv.clear();
     }
 }
