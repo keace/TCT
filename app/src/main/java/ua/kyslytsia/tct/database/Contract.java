@@ -15,7 +15,7 @@ public class Contract {
     private static final String SPACE_BRACKET = " (";
     private static final String COMMA_SPACE = ", ";
     private static final String BRACKET_SEMICOLON ="); ";
-    private static final String INSERT_INTO = "INSERT INTO ";
+    //private static final String INSERT_INTO = "INSERT INTO ";
 
 
     public static final class GenderEntry implements BaseColumns {
@@ -23,9 +23,12 @@ public class Contract {
         public static final String COLUMN_GENDER = "gender";
     }
 
+    public static final int GENDER_MALE = 1;
+    public static final int GENDER_FEMALE = 0;
+
     public static final class PersonEntry implements BaseColumns {
         public static final String TABLE_NAME = "person";
-        public static final String COLUMN_SURNAME = "surname";
+        public static final String COLUMN_LASTNAME = "last_name";
         public static final String COLUMN_FIRST_NAME = "first_name";
         public static final String COLUMN_MIDDLE_NAME = "middle_name";
         public static final String COLUMN_GENDER_ID = "gender_id";
@@ -75,13 +78,24 @@ public class Contract {
         public static final String COLUMN_POSITION = "position";
     }
 
+    public static final class TeamEntry implements BaseColumns {
+        public static final String TABLE_NAME = "team";
+        public static final String COLUMN_COMPETITION_ID = "competition_id";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_PLACE = "place";
+    }
+    //public static final int WITHOUT_TEAM_ID = 0;
+
     public static final class MemberEntry implements BaseColumns {
         public static final String TABLE_NAME = "member";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_PERSON_ID = "person_id";
+        public static final String COLUMN_TEAM_ID = "team_id";
+        public static final String COLUMN_START_NUMBER = "start_number";
         public static final String COLUMN_SPORT_RANK = "sport_rank";
-        public static final String COLUMN_TEAM = "team";
         public static final String COLUMN_BIKE = "bike";
+        public static final String COLUMN_TIME = "time";
+        public static final String COLUMN_PLACE = "place";
     }
 
     public static final class AttemptEntry implements BaseColumns {
@@ -98,6 +112,7 @@ public class Contract {
         public static final String TABLE_NAME = "stage_on_competition";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_STAGE_ID = "stage_id";
+        public static final String COLUMN_POSITION = "position";
     }
 
     public static final class StageOnAttemptEntry implements BaseColumns {
@@ -149,28 +164,37 @@ public class Contract {
 
     public static final String SQL_CREATE_PERSON_TABLE = CREATE_TABLE + PersonEntry.TABLE_NAME + SPACE_BRACKET +
             PersonEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
-            PersonEntry.COLUMN_SURNAME + TEXT + NOT_NULL + COMMA_SPACE +
+            PersonEntry.COLUMN_LASTNAME + TEXT + NOT_NULL + COMMA_SPACE +
             PersonEntry.COLUMN_FIRST_NAME + TEXT + NOT_NULL + COMMA_SPACE +
             PersonEntry.COLUMN_MIDDLE_NAME + TEXT + COMMA_SPACE +
             PersonEntry.COLUMN_GENDER_ID + INTEGER + REFERENCES + GenderEntry.TABLE_NAME + "(" + GenderEntry._ID + ")" + COMMA_SPACE + //FK OK
             PersonEntry.COLUMN_BIRTHDAY + TEXT + BRACKET_SEMICOLON;
 
-    protected static final String SQL_CREATE_JUDGES_TABLE = CREATE_TABLE + JudgeEntry.TABLE_NAME + SPACE_BRACKET +
+    public static final String SQL_CREATE_JUDGES_TABLE = CREATE_TABLE + JudgeEntry.TABLE_NAME + SPACE_BRACKET +
             JudgeEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             JudgeEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE +  //FK OK
             JudgeEntry.COLUMN_PERSON_ID + INTEGER + NOT_NULL + REFERENCES + PersonEntry.TABLE_NAME + "(" + PersonEntry._ID + ")" + COMMA_SPACE + //FK OK
             JudgeEntry.COLUMN_JUDGE_RANK + TEXT + COMMA_SPACE +
             JudgeEntry.COLUMN_POSITION + TEXT + BRACKET_SEMICOLON;
 
-    protected static final String SQL_CREATE_MEMBERS_TABLE = CREATE_TABLE + MemberEntry.TABLE_NAME + SPACE_BRACKET +
+    public static final String SQL_CREATE_TEAM_TABLE = CREATE_TABLE + TeamEntry.TABLE_NAME + SPACE_BRACKET +
+            TeamEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
+            TeamEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE +  //FK OK
+            TeamEntry.COLUMN_NAME + TEXT + NOT_NULL + COMMA_SPACE +
+            TeamEntry.COLUMN_PLACE + INTEGER + BRACKET_SEMICOLON;
+
+    public static final String SQL_CREATE_MEMBERS_TABLE = CREATE_TABLE + MemberEntry.TABLE_NAME + SPACE_BRACKET +
             MemberEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             MemberEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_PERSON_ID + INTEGER + NOT_NULL + REFERENCES + PersonEntry.TABLE_NAME + "(" + PersonEntry._ID + ")" + COMMA_SPACE + //FK OK
+            MemberEntry.COLUMN_TEAM_ID + INTEGER + REFERENCES + TeamEntry.TABLE_NAME  + "(" + TeamEntry._ID + ")" + COMMA_SPACE + //FK OK
+            MemberEntry.COLUMN_START_NUMBER + INTEGER + COMMA_SPACE +
             MemberEntry.COLUMN_SPORT_RANK + TEXT + COMMA_SPACE +
-            MemberEntry.COLUMN_TEAM + TEXT + COMMA_SPACE +
-            MemberEntry.COLUMN_BIKE + TEXT + BRACKET_SEMICOLON;
+            MemberEntry.COLUMN_BIKE + TEXT + COMMA_SPACE +
+            MemberEntry.COLUMN_TIME + INTEGER + COMMA_SPACE +
+            MemberEntry.COLUMN_PLACE + INTEGER + BRACKET_SEMICOLON;
 
-    protected static final String SQL_CREATE_ATTEMPT_TABLE = CREATE_TABLE + AttemptEntry.TABLE_NAME + SPACE_BRACKET +
+    public static final String SQL_CREATE_ATTEMPT_TABLE = CREATE_TABLE + AttemptEntry.TABLE_NAME + SPACE_BRACKET +
             AttemptEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             AttemptEntry.COLUMN_MEMBERS_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_TRY_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
@@ -179,12 +203,13 @@ public class Contract {
             AttemptEntry.COLUMN_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_IS_CLOSED + INTEGER + NOT_NULL + BRACKET_SEMICOLON;
 
-    protected static final String SQL_CREATE_STAGE_ON_COMPETITION_TABLE = CREATE_TABLE + StageOnCompetitionEntry.TABLE_NAME + SPACE_BRACKET +
+    public static final String SQL_CREATE_STAGE_ON_COMPETITION_TABLE = CREATE_TABLE + StageOnCompetitionEntry.TABLE_NAME + SPACE_BRACKET +
             StageOnCompetitionEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             StageOnCompetitionEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
-            StageOnCompetitionEntry.COLUMN_STAGE_ID + INTEGER + NOT_NULL + REFERENCES + StageEntry.TABLE_NAME + "(" + StageEntry._ID + ")" + BRACKET_SEMICOLON; //FK OK
+            StageOnCompetitionEntry.COLUMN_STAGE_ID + INTEGER + NOT_NULL + REFERENCES + StageEntry.TABLE_NAME + "(" + StageEntry._ID + ")" + COMMA_SPACE + //FK OK
+            StageOnCompetitionEntry.COLUMN_POSITION + INTEGER + BRACKET_SEMICOLON;
 
-    protected static final String SQL_CREATE_STAGE_ON_ATTEMPT_TABLE = CREATE_TABLE + StageOnAttemptEntry.TABLE_NAME + SPACE_BRACKET +
+    public static final String SQL_CREATE_STAGE_ON_ATTEMPT_TABLE = CREATE_TABLE + StageOnAttemptEntry.TABLE_NAME + SPACE_BRACKET +
             StageOnAttemptEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + NOT_NULL + COMMA_SPACE +
             StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + StageOnCompetitionEntry.TABLE_NAME + "(" + StageOnCompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
             StageOnAttemptEntry.COLUMN_ATTEMPT_ID + INTEGER + NOT_NULL + REFERENCES + AttemptEntry.TABLE_NAME + "(" + AttemptEntry._ID + ")" + COMMA_SPACE + //FK OK

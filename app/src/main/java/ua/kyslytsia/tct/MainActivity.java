@@ -136,18 +136,18 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
         }
-        /*if (id == R.id.nav_dbhelp) {
+        /*if (competitionId == R.competitionId.nav_dbhelp) {
 
         }
-        /*else if (id == R.id.nav_gallery) {
+        /*else if (competitionId == R.competitionId.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (competitionId == R.competitionId.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (competitionId == R.competitionId.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (competitionId == R.competitionId.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (competitionId == R.competitionId.nav_send) {
 
         }
 */

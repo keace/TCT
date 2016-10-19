@@ -28,14 +28,6 @@ public class CompetitionCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        /*      R.id.textViewItemCompDate,
-                R.id.textViewItemCompType,
-
-                R.id.textViewItemCompName,
-                R.id.textViewItemCompPlace,
-
-                R.id.textViewItemCompDist,
-                R.id.textViewItemCompRank,*/
         DbHelper dbHelper = MainActivity.dbHelper;
 
         TextView date = (TextView) view.findViewById(R.id.textViewItemCompDate);

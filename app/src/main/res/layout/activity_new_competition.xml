@@ -31,8 +31,7 @@
             android:inputType="date"
             android:ems="10"
             android:id="@+id/newCompetitionDate"
-            android:layout_weight="1"
-            android:singleLine="true" />
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

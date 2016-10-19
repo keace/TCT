@@ -19,11 +19,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".CalculatorActivity" />
-        <activity android:name=".NewCompetitionActivity" />
         <activity android:name=".DBHelpActivity" />
-        <activity android:name=".AddStageActivity" />
+        <activity android:name=".NewCompetitionActivity" />
         <activity android:name=".StagesOnCompetitionActivity" />
-        <activity android:name=".MembersOnCompetitionActivity" />
+        <activity android:name=".AddStageActivity" />
+        <activity android:name=".MembersActivity" />
+        <activity android:name=".NewMemberActivity" />
+
     </application>
 
 </manifest>

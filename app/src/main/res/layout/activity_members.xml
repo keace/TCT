@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -7,15 +8,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/listViewStageOnCompetition"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabSoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_add" />
+        android:id="@+id/listViewMembers" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -23,21 +16,20 @@
         android:layout_height="match_parent">
 
         <Button
-            android:text="Members"
+            android:text="Новый участник"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonSoCToMembers"
+            android:id="@+id/buttonMembersToNewMember"
             android:layout_weight="1"
             android:layout_gravity="bottom" />
 
         <Button
-            android:text="Add Stages"
+            android:text="Этапы"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonSoCAddStage"
+            android:id="@+id/buttonMembersToStages"
             android:layout_weight="1"
             android:layout_gravity="bottom" />
+
     </LinearLayout>
-
 </LinearLayout>
-

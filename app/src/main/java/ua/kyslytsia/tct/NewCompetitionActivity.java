@@ -64,7 +64,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
         type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Selected TYPE id = " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Selected TYPE competitionId = " + id, Toast.LENGTH_SHORT).show();
                 selectedTypeId = id;
                 adapterDistance.notifyDataSetChanged();
             }
@@ -110,7 +110,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
         distance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Selected DISTANCE id = " + id, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Selected DISTANCE competitionId = " + id, Toast.LENGTH_SHORT).show();
                 selectedDistanceId = id;
             }
 

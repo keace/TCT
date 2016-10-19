@@ -6,18 +6,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
-import ua.kyslytsia.tct.AddStageActivity;
-import ua.kyslytsia.tct.MainActivity;
 import ua.kyslytsia.tct.mocks.Competition;
+import ua.kyslytsia.tct.mocks.Member;
+import ua.kyslytsia.tct.mocks.Person;
 
 public class DbHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "LOG DB-HELPER";
 
-    public static final int DB_VERSION = 4;
-    public static final String DB_NAME = "tct.db";
+    private static final int DB_VERSION = 5;
+    private static final String DB_NAME = "tct.db";
 
     private static ContentValues cv = new ContentValues();
 
@@ -32,9 +31,11 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(LOG, Contract.SQL_CREATE_GENDER_TABLE);
         db.execSQL(Contract.SQL_CREATE_GENDER_TABLE);
 
-        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Муж");
-        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.GenderEntry._ID, 0);
         cv.put(Contract.GenderEntry.COLUMN_GENDER, "Жен");
+        db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.GenderEntry._ID, 1);
+        cv.put(Contract.GenderEntry.COLUMN_GENDER, "Муж");
         db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
         cv.clear();
 
@@ -75,6 +76,7 @@ public class DbHelper extends SQLiteOpenHelper {
         cv.clear();
 
         db.execSQL(Contract.SQL_CREATE_COMPETITION_TABLE);
+        db.execSQL(Contract.SQL_CREATE_TEAM_TABLE);
         db.execSQL(Contract.SQL_CREATE_PERSON_TABLE);
         db.execSQL(Contract.SQL_CREATE_JUDGES_TABLE);
         db.execSQL(Contract.SQL_CREATE_MEMBERS_TABLE);
@@ -95,6 +97,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + Contract.JudgeEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.PersonEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.CompetitionEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + Contract.TeamEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.StageEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.DistanceEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + Contract.TypeEntry.TABLE_NAME);
@@ -173,7 +176,53 @@ public class DbHelper extends SQLiteOpenHelper {
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageId);
             sqLiteDatabase.insert(Contract.StageOnCompetitionEntry.TABLE_NAME, null, cv);
             Log.d(LOG, "INSERTED CompId = " + compId + ", StageId = " + stageId);
+            sqLiteDatabase.close();
         }
         cv.clear();
+    }
+
+    public Member findMemberById (int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.MemberEntry.TABLE_NAME + " WHERE " + Contract.MemberEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        Member member = new Member(
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_COMPETITION_ID)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_PERSON_ID)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_TEAM_ID)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)),
+                c.getString(c.getColumnIndex(Contract.MemberEntry.COLUMN_SPORT_RANK)),
+                c.getString(c.getColumnIndex(Contract.MemberEntry.COLUMN_BIKE)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_PLACE)));
+        Log.d(LOG, member.toString());
+        c.close();
+        sqLiteDatabase.close();
+        return member;
+    }
+
+    public Person findPersonById (int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        Person person = new Person(
+                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_LASTNAME)),
+                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)),
+                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_MIDDLE_NAME)),
+                c.getInt(c.getColumnIndex(Contract.PersonEntry.COLUMN_GENDER_ID)),
+                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_BIRTHDAY)));
+        Log.d(LOG, person.toString());
+        c.close();
+        sqLiteDatabase.close();
+        return person;
+    }
+
+    public String findTeamNameById (int id) {
+        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.TeamEntry.TABLE_NAME + " WHERE " + Contract.TeamEntry._ID + "=" + id + ";", null);
+        c.moveToFirst();
+        String result = c.getString(c.getColumnIndex(Contract.TeamEntry.COLUMN_NAME));
+        c.close();
+        sqLiteDatabase.close();
+        return result;
     }
 }

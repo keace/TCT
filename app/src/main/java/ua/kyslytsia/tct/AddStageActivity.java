@@ -1,5 +1,6 @@
 package ua.kyslytsia.tct;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +46,11 @@ public class AddStageActivity extends AppCompatActivity {
                 for (int i = 0; i < stageIds.length; i++){
                     Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIds[i]);
                     dbHelper.addStageOnCompetition(competitionId, (int) stageIds[i]);
-
                 }
-            }});
+                Intent intent = new Intent(AddStageActivity.this, StagesOnCompetitionActivity.class);
+                intent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
+                startActivity(intent);
+            }
+        });
     }
 }
