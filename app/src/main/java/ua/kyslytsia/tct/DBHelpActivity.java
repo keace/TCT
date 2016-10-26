@@ -51,16 +51,16 @@ public class DBHelpActivity extends AppCompatActivity {
         SimpleCursorAdapter adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance_help, cursorDistance, fromDistance, toDistance, 1);
         distance.setAdapter(adapterDistance);
 
-        // Stage table
+        // StageOnCompetition table
         stage = (ListView) findViewById(R.id.listViewStage);
 
-        // Stage On Competition Table
-        stageOnCompetition = (ListView) findViewById(R.id.listViewStageOnCompetition);
-        String[] fromSOC = new String[] {Contract.StageOnCompetitionEntry._ID, Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID};
-        int[] toSOC = new int[] {R.id.textViewSOCId, R.id.textViewSOCCompId, R.id.textViewSOCStageId};
-        Cursor cursorSOC = sqLiteDatabase.query(Contract.StageOnCompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
-        SimpleCursorAdapter adapterSOC = new SimpleCursorAdapter(this, R.layout.item_stage_on_comp, cursorSOC, fromSOC, toSOC, 1);
-        stageOnCompetition.setAdapter(adapterSOC);
+        // StageOnCompetition Table
+//        stageOnCompetition = (ListView) findViewById(R.id.listViewStageOnCompetition);
+//        String[] fromSOC = new String[] {Contract.StageOnCompetitionEntry._ID, Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID};
+//        int[] toSOC = new int[] {R.id.textViewSOCId, R.id.textViewSOCCompId, R.id.textViewSOCStageId};
+//        Cursor cursorSOC = sqLiteDatabase.query(Contract.StageOnCompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
+//        SimpleCursorAdapter adapterSOC = new SimpleCursorAdapter(this, R.layout.item_stage_on_comp, cursorSOC, fromSOC, toSOC, 1);
+//        stageOnCompetition.setAdapter(adapterSOC);
     }
 
     public void addGender(View v) {

@@ -100,11 +100,12 @@ public class Contract {
 
     public static final class AttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "attempt";
+        public static final String COLUMN_COMPETITION_ID = "competition_id"; ///////////////////////////////////////////
         public static final String COLUMN_MEMBERS_ID = "members_id";
         public static final String COLUMN_TRY_NUMBER = "try_number";
         public static final String COLUMN_PENALTY_TOTAL = "penalty_total";
         public static final String COLUMN_TIME = "time";
-        public static final String COLUMN_TOTAL = "total";
+        public static final String COLUMN_RESULT_TIME = "result_time";
         public static final String COLUMN_IS_CLOSED = "is_closed";
     }
 
@@ -196,11 +197,12 @@ public class Contract {
 
     public static final String SQL_CREATE_ATTEMPT_TABLE = CREATE_TABLE + AttemptEntry.TABLE_NAME + SPACE_BRACKET +
             AttemptEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
+            AttemptEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_MEMBERS_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_TRY_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_PENALTY_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_TIME + TEXT + NOT_NULL + COMMA_SPACE +
-            AttemptEntry.COLUMN_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
+            AttemptEntry.COLUMN_RESULT_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_IS_CLOSED + INTEGER + NOT_NULL + BRACKET_SEMICOLON;
 
     public static final String SQL_CREATE_STAGE_ON_COMPETITION_TABLE = CREATE_TABLE + StageOnCompetitionEntry.TABLE_NAME + SPACE_BRACKET +

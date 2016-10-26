@@ -22,7 +22,7 @@ public class StageOnCompetitionCursorAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_stage, parent, false);
+        View view = inflater.inflate(R.layout.item_stage_on_comp, parent, false);
         return view;
     }
 
@@ -30,7 +30,10 @@ public class StageOnCompetitionCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor c) {
         DbHelper dbHelper = MainActivity.dbHelper;
 
-        TextView stageName = (TextView) view.findViewById(R.id.textViewItemStage);
+        TextView stagePosition = (TextView) view.findViewById(R.id.textViewSOCPosition);
+        stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
+
+        TextView stageName = (TextView) view.findViewById(R.id.textViewSOCName);
         stageName.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID))));
     }
 }

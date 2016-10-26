@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "LOG DB-HELPER";
 
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
     private static final String DB_NAME = "tct.db";
 
     private static ContentValues cv = new ContentValues();
@@ -142,7 +142,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public Competition findCompetitionById (int id) {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.CompetitionEntry.TABLE_NAME + " WHERE " + Contract.CompetitionEntry._ID + "=" + id + ";", null);
+        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.CompetitionEntry.TABLE_NAME + " WHERE " + Contract.CompetitionEntry._ID + "=?;", new String[] {String.valueOf(id)});
         c.moveToFirst();
         Competition competition = new Competition(
                 c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)),
@@ -174,11 +174,28 @@ public class DbHelper extends SQLiteOpenHelper {
                 cv.clear(); }
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, compId);
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageId);
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, stageId); // In default Position = Id
             sqLiteDatabase.insert(Contract.StageOnCompetitionEntry.TABLE_NAME, null, cv);
             Log.d(LOG, "INSERTED CompId = " + compId + ", StageId = " + stageId);
             sqLiteDatabase.close();
         }
         cv.clear();
+    }
+
+    public void updateStageOnCompetitionPosition (long id, int newPosition) {
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.clear();
+        cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, newPosition);
+        sqLiteDatabase.update(Contract.StageOnCompetitionEntry.TABLE_NAME, cv, Contract.StageOnCompetitionEntry._ID + "=?", new String[] {String.valueOf(id)});
+        sqLiteDatabase.close();
+        cv.clear();
+    }
+
+    public void dropStageOnCompetition (long id) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, Contract.StageOnCompetitionEntry._ID + "=?", new String[] {String.valueOf(id)});
+        sqLiteDatabase.close();
     }
 
     public Member findMemberById (int id) {

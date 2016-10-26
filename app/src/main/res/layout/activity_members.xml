@@ -16,18 +16,18 @@
         android:layout_height="match_parent">
 
         <Button
-            android:text="Новый участник"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/buttonMembersToNewMember"
-            android:layout_weight="1"
-            android:layout_gravity="bottom" />
-
-        <Button
             android:text="Этапы"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonMembersToStages"
+            android:layout_weight="1"
+            android:layout_gravity="bottom" />
+
+        <Button
+            android:text="Новый участник"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonMembersToNewMember"
             android:layout_weight="1"
             android:layout_gravity="bottom" />
 

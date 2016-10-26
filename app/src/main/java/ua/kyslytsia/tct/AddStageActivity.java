@@ -7,8 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import ua.kyslytsia.tct.adapter.AddStageCursorAdapter;
@@ -39,13 +41,21 @@ public class AddStageActivity extends AppCompatActivity {
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         listView.setAdapter(adapter);
 
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(AddStageActivity.this, "id = " + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         buttonAddStages.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 long[] stageIds = listView.getCheckedItemIds();
-                for (int i = 0; i < stageIds.length; i++){
-                    Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIds[i]);
-                    dbHelper.addStageOnCompetition(competitionId, (int) stageIds[i]);
+                for (long stageId : stageIds) {
+                    Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageId);
+                    dbHelper.addStageOnCompetition(competitionId, (int) stageId);
                 }
                 Intent intent = new Intent(AddStageActivity.this, StagesOnCompetitionActivity.class);
                 intent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);

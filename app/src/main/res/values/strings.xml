@@ -7,10 +7,48 @@
     <string name="action_settings">Settings</string>
 
     <string name="menu_calculator">Калькулятор</string>
+    <string name="title_calculator">Калькулятор</string>
+
+    <string name="title_competition">Соревнования</string>
+    <string name="title_new_competition">Новое соревнование</string>
+    <string name="title_stage_on_competition">Этапы соревнования</string>
+    <string name="title_add_stage">Добавить этап</string>
+    <string name="title_members">Участники соревнования</string>
+    <string name="title_new_members">Добавить участника</string>
+    <string name="title_attempt">Заезд</string>
 
     <string-array name="types">
         <item>Велосипедный</item>
         <item>Горный</item>
         <item>Водный</item>
     </string-array>
+
+    <declare-styleable name="DragSortListView">
+        <attr name="collapsed_height" format="dimension" />
+        <attr name="drag_scroll_start" format="float" />
+        <attr name="max_drag_scroll_speed" format="float" />
+        <attr name="float_background_color" format="color" />
+        <attr name="remove_mode">
+            <enum name="clickRemove" value="0" />
+            <enum name="flingRemove" value="1" />
+        </attr>
+        <attr name="track_drag_sort" format="boolean"/>
+        <attr name="float_alpha" format="float"/>
+        <attr name="slide_shuffle_speed" format="float"/>
+        <attr name="remove_animation_duration" format="integer"/>
+        <attr name="drop_animation_duration" format="integer"/>
+        <attr name="drag_enabled" format="boolean" />
+        <attr name="sort_enabled" format="boolean" />
+        <attr name="remove_enabled" format="boolean" />
+        <attr name="drag_start_mode">
+            <enum name="onDown" value="0" />
+            <enum name="onMove" value="1" />
+            <enum name="onLongPress" value="2"/>
+        </attr>
+        <attr name="drag_handle_id" format="integer" />
+        <attr name="fling_handle_id" format="integer" />
+        <attr name="click_remove_id" format="integer" />
+        <attr name="use_default_controller" format="boolean" />
+    </declare-styleable>
+
 </resources>

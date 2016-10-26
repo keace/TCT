@@ -135,6 +135,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(dbHelpIntent);
                 break;
             }
+            case R.id.attempt: {
+                Intent dbAttemptIntent = new Intent(this, AttemptActivity.class);
+                startActivity(dbAttemptIntent);
+                break;
+            }
         }
         /*if (competitionId == R.competitionId.nav_dbhelp) {
 

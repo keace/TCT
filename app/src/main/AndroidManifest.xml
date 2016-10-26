@@ -10,22 +10,38 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/title_competition"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CalculatorActivity" />
-        <activity android:name=".DBHelpActivity" />
-        <activity android:name=".NewCompetitionActivity" />
-        <activity android:name=".StagesOnCompetitionActivity" />
-        <activity android:name=".AddStageActivity" />
-        <activity android:name=".MembersActivity" />
-        <activity android:name=".NewMemberActivity" />
 
+        <activity
+            android:name=".CalculatorActivity"
+            android:label="@string/title_calculator"
+            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".NewCompetitionActivity"
+            android:label="@string/title_new_competition"/>
+        <activity
+            android:name=".StagesOnCompetitionActivity"
+            android:label="@string/title_stage_on_competition"/>
+        <activity
+            android:name=".AddStageActivity"
+            android:label="@string/title_add_stage"/>
+        <activity
+            android:name=".MembersActivity"
+            android:label="@string/title_members"/>
+        <activity
+            android:name=".NewMemberActivity"
+            android:label="@string/title_new_members"/>
+        <activity
+            android:name=".AttemptActivity"
+            android:label="@string/title_attempt"/>
+
+        <activity android:name=".DBHelpActivity" />
     </application>
 
 </manifest>
