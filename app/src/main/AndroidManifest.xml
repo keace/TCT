@@ -42,6 +42,12 @@
             android:label="@string/title_attempt"/>
 
         <activity android:name=".DBHelpActivity" />
+        
+        <provider
+            android:authorities="ua.kyslytsia.tct.database"
+            android:name=".database.ContentProvider"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>

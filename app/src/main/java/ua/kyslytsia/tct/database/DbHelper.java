@@ -58,7 +58,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(LOG, Contract.SQL_CREATE_STAGE_ON_ATTEMPT_TABLE);
 
         db.execSQL(Contract.SQL_CREATE_DISTANCE_TABLE);
-        cv.put(Contract.DistanceEntry.COLUMN_DISTANCE_NAME, "Фигурка");
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Фигурка");
         cv.put(Contract.DistanceEntry.COLUMN_TYPE_ID, 1);
         db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
         cv.clear();
@@ -124,7 +124,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
         Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.DistanceEntry.TABLE_NAME + " WHERE " + Contract.DistanceEntry._ID + "=" + id + ";", null);
         c.moveToFirst();
-        String result = c.getString(c.getColumnIndex(Contract.DistanceEntry.COLUMN_DISTANCE_NAME));
+        String result = c.getString(c.getColumnIndex(Contract.DistanceEntry.COLUMN_NAME));
         c.close();
         sqLiteDatabase.close();
         return result;

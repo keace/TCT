@@ -3,21 +3,24 @@ package ua.kyslytsia.tct;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
 
-public class DBHelpActivity extends AppCompatActivity {
+public class DBHelpActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     ListView gender, type, distance, stage, competition, person, judge, member, attempt, stageOnCompetition, StageOnAttempt;
     CursorAdapter adapterGender;
+    SimpleCursorAdapter personAdapter;
 
     DbHelper dbHelper;
     SQLiteDatabase sqLiteDatabase;
@@ -45,9 +48,10 @@ public class DBHelpActivity extends AppCompatActivity {
 
         // Distance Table
         distance = (ListView) findViewById(R.id.listViewDistance);
-        String[] fromDistance = new String[] {Contract.DistanceEntry._ID, Contract.DistanceEntry.COLUMN_DISTANCE_NAME, Contract.DistanceEntry.COLUMN_TYPE_ID};
+        String[] fromDistance = new String[] {Contract.DistanceEntry._ID, Contract.DistanceEntry.COLUMN_NAME, "type_name"};
         int[] toDistance = new int[]{R.id.textViewDistHelpId, R.id.textViewDistHelpName, R.id.textViewDistHelpTypeId};
-        Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
+//        Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursorDistance = sqLiteDatabase.rawQuery("SELECT distance._id, distance.name, type.name AS type_name FROM " + Contract.DistanceEntry.TABLE_NAME + " INNER JOIN " + Contract.TypeEntry.TABLE_NAME + " ON distance." + Contract.DistanceEntry.COLUMN_TYPE_ID + " = type." + Contract.TypeEntry._ID, null);
         SimpleCursorAdapter adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance_help, cursorDistance, fromDistance, toDistance, 1);
         distance.setAdapter(adapterDistance);
 
@@ -61,6 +65,15 @@ public class DBHelpActivity extends AppCompatActivity {
 //        Cursor cursorSOC = sqLiteDatabase.query(Contract.StageOnCompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
 //        SimpleCursorAdapter adapterSOC = new SimpleCursorAdapter(this, R.layout.item_stage_on_comp, cursorSOC, fromSOC, toSOC, 1);
 //        stageOnCompetition.setAdapter(adapterSOC);
+
+        // Person Table w.ContentProvider
+
+        person = (ListView) findViewById(R.id.listViewPerson);
+        getSupportLoaderManager().initLoader(0, null, this);
+        String[] fromPerson = new String[] {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LASTNAME};
+        int[] toPerson = new int[] {R.id.textView_personId, R.id.textView_personFirstName, R.id.textView_personLastName};
+        personAdapter = new SimpleCursorAdapter(this, R.layout.item_person, null, fromPerson, toPerson, 0);
+        person.setAdapter(personAdapter);
     }
 
     public void addGender(View v) {
@@ -71,5 +84,22 @@ public class DBHelpActivity extends AppCompatActivity {
 
     public void deleteGender(View v) {
 
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LASTNAME};
+        CursorLoader cursorLoader = new CursorLoader(this, ContentProvider.PERSON_CONTENT_URI, projection, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        personAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        personAdapter.swapCursor(null);
     }
 }

@@ -40,12 +40,14 @@ public class Contract {
         public static final String TABLE_NAME = "type";
         public static final String COLUMN_NAME = "name";
     }
+    public static final String TYPE_NAME_ADAPTED = TypeEntry.TABLE_NAME + "_" + TypeEntry.COLUMN_NAME;
 
     public static final class DistanceEntry implements BaseColumns {
         public static final String TABLE_NAME = "distance";
         public static final String COLUMN_TYPE_ID = "type_id";
-        public static final String COLUMN_DISTANCE_NAME = "name";
+        public static final String COLUMN_NAME = "name";
     }
+    public static final String DISTANCE_NAME_ADAPTED = DistanceEntry.TABLE_NAME + "_" + DistanceEntry.COLUMN_NAME;
 
     public static final class CompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "competition";
@@ -137,8 +139,8 @@ public class Contract {
     public static final String SQL_CREATE_DISTANCE_TABLE = CREATE_TABLE + DistanceEntry.TABLE_NAME + SPACE_BRACKET +
             DistanceEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             DistanceEntry.COLUMN_TYPE_ID + INTEGER + NOT_NULL + REFERENCES + TypeEntry.TABLE_NAME + "(" + TypeEntry._ID + ")" + COMMA_SPACE + //FK OK
-            DistanceEntry.COLUMN_DISTANCE_NAME + TEXT + NOT_NULL + BRACKET_SEMICOLON;
-//            INSERT_INTO + DistanceEntry.TABLE_NAME + " (" + DistanceEntry.COLUMN_TYPE_ID + "," + DistanceEntry.COLUMN_DISTANCE_NAME + ")" + " VALUES (1, 'Фигурка');";
+            DistanceEntry.COLUMN_NAME + TEXT + NOT_NULL + BRACKET_SEMICOLON;
+//            INSERT_INTO + DistanceEntry.TABLE_NAME + " (" + DistanceEntry.COLUMN_TYPE_ID + "," + DistanceEntry.COLUMN_NAME + ")" + " VALUES (1, 'Фигурка');";
 
     public static final String SQL_CREATE_STAGE_TABLE = CREATE_TABLE + StageEntry.TABLE_NAME + SPACE_BRACKET +
             StageEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +

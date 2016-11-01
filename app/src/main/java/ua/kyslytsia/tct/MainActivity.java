@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,15 +22,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ua.kyslytsia.tct.adapter.CompetitionCursorAdapter;
+import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static DbHelper dbHelper;
     public SQLiteDatabase sqLiteDatabase;
     ListView listViewMain;
+    CompetitionCursorAdapter competitionCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +49,10 @@ public class MainActivity extends AppCompatActivity
         textViewMain.setText(dbHelper.getDatabaseName());
 
         listViewMain = (ListView) findViewById(R.id.listViewMain);
+        getSupportLoaderManager().initLoader(1, null, this);
+        //Cursor cursorComp = sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
 
-        Cursor cursorComp = sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
-
-        CompetitionCursorAdapter competitionCursorAdapter = new CompetitionCursorAdapter(this, cursorComp, true);
+        competitionCursorAdapter = new CompetitionCursorAdapter(this, null, 1);
         listViewMain.setAdapter(competitionCursorAdapter);
         listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -159,5 +164,21 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        CursorLoader cursorLoader = new CursorLoader(MainActivity.this, ContentProvider.COMPETITION_CONTENT_URI, null, null, null, null);
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        competitionCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        competitionCursorAdapter.swapCursor(null);
     }
 }

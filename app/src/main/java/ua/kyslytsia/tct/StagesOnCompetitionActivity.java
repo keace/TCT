@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,7 +34,7 @@ import ua.kyslytsia.tct.utils.dslv.DragSortController;
 import ua.kyslytsia.tct.utils.dslv.DragSortListView;
 import ua.kyslytsia.tct.utils.dslv.SimpleFloatViewManager;
 
-public class StagesOnCompetitionActivity extends AppCompatActivity {
+public class StagesOnCompetitionActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String LOG = "SOC LOG!";
 
@@ -41,6 +43,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity {
 
     int dragPosition;
     long dragId;
+    Cursor c;
 
     StageOnCompetitionCursorAdapter adapter;
 
@@ -48,6 +51,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage_on_competition);
+        getSupportLoaderManager().initLoader(1, null, this);
 
         competitionId = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
 
@@ -91,7 +95,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity {
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
 
-        Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + competitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
+        c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + competitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
         adapter = new StageOnCompetitionCursorAdapter(this, c, true);
 
         listView.setAdapter(adapter);
@@ -129,6 +133,22 @@ public class StagesOnCompetitionActivity extends AppCompatActivity {
 //        });
 
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override
         public void drop(int from, int to) {
@@ -165,12 +185,4 @@ public class StagesOnCompetitionActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         }
     };
-
-    private DragSortListView.DragListener onDrag = new DragSortListView.DragListener() {
-        @Override
-        public void drag(int from, int to) {
-
-        }
-    };
-
 }

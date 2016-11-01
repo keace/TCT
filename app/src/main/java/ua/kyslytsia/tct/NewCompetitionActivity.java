@@ -81,7 +81,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
         //String[] selectionArgs = new String[]{String.valueOf(selectedTypeId)};
         //String[] selectionArgs = new String[]{"1"};
         Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, null, null, null, null, null);
-        String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_DISTANCE_NAME};
+        String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_NAME};
         int[] toDistance = new int[]{R.id.textViewItemDistance};
         adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
 
@@ -93,7 +93,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
                 String[] selectionArgs = new String[]{String.valueOf(selectedTypeId)};
                 Toast.makeText(NewCompetitionActivity.this, "TYPE_ID = " + String.valueOf(selectedTypeId), Toast.LENGTH_SHORT).show();
                 Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
-                String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_DISTANCE_NAME};
+                String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_NAME};
                 int[] toDistance = new int[]{R.id.textViewItemDistance};
                 adapterDistance = new SimpleCursorAdapter(NewCompetitionActivity.this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
                 distance.setAdapter(adapterDistance);
