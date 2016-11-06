@@ -7,6 +7,7 @@ import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -37,6 +38,9 @@ public class NewCompetitionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_competition);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setSubtitle("Создать соревнование");
+        setSupportActionBar(toolbar);
 
         date = (EditText) findViewById(R.id.newCompetitionDate);
         name = (EditText) findViewById(R.id.newCompetitionName);

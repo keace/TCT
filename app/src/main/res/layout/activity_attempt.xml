@@ -4,6 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <include layout="@layout/toolbar"/>
+    </android.support.design.widget.AppBarLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -44,6 +51,55 @@
             android:id="@+id/listViewAttempt" />
     </LinearLayout>
 
+    <TextView
+        android:text="Результаты"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewAttemptMinutes"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text=":"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView6"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewAttemptSeconds"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text=":"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView4"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewAttemptMillis"
+            android:layout_weight="1" />
+    </LinearLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -56,7 +112,7 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="TextView"
+            android:text="(Время)"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptTime"
@@ -75,7 +131,7 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="TextView"
+            android:text="(штрафы)"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptPenaltySum"
@@ -94,7 +150,7 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="TextView"
+            android:text="(цена штрафа)"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptPenaltyCost"
@@ -113,7 +169,7 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="TextView"
+            android:text="(Результат)"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptResultTime"
@@ -127,15 +183,15 @@
         android:layout_gravity="bottom">
 
         <Button
-            android:text="Посчитать"
-            android:layout_width="wrap_content"
+            android:text="Сбросить все"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/buttonAttemptCalculate"
+            android:id="@+id/buttonAttemptResetAll"
             android:layout_weight="1" />
 
         <Button
             android:text="Записать"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonAttemptWrite"
             android:layout_weight="1" />

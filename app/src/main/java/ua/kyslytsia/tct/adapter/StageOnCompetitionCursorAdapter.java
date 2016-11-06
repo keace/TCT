@@ -15,8 +15,8 @@ import ua.kyslytsia.tct.database.DbHelper;
 
 public class StageOnCompetitionCursorAdapter extends CursorAdapter {
 
-    public StageOnCompetitionCursorAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
+    public StageOnCompetitionCursorAdapter(Context context, Cursor c, int flag) {
+        super(context, c, flag);
     }
 
     @Override
@@ -28,12 +28,12 @@ public class StageOnCompetitionCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor c) {
-        DbHelper dbHelper = MainActivity.dbHelper;
-
         TextView stagePosition = (TextView) view.findViewById(R.id.textViewSOCPosition);
+//        stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
         stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
 
         TextView stageName = (TextView) view.findViewById(R.id.textViewSOCName);
-        stageName.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID))));
+//        stageName.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID))));
+        stageName.setText(c.getString(c.getColumnIndex(Contract.STAGE_NAME_ADAPTED)));
     }
 }

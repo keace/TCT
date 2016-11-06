@@ -18,8 +18,8 @@ public class MembersAdapter extends CursorAdapter {
 
     //int competitionId; // from Intent
 
-    public MembersAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
+    public MembersAdapter(Context context, Cursor c, int flag) {
+        super(context, c, flag);
     }
 
     @Override
@@ -31,23 +31,16 @@ public class MembersAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        DbHelper dbHelper = MainActivity.dbHelper;
-
         TextView team = (TextView) view.findViewById(R.id.textViewMembersTeam);
-        team.setText(dbHelper.findTeamNameById(cursor.getInt(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_TEAM_ID))));
-        // findTeamNameById from getTeam_id from Members
+        team.setText(cursor.getString(cursor.getColumnIndex(Contract.TEAM_NAME_ADAPTED)));
 
         TextView number = (TextView) view.findViewById(R.id.textViewMembersNumber);
         number.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)));
-        // getNumber from Members
 
         TextView name = (TextView) view.findViewById(R.id.textViewMembersName);
-        Person person = dbHelper.findPersonById(cursor.getInt(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_PERSON_ID)));
         StringBuffer sb = new StringBuffer();
-        sb.append(person.getSurName()).append(" ").append(person.getFirstName());
+        sb.append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_LASTNAME))).append(" ").append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
         name.setText(sb.toString());
-        sb.delete(0, sb.length());
-        // getFirstName getSurName from Members or Person
 
 //        TextView time = (TextView) view.findViewById(R.id.textViewMembersTime);
 //        time.setText(cursor.getInt(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)));

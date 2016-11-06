@@ -21,27 +21,36 @@
         <activity
             android:name=".CalculatorActivity"
             android:label="@string/title_calculator"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".NewCompetitionActivity"
-            android:label="@string/title_new_competition"/>
+            android:label="@string/title_new_competition"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".StagesOnCompetitionActivity"
-            android:label="@string/title_stage_on_competition"/>
+            android:label="@string/title_stage_on_competition"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".AddStageActivity"
-            android:label="@string/title_add_stage"/>
+            android:label="@string/title_add_stage"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".MembersActivity"
-            android:label="@string/title_members"/>
+            android:label="@string/title_members"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".NewMemberActivity"
-            android:label="@string/title_new_members"/>
+            android:label="@string/title_new_members"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".AttemptActivity"
-            android:label="@string/title_attempt"/>
+            android:label="@string/title_attempt"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".DBHelpActivity" />
+        <activity
+            android:name=".DBHelpActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         
         <provider
             android:authorities="ua.kyslytsia.tct.database"

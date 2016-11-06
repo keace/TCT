@@ -1,57 +1,42 @@
 package ua.kyslytsia.tct;
 
-import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipDescription;
-import android.content.DialogInterface;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.DataSetObserver;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import java.util.List;
-
 import ua.kyslytsia.tct.adapter.StageOnCompetitionCursorAdapter;
+import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
-import ua.kyslytsia.tct.database.DbHelper;
-import ua.kyslytsia.tct.utils.dslv.DragSortController;
 import ua.kyslytsia.tct.utils.dslv.DragSortListView;
-import ua.kyslytsia.tct.utils.dslv.SimpleFloatViewManager;
 
 public class StagesOnCompetitionActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String LOG = "SOC LOG!";
+    public static final String LOG = "LOG! StageOnComp";
 
     DragSortListView listView;
     int competitionId;
-
-    int dragPosition;
-    long dragId;
-    Cursor c;
-
     StageOnCompetitionCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stage_on_competition);
-        getSupportLoaderManager().initLoader(1, null, this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setSubtitle("Этапы на соревновании");
+        setSupportActionBar(toolbar);
 
         competitionId = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
 
@@ -92,12 +77,10 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         });
 
         listView = (DragSortListView) findViewById(R.id.listViewStageOnCompetition);
-        DbHelper dbHelper = new DbHelper(this);
-        SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
 
-        c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + competitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
-        adapter = new StageOnCompetitionCursorAdapter(this, c, true);
-
+        //REFACTOR TO CONTENT LOADER c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + competitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
+        adapter = new StageOnCompetitionCursorAdapter(this, null, Contract.STAGE_ON_COMPETITION_LOADER_ID);
+        getSupportLoaderManager().initLoader(Contract.STAGE_ON_COMPETITION_LOADER_ID, null, this);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -109,54 +92,35 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         });
 
         listView.setDropListener(onDrop);
-
-          //DragSortController controller = new DragSortController(listView);
-//        controller.setRemoveEnabled(false);
-//        controller.setSortEnabled(true);
-//        controller.setDragInitMode(DragSortController.ON_LONG_PRESS);
-        //SimpleFloatViewManager viewManager = new SimpleFloatViewManager(listView);
-
-        //listView.setFloatViewManager(viewManager);
-//        listView.setOnTouchListener(controller);
-//        listView.setDragEnabled(true);
-
-//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                ClipData clipData = ClipData.newPlainText("", "");
-//                View.DragShadowBuilder shadow = new View.DragShadowBuilder(view);
-//                dragPosition = position;
-//                dragId = id;
-//                parent.startDrag(clipData, shadow, null, 0);
-//                return false;
-//            }
-//        });
-
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        CursorLoader cursorLoader = new CursorLoader(StagesOnCompetitionActivity.this, ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, null, null, null, null);
+        cursorLoader.setSelection(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "=" + competitionId);
+        return cursorLoader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        adapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        adapter.swapCursor(null);
     }
 
     private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
         @Override
         public void drop(int from, int to) {
+            ContentValues cv = new ContentValues();
+
             int newPosition = to + 1;
             if (from != to) {
-                DbHelper dbHelper = new DbHelper(StagesOnCompetitionActivity.this);
                 Log.i(LOG, "Adapter getCount = " + adapter.getCount());
-                dbHelper.updateStageOnCompetitionPosition(adapter.getItemId(from), newPosition);
+                cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, newPosition);
+                getContentResolver().update(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv, Contract.StageOnCompetitionEntry._ID + "=?", new String[] {String.valueOf(adapter.getItemId(from))});
                 Log.i(LOG, "First! Change position item_id = " + adapter.getItemId(from) + "from: " + from + " to position: " + newPosition);
 
                     /*upstairs element*/
@@ -166,7 +130,8 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
                             continue;
                         }
                         newPosition = newPosition + 1;
-                        dbHelper.updateStageOnCompetitionPosition(adapter.getItemId(i), newPosition);
+                        cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, newPosition);
+                        getContentResolver().update(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv, Contract.StageOnCompetitionEntry._ID + "=?", new String[] {String.valueOf(adapter.getItemId(i))});
                         Log.i(LOG, "Change position item_id = " + adapter.getItemId(i) + " to position: " + newPosition);
                     }
 
@@ -177,11 +142,13 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
                             continue;
                         }
                         newPosition = newPosition - 1;
-                        dbHelper.updateStageOnCompetitionPosition(adapter.getItemId(i), newPosition);
+                        cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, newPosition);
+                        getContentResolver().update(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv, Contract.StageOnCompetitionEntry._ID + "=?", new String[] {String.valueOf(adapter.getItemId(i))});
                         Log.i(LOG, "Change position item_id = " + adapter.getItemId(i) + " to position: " + newPosition);
                     }
                 }
             }
+            //getContentResolver().update(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv, null, null);
             adapter.notifyDataSetChanged();
         }
     };

@@ -31,6 +31,11 @@ public class Chronometer extends TextView {
 
     private long timeElapsed;
 
+    private int hours;
+    private int minutes;
+    private int seconds;
+    private int milliseconds;
+
     public Chronometer(Context context) {
         this (context, null, 0);
     }
@@ -101,18 +106,50 @@ public class Chronometer extends TextView {
     private synchronized void updateText(long now) {
         timeElapsed = now - mBase;
 
+
+        String text = timeLongMillisToString(timeElapsed);
+//        DecimalFormat df = new DecimalFormat("00");
+//
+//        hours = (int)(timeElapsed / (3600 * 1000));
+//        int remaining = (int)(timeElapsed % (3600 * 1000));
+//
+//        minutes = (int)(remaining / (60 * 1000));
+//        remaining = (int)(remaining % (60 * 1000));
+//
+//        seconds = (int)(remaining / 1000);
+//        remaining = (int)(remaining % (1000));
+//
+//        milliseconds = (int)(((int)timeElapsed % 1000) / 10);
+//
+//        String text = "";
+//
+//        if (hours > 0) {
+//            text += df.format(hours) + ":";
+//        }
+//
+//        text += df.format(minutes) + ":";
+//        text += df.format(seconds) + ":";
+//        if (milliseconds < 10) {
+//            text += Integer.toString(0 + milliseconds);
+//        }
+//        text += Integer.toString(milliseconds);
+
+        setText(text);
+    }
+
+    public String timeLongMillisToString (long time) {
         DecimalFormat df = new DecimalFormat("00");
 
-        int hours = (int)(timeElapsed / (3600 * 1000));
-        int remaining = (int)(timeElapsed % (3600 * 1000));
+        hours = (int)(time / (3600 * 1000));
+        int remaining = (int)(time % (3600 * 1000));
 
-        int minutes = (int)(remaining / (60 * 1000));
+        minutes = (int)(remaining / (60 * 1000));
         remaining = (int)(remaining % (60 * 1000));
 
-        int seconds = (int)(remaining / 1000);
+        seconds = (int)(remaining / 1000);
         remaining = (int)(remaining % (1000));
 
-        int milliseconds = (int)(((int)timeElapsed % 1000) / 10);
+        milliseconds = (int)(((int)time % 1000) / 10);
 
         String text = "";
 
@@ -126,8 +163,7 @@ public class Chronometer extends TextView {
             text += Integer.toString(0 + milliseconds);
         }
         text += Integer.toString(milliseconds);
-
-        setText(text);
+        return text;
     }
 
     private void updateRunning() {
@@ -164,4 +200,19 @@ public class Chronometer extends TextView {
         return timeElapsed;
     }
 
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public int getMilliseconds() {
+        return milliseconds;
+    }
 }

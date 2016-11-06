@@ -17,12 +17,17 @@ public class Contract {
     private static final String BRACKET_SEMICOLON ="); ";
     //private static final String INSERT_INTO = "INSERT INTO ";
 
+    /* Loaders Id */
+    public static final int COMPETITIONS_LOADER_ID = 1;
+    public static final int STAGE_ON_COMPETITION_LOADER_ID = 2;
+    public static final int ADD_STAGE_LOADER_ID = 3;
+    public static final int MEMBERS_LOADER_ID = 4;
+    public static final int ATTEMPT_LOADER_ID = 5;
 
     public static final class GenderEntry implements BaseColumns {
         public static final String TABLE_NAME = "gender";
         public static final String COLUMN_GENDER = "gender";
     }
-
     public static final int GENDER_MALE = 1;
     public static final int GENDER_FEMALE = 0;
 
@@ -71,6 +76,7 @@ public class Contract {
         public static final String COLUMN_DESCRIPTION_PENALTY = "description_penalty";
         public static final String COLUMN_BITMAP = "bitmap";
     }
+    public static final String STAGE_NAME_ADAPTED = StageEntry.TABLE_NAME + "_" + StageEntry.COLUMN_NAME;
 
     public static final class JudgeEntry implements BaseColumns {
         public static final String TABLE_NAME = "judge";
@@ -86,6 +92,7 @@ public class Contract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_PLACE = "place";
     }
+    public static final String TEAM_NAME_ADAPTED = TeamEntry.TABLE_NAME + "_" + TeamEntry.COLUMN_NAME;
     //public static final int WITHOUT_TEAM_ID = 0;
 
     public static final class MemberEntry implements BaseColumns {
@@ -99,6 +106,7 @@ public class Contract {
         public static final String COLUMN_TIME = "time";
         public static final String COLUMN_PLACE = "place";
     }
+    public static final String MEMBER_PLACE_ADAPTED = "member_place";
 
     public static final class AttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "attempt";
@@ -120,8 +128,8 @@ public class Contract {
 
     public static final class StageOnAttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "stage_on_attempt";
-        public static final String COLUMN_STAGE_ON_COMPETITION_ID = "stage_on_competition_id";
         public static final String COLUMN_ATTEMPT_ID = "attempt_id";
+        public static final String COLUMN_STAGE_ON_COMPETITION_ID = "stage_on_competition_id";
         public static final String COLUMN_PENALTY = "penalty";
     }
 

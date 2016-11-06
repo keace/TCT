@@ -8,14 +8,14 @@
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewSOAPosition"
+        android:id="@+id/textViewSOAStagePosition"
         android:layout_weight="1" />
 
     <TextView
         android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textViewSOAName"
+        android:id="@+id/textViewSOAStageName"
         android:layout_weight="1" />
 
     <EditText
@@ -23,6 +23,6 @@
         android:layout_height="wrap_content"
         android:inputType="numberSigned"
         android:ems="10"
-        android:id="@+id/editTextSOAPenalty"
+        android:id="@+id/editTextSOAPenaltyOnStage"
         android:layout_weight="1" />
 </LinearLayout>

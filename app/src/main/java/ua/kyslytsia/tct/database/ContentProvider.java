@@ -131,13 +131,18 @@ public class ContentProvider extends android.content.ContentProvider {
         int uriType = sURI_MATCHER.match(uri);
         switch (uriType) {
             case PERSONS:
+                Log.i(LOG, "Case: PERSONS");
                 queryBuilder.setTables(Contract.PersonEntry.TABLE_NAME);
                 break;
+
             case PERSON_ID:
+                Log.i(LOG, "Case: PERSON_ID");
                 queryBuilder.setTables(Contract.PersonEntry.TABLE_NAME);
                 queryBuilder.appendWhere(Contract.PersonEntry._ID + "=" + uri.getLastPathSegment());
                 break;
+
             case COMPETITIONS:
+                Log.i(LOG, "Case: COMPETITIONS");
                 projection = new String[] {
                         Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry._ID,
                         Contract.CompetitionEntry.COLUMN_DATE,
@@ -154,15 +159,73 @@ public class ContentProvider extends android.content.ContentProvider {
                         " INNER JOIN " + Contract.DistanceEntry.TABLE_NAME +
                         " ON " + Contract.CompetitionEntry.COLUMN_DISTANCE_ID + " = " + Contract.DistanceEntry.TABLE_NAME + "." + Contract.DistanceEntry._ID);
                 break;
+
             case COMPETITION_ID:
+                Log.i(LOG, "Case: COMPETITION_ID");
                 queryBuilder.setTables(Contract.CompetitionEntry.TABLE_NAME);
                 queryBuilder.appendWhere(Contract.CompetitionEntry._ID + "=" + uri.getLastPathSegment());
+                break;
+
+            case STAGES_ON_COMPETITIONS:
+                Log.i(LOG, "Case: STAGE_ON_COMPETITION");
+                projection = new String[] {
+                        Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID,
+                        Contract.StageOnCompetitionEntry.COLUMN_POSITION,
+                        Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry.COLUMN_NAME + " AS " + Contract.STAGE_NAME_ADAPTED
+                };
+
+                queryBuilder.setTables(Contract.StageOnCompetitionEntry.TABLE_NAME +
+                        " INNER JOIN " + Contract.StageEntry.TABLE_NAME +
+                        " ON " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID);
+                sortOrder = Contract.StageOnCompetitionEntry.COLUMN_POSITION;
+                break;
+
+            case STAGE_ON_COMPETITION_ID:
+                Log.i(LOG, "Case: STAGE_ON_COMPETITION_ID");
+                break;
+
+            case STAGES:
+                Log.i(LOG, "Case: STAGES");
+                queryBuilder.setTables(Contract.StageEntry.TABLE_NAME +
+                        " INNER JOIN " + Contract.StageOnCompetitionEntry.TABLE_NAME +
+                        " ON " + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID + "=" + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID);
+                queryBuilder.appendWhere(Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "!=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID);
+                break;
+
+            case MEMBERS:
+                Log.i(LOG, "Case: MEMBERS");
+                projection = new String[] {
+                        Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry._ID,
+                        Contract.MemberEntry.COLUMN_START_NUMBER,
+                        Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_PLACE + " AS " + Contract.MEMBER_PLACE_ADAPTED,
+                        Contract.MemberEntry.COLUMN_TIME,
+                        Contract.MemberEntry.COLUMN_SPORT_RANK,
+                        Contract.PersonEntry.COLUMN_LASTNAME,
+                        Contract.PersonEntry.COLUMN_FIRST_NAME,
+                        Contract.PersonEntry.COLUMN_MIDDLE_NAME,
+                        Contract.PersonEntry.COLUMN_BIRTHDAY,
+                        Contract.TeamEntry.TABLE_NAME + "." + Contract.TeamEntry.COLUMN_NAME + " AS " + Contract.TEAM_NAME_ADAPTED,
+                        Contract.GenderEntry.COLUMN_GENDER
+                };
+
+                queryBuilder.setTables(Contract.MemberEntry.TABLE_NAME +
+                " INNER JOIN " + Contract.TeamEntry.TABLE_NAME +
+                " ON " + Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_TEAM_ID + "=" + Contract.TeamEntry.TABLE_NAME + "." + Contract.TeamEntry._ID +
+                " INNER JOIN " + Contract.PersonEntry.TABLE_NAME +
+                " ON " + Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_PERSON_ID + "=" + Contract.PersonEntry.TABLE_NAME + "." + Contract.PersonEntry._ID +
+                " INNER JOIN " + Contract.GenderEntry.TABLE_NAME +
+                " ON " + Contract.PersonEntry.TABLE_NAME + "." + Contract.PersonEntry.COLUMN_GENDER_ID + "=" + Contract.GenderEntry.TABLE_NAME + "." + Contract.GenderEntry._ID);
+                break;
+
+            case STAGES_ON_ATTEMPTS:
+                Log.i(LOG, "Case: STAGES_ON_ATTEMPTS");
+
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
         SQLiteDatabase sqLiteDatabase = dbHelper.getReadableDatabase();
-        Log.i(LOG, queryBuilder.buildQuery(projection, selection, null, null, sortOrder, null));
+        Log.i(LOG, "QUERY: " + queryBuilder.buildQuery(projection, selection, null, null, sortOrder, null));
         Cursor cursor = queryBuilder.query(sqLiteDatabase, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
@@ -178,17 +241,23 @@ public class ContentProvider extends android.content.ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURI_MATCHER.match(uri);
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
-        long id = 0;
+        long id;
+        Uri resultUri;
         switch (uriType) {
             case PERSONS:
                 id = sqLiteDatabase.insert(Contract.PersonEntry.TABLE_NAME, null, values);
+                resultUri = Uri.parse(PERSON_CONTENT_URI + "/" + id);
+                break;
+            case STAGES_ON_COMPETITIONS:
+                id = sqLiteDatabase.insert(Contract.StageOnCompetitionEntry.TABLE_NAME, null, values);
+                resultUri = Uri.parse(STAGE_ON_COMPETITION_CONTENT_URI + "/" + id);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
-        return Uri.parse(PERSON_CONTENT_URI + "/" + id);
+        return resultUri;
     }
 
     @Override
@@ -198,6 +267,19 @@ public class ContentProvider extends android.content.ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        int uriType = sURI_MATCHER.match(uri);
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+        int rowsUpdated = 0;
+        switch (uriType){
+            case STAGES_ON_COMPETITIONS:
+                Log.i(LOG, "Update STAGE_ON_COMPETITION");
+                // !!! May be transaction
+                sqLiteDatabase.update(Contract.StageOnCompetitionEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return rowsUpdated;
     }
 }

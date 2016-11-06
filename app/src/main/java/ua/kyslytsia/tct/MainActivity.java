@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setSubtitle("Список соревнований");
         setSupportActionBar(toolbar);
 
         dbHelper = new DbHelper(this);
@@ -49,10 +50,10 @@ public class MainActivity extends AppCompatActivity
         textViewMain.setText(dbHelper.getDatabaseName());
 
         listViewMain = (ListView) findViewById(R.id.listViewMain);
-        getSupportLoaderManager().initLoader(1, null, this);
+        getSupportLoaderManager().initLoader(Contract.COMPETITIONS_LOADER_ID, null, this);
         //Cursor cursorComp = sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
 
-        competitionCursorAdapter = new CompetitionCursorAdapter(this, null, 1);
+        competitionCursorAdapter = new CompetitionCursorAdapter(this, null, Contract.COMPETITIONS_LOADER_ID);
         listViewMain.setAdapter(competitionCursorAdapter);
         listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         if (drawer != null) {
-            drawer.setDrawerListener(toggle);
+            drawer.addDrawerListener(toggle);
         }
         toggle.syncState();
 

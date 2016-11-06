@@ -15,8 +15,8 @@ import ua.kyslytsia.tct.database.DbHelper;
 
 public class AddStageCursorAdapter extends CursorAdapter {
 
-        public AddStageCursorAdapter (Context context, Cursor c, boolean autoRequery) {
-            super(context, c, autoRequery);
+        public AddStageCursorAdapter (Context context, Cursor c, int flag) {
+            super(context, c, flag);
         }
 
         @Override
@@ -31,10 +31,11 @@ public class AddStageCursorAdapter extends CursorAdapter {
 
         @Override
         public void bindView(View view, Context context, Cursor c) {
-            DbHelper dbHelper = MainActivity.dbHelper;
+            //DbHelper dbHelper = MainActivity.dbHelper;
 
             CheckedTextView addStage = (CheckedTextView) view.findViewById(R.id.checkBoxAddStage);
-            addStage.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageEntry._ID))));
+            addStage.setText(c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)));
+            //addStage.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageEntry._ID))));
 
             /* If we use default layout from template: */
             //TextView stageName = (TextView) view.findViewById(android.R.id.text1);
