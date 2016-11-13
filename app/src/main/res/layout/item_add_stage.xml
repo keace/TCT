@@ -6,3 +6,6 @@
         android:layout_height="wrap_content"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:id="@+id/checkBoxAddStage" />
+
+
+

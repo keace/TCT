@@ -76,7 +76,7 @@ public class DBHelpActivity extends AppCompatActivity implements LoaderManager.L
 
         person = (ListView) findViewById(R.id.listViewPerson);
         getSupportLoaderManager().initLoader(0, null, this);
-        String[] fromPerson = new String[] {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LASTNAME};
+        String[] fromPerson = new String[] {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LAST_NAME};
         int[] toPerson = new int[] {R.id.textView_personId, R.id.textView_personFirstName, R.id.textView_personLastName};
         personAdapter = new SimpleCursorAdapter(this, R.layout.item_person, null, fromPerson, toPerson, 0);
         person.setAdapter(personAdapter);
@@ -116,7 +116,7 @@ public class DBHelpActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection = {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LASTNAME};
+        String[] projection = {Contract.PersonEntry._ID, Contract.PersonEntry.COLUMN_FIRST_NAME, Contract.PersonEntry.COLUMN_LAST_NAME};
         CursorLoader cursorLoader = new CursorLoader(this, ContentProvider.PERSON_CONTENT_URI, projection, null, null, null);
         return cursorLoader;
     }

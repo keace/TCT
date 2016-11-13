@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,6 +30,7 @@ import ua.kyslytsia.tct.database.DbHelper;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG = "Log! Main Activity";
     public static DbHelper dbHelper;
     public SQLiteDatabase sqLiteDatabase;
     ListView listViewMain;
@@ -58,9 +60,13 @@ public class MainActivity extends AppCompatActivity
         listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent stageOnCompetitionIntent = new Intent(MainActivity.this, StagesOnCompetitionActivity.class);
-                stageOnCompetitionIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, (int) id);
-                startActivity(stageOnCompetitionIntent);
+                Intent membersIntent = new Intent(MainActivity.this, MembersActivity.class);
+                membersIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id);
+                Log.i(LOG, "Put competition_id to intent = " + id);
+                startActivity(membersIntent);
+//                Intent stageOnCompetitionIntent = new Intent(MainActivity.this, StagesOnCompetitionActivity.class);
+//                stageOnCompetitionIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, (int) id);
+//                startActivity(stageOnCompetitionIntent);
             }
         });
 

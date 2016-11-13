@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -80,15 +79,15 @@ public class NewMemberActivity extends AppCompatActivity {
         } else {
             SQLiteDatabase sqLiteDatabase = MainActivity.dbHelper.getWritableDatabase();
 
-            Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LASTNAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;", new String[] {lastName.getText().toString(), firstName.getText().toString()});
-//            SQLiteStatement stmt = sqLiteDatabase.compileStatement("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LASTNAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;");
+            Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;", new String[] {lastName.getText().toString(), firstName.getText().toString()});
+//            SQLiteStatement stmt = sqLiteDatabase.compileStatement("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;");
 //            stmt.bindString(1, lastName.getText().toString());
 //            stmt.bindString(2, firstName.getText().toString());
 
             if (c.getCount() == 0){
                 Log.d(LOG, "c.getCount = " + c.getCount());
             /* New Person creating if not exists with some lastName and firstName*/
-                cv.put(Contract.PersonEntry.COLUMN_LASTNAME, lastName.getText().toString());
+                cv.put(Contract.PersonEntry.COLUMN_LAST_NAME, lastName.getText().toString());
                 cv.put(Contract.PersonEntry.COLUMN_FIRST_NAME, firstName.getText().toString());
                 cv.put(Contract.PersonEntry.COLUMN_MIDDLE_NAME, middleName.getText().toString());
                 cv.put(Contract.PersonEntry.COLUMN_GENDER_ID, genderId);

@@ -1,5 +1,6 @@
 package ua.kyslytsia.tct;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -27,7 +28,9 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
     ListView listView;
     private String LOG = "LOG ADD STAGE";
     DbHelper dbHelper = MainActivity.dbHelper;
-    int competitionId, distanceId;
+    long competitionId;
+    long distanceId;
+    int lastPosition;
     AddStageCursorAdapter adapter;
 
     @Override
@@ -38,7 +41,9 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         toolbar.setSubtitle("Добавить этапы");
         setSupportActionBar(toolbar);
 
-        competitionId = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+        competitionId = getIntent().getLongExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+        lastPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
+        Log.i(LOG, "Get competition_id from intent = " + competitionId);
 
         getSupportLoaderManager().initLoader(Contract.ADD_STAGE_LOADER_ID, null, this);
         listView = (ListView) findViewById(R.id.listViewAddStage);
@@ -57,10 +62,19 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         buttonAddStages.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ContentValues cv = new ContentValues();
                 long[] stageIds = listView.getCheckedItemIds();
-                for (long stageId : stageIds) {
-                    Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageId);
-                    dbHelper.addStageOnCompetition(competitionId, (int) stageId);
+                int length = stageIds.length;
+                Log.i(LOG, "Count of items to add = " + length);
+                for (int i = 0; i < stageIds.length; i++) {
+                //for (long stageId : stageIds) {
+                    //Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageId);
+                    Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIds[i]);
+                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
+                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageIds[i]);
+                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, lastPosition+i+1);
+                    //dbHelper.addStageOnCompetition(competitionId, stageIds[i], lastPosition+i);
+                    getContentResolver().insert(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv);
                 }
                 Intent intent = new Intent(AddStageActivity.this, StagesOnCompetitionActivity.class);
                 intent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);

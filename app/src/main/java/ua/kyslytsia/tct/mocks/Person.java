@@ -1,6 +1,8 @@
 package ua.kyslytsia.tct.mocks;
 
-public class Person {
+import java.io.Serializable;
+
+public class Person implements Serializable {
     private String surName;
     private String firstName;
     private String middleName;

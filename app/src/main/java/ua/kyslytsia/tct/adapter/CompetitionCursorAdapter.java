@@ -28,7 +28,7 @@ public class CompetitionCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        DbHelper dbHelper = MainActivity.dbHelper;
+       // DbHelper dbHelper = MainActivity.dbHelper;
 
         TextView date = (TextView) view.findViewById(R.id.textViewItemCompDate); //same
         date.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)));

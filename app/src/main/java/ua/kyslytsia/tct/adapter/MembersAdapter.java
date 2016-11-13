@@ -8,11 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import ua.kyslytsia.tct.MainActivity;
 import ua.kyslytsia.tct.R;
 import ua.kyslytsia.tct.database.Contract;
-import ua.kyslytsia.tct.database.DbHelper;
-import ua.kyslytsia.tct.mocks.Person;
 
 public class MembersAdapter extends CursorAdapter {
 
@@ -39,11 +36,11 @@ public class MembersAdapter extends CursorAdapter {
 
         TextView name = (TextView) view.findViewById(R.id.textViewMembersName);
         StringBuffer sb = new StringBuffer();
-        sb.append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_LASTNAME))).append(" ").append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
+        sb.append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME))).append(" ").append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
         name.setText(sb.toString());
 
-//        TextView time = (TextView) view.findViewById(R.id.textViewMembersTime);
-//        time.setText(cursor.getInt(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)));
+        TextView time = (TextView) view.findViewById(R.id.textViewMembersTime);
+        time.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)));
         // getTime from Members
     }
 }

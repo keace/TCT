@@ -33,7 +33,7 @@ public class Contract {
 
     public static final class PersonEntry implements BaseColumns {
         public static final String TABLE_NAME = "person";
-        public static final String COLUMN_LASTNAME = "last_name";
+        public static final String COLUMN_LAST_NAME = "last_name";
         public static final String COLUMN_FIRST_NAME = "first_name";
         public static final String COLUMN_MIDDLE_NAME = "middle_name";
         public static final String COLUMN_GENDER_ID = "gender_id";
@@ -175,7 +175,7 @@ public class Contract {
 
     public static final String SQL_CREATE_PERSON_TABLE = CREATE_TABLE + PersonEntry.TABLE_NAME + SPACE_BRACKET +
             PersonEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
-            PersonEntry.COLUMN_LASTNAME + TEXT + NOT_NULL + COMMA_SPACE +
+            PersonEntry.COLUMN_LAST_NAME + TEXT + NOT_NULL + COMMA_SPACE +
             PersonEntry.COLUMN_FIRST_NAME + TEXT + NOT_NULL + COMMA_SPACE +
             PersonEntry.COLUMN_MIDDLE_NAME + TEXT + COMMA_SPACE +
             PersonEntry.COLUMN_GENDER_ID + INTEGER + REFERENCES + GenderEntry.TABLE_NAME + "(" + GenderEntry._ID + ")" + COMMA_SPACE + //FK OK
@@ -211,7 +211,7 @@ public class Contract {
             AttemptEntry.COLUMN_MEMBERS_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_TRY_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_PENALTY_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
-            AttemptEntry.COLUMN_TIME + TEXT + NOT_NULL + COMMA_SPACE +
+            AttemptEntry.COLUMN_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_RESULT_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_IS_CLOSED + INTEGER + NOT_NULL + BRACKET_SEMICOLON;
 

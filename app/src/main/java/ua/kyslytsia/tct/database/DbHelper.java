@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "LOG DB-HELPER";
 
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 7;
     private static final String DB_NAME = "tct.db";
 
     private static ContentValues cv = new ContentValues();
@@ -159,14 +159,13 @@ public class DbHelper extends SQLiteOpenHelper {
         return competition;
     }
 
-    public void addStageOnCompetition (int compId, int stageId) {
+    public void addStageOnCompetition (long compId, long stageId, int lastPosition) {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "=" + compId + " AND " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + stageId + ";", null);
-
+        int position = lastPosition + 1;
         if (c.getCount() > 0) {
             c.moveToFirst();
             Log.d(LOG, "NOT INSERTED because such record already exists, c.getCount = " + c.getCount());
-            //Log.d(LOG, "Содержимое первой строки первого столбца: " + c.getInt(0));
             c.close();
             return;
         } else {
@@ -174,9 +173,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 cv.clear(); }
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, compId);
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageId);
-            cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, stageId); // In default Position = Id
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, position);
             sqLiteDatabase.insert(Contract.StageOnCompetitionEntry.TABLE_NAME, null, cv);
-            Log.d(LOG, "INSERTED CompId = " + compId + ", StageId = " + stageId);
+            Log.d(LOG, "INSERTED CompId = " + compId + ", StageId = " + stageId + ", on position = " + position);
             sqLiteDatabase.close();
         }
         cv.clear();
@@ -222,7 +221,7 @@ public class DbHelper extends SQLiteOpenHelper {
         Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry._ID + "=" + id + ";", null);
         c.moveToFirst();
         Person person = new Person(
-                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_LASTNAME)),
+                c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME)),
                 c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)),
                 c.getString(c.getColumnIndex(Contract.PersonEntry.COLUMN_MIDDLE_NAME)),
                 c.getInt(c.getColumnIndex(Contract.PersonEntry.COLUMN_GENDER_ID)),

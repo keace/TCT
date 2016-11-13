@@ -1,6 +1,8 @@
 package ua.kyslytsia.tct.mocks;
 
-public class Member {
+import java.io.Serializable;
+
+public class Member implements Serializable {
 
     private int competitionId;
     private int personId;

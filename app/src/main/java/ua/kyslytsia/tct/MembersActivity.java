@@ -9,17 +9,23 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import ua.kyslytsia.tct.adapter.MembersAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.mocks.Person;
 
 public class MembersActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String LOG = "LOG! Members Activity";
+
     MembersAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +36,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
 
         ListView listView = (ListView) findViewById(R.id.listViewMembers);
 
-        final int competitionId = getIntent().getIntExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        final long competitionId = getIntent().getLongExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
 
         //SQLiteDatabase sqLiteDatabase = MainActivity.dbHelper.getReadableDatabase();
 
@@ -43,11 +49,17 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intentToAttempt = new Intent(MembersActivity.this, AttemptActivity.class);
-                intentToAttempt.putExtra(Contract.MemberEntry._ID, id);
-                intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId);
-                startActivity(intentToAttempt);
-                //intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_PERSON_ID, id);
+                TextView textView = (TextView) view.findViewById(R.id.textViewMembersTime);
+                if (textView.getText().toString() == "") {
+                    Log.i(LOG, "Time is null. Starting Attempt Activity");
+                    Intent intentToAttempt = new Intent(MembersActivity.this, AttemptActivity.class);
+                    intentToAttempt.putExtra(Contract.MemberEntry._ID, id);
+                    intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId);
+                    startActivity(intentToAttempt);
+                    //intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_PERSON_ID, id);
+                } else {
+                    Log.i(LOG, "Time not null. Starting AttemptResult Activity");
+                }
             }
         });
 

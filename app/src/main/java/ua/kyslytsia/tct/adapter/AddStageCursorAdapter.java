@@ -34,11 +34,8 @@ public class AddStageCursorAdapter extends CursorAdapter {
             //DbHelper dbHelper = MainActivity.dbHelper;
 
             CheckedTextView addStage = (CheckedTextView) view.findViewById(R.id.checkBoxAddStage);
+//            String text = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)) + " pos:" + c.getString(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION));
+//            addStage.setText(text);
             addStage.setText(c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)));
-            //addStage.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageEntry._ID))));
-
-            /* If we use default layout from template: */
-            //TextView stageName = (TextView) view.findViewById(android.R.id.text1);
-            //stageName.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageEntry._ID))));
         }
 }

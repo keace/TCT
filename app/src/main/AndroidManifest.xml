@@ -49,6 +49,11 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
+            android:name=".MemberResultActivity"
+            android:label="Результат заезда"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
             android:name=".DBHelpActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         

@@ -33,7 +33,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:text="Stop"
+            android:text="Стоп/Посчитать"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/buttonAttemptStop"
@@ -58,47 +58,6 @@
         android:gravity="center_horizontal"
         android:textStyle="bold"
         />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewAttemptMinutes"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text=":"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView6"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewAttemptSeconds"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text=":"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView4"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/textViewAttemptMillis"
-            android:layout_weight="1" />
-    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -190,7 +149,7 @@
             android:layout_weight="1" />
 
         <Button
-            android:text="Записать"
+            android:text="Записать и перейти к списку участников"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonAttemptWrite"
