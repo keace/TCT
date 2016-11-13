@@ -1,6 +1,7 @@
 package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import ua.kyslytsia.tct.utils.Chronometer;
 public class AttemptActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
         SimpleCursorAdapter adapter;
 
+    private static final String LOG = "Log Attempt Activity";
     TextView textViewTime, textViewPenaltySum, textViewPenaltyCost, textViewResult;
     TextView minutes, seconds, millis;
     ListView listView;
@@ -89,16 +91,22 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
                 ch.stop();
+                penaltyTotal = 0;
+                String penaltyOnStage;
                 textViewTime.setText(ch.getText());
 
                 for (int i=0; i<listView.getChildCount(); i++) {
 
                     View view = listView.getChildAt(i);
-                    EditText editText = (EditText) view.findViewById(R.id.editTextSOAPenaltyOnStage);
-                    String penaltyOnStage = editText.getText().toString();
+                    EditText editTextPenaltyOnStage = (EditText) view.findViewById(R.id.editTextSOAPenaltyOnStage);
+                    if (editTextPenaltyOnStage.getText().toString().equals("")) {
+                        penaltyOnStage = "0";
+                    } else {
+                        penaltyOnStage = editTextPenaltyOnStage.getText().toString();
+                    }
 
                     stageOnAttemptList.add(new StageOnAttempt(listView.getAdapter().getItemId(i), Long.parseLong(penaltyOnStage)));
-                    Log.d("Log! Attempt Activity", "StageOnAttempt: " + stageOnAttemptList.get(i));
+                    Log.d(LOG, "StageOnAttempt: " + stageOnAttemptList.get(i));
                     if(!penaltyOnStage.equals(""))
                         penaltyTotal+=Integer.parseInt(penaltyOnStage);
                 }
@@ -129,6 +137,8 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                long attemptId;
+
                 ContentValues cv = new ContentValues();
                 cv.put(Contract.AttemptEntry.COLUMN_COMPETITION_ID, competition_id);
                 cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
@@ -137,18 +147,25 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                 cv.put(Contract.AttemptEntry.COLUMN_TIME, timeString);
                 cv.put(Contract.AttemptEntry.COLUMN_RESULT_TIME, resultTimeLong);
                 cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, 1);
-                long attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
+                Log.i(LOG, "Try to insert Attempt: " + cv.toString());
+                attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
+                Log.i(LOG, "Insert ok. attemptId = " + attemptId);
                 cv.clear();
                 for (int i = 0; i < stageOnAttemptList.size(); i++){
                     cv.put(Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID, attemptId);
                     cv.put(Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID, stageOnAttemptList.get(i).getStage_on_competition_id());
                     cv.put(Contract.StageOnAttemptEntry.COLUMN_PENALTY, stageOnAttemptList.get(i).getPenalty());
+                    Log.i(LOG, "Try to insert Stage on attempt: " + cv.toString());
                     getContentResolver().insert(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, cv);
                     cv.clear();
                 }
                 cv.put(Contract.MemberEntry.COLUMN_TIME, resultTimeLong);
+                Log.i(LOG, "Try to update Member with id = " + memberId + ", add resultTimeLong = " + resultTimeLong);
                 getContentResolver().update(Uri.parse(ContentProvider.MEMBER_CONTENT_URI + "/" + memberId), cv, Contract.MemberEntry._ID + "=" + memberId, null);
                 cv.clear();
+                Intent toMembersIntent = new Intent(AttemptActivity.this, MembersActivity.class);
+                toMembersIntent.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competition_id);
+                startActivity(toMembersIntent);
             }
         });
 

@@ -301,20 +301,20 @@ public class ContentProvider extends android.content.ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURI_MATCHER.match(uri);
-        int rowDeleted = 0;
+        int rowsDeleted = 0;
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         switch (uriType) {
             case STAGE_ON_COMPETITION_ID:
                 Log.i(LOG, "Delete STAGE_ON_COMPETITION_ID");
-                rowDeleted = sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        Log.i(LOG, "rowDeleted = " + rowDeleted);
+        Log.i(LOG, "rowsDeleted = " + rowsDeleted);
         getContext().getContentResolver().notifyChange(uri, null);
-        return rowDeleted;
+        return rowsDeleted;
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ua.kyslytsia.tct.adapter.MembersAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
@@ -58,7 +59,8 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                     startActivity(intentToAttempt);
                     //intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_PERSON_ID, id);
                 } else {
-                    Log.i(LOG, "Time not null. Starting AttemptResult Activity");
+                    Toast.makeText(MembersActivity.this, "Этот участник уже прошел дистанцию", Toast.LENGTH_SHORT).show();
+                    Log.i(LOG, "Time not null. Can't start activity");
                 }
             }
         });
