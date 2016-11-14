@@ -10,6 +10,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -33,7 +35,15 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         setContentView(R.layout.activity_members);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle("Список участников");
+        toolbar.setNavigationIcon(R.drawable.home);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentToMainActivity = new Intent(MembersActivity.this, MainActivity.class);
+                startActivity(intentToMainActivity);
+            }
+        });
 
         ListView listView = (ListView) findViewById(R.id.listViewMembers);
 
@@ -84,6 +94,29 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(intentToStages);
             }
         });
+    }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.secondary_activities, menu);
+//        return true;
+//    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        switch (item.getItemId()) {
+
+        //noinspection SimplifiableIfStatement
+        case R.id.home:
+            Intent intentToMainActivity = new Intent(MembersActivity.this, MainActivity.class);
+            startActivity(intentToMainActivity);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

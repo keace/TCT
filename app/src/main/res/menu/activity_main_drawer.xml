@@ -4,23 +4,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Соревнования" />
+            android:icon="@drawable/trophy"
+            android:title="@string/navigation_drawer_item_competitions" />
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Участники" />
+            android:icon="@drawable/account_multiple"
+            android:title="@string/navigation_drawer_item_peoples" />
         <item
             android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Энциклопедия" />
+            android:icon="@drawable/book_open_page_variant"
+            android:title="@string/navigation_drawer_item_encyclopedia" />
         <item
             android:id="@+id/nav_calculator"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/menu_calculator" />
+            android:icon="@drawable/calculator"
+            android:title="@string/navigation_drawer_item_calculator" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Additional">
         <menu>
             <item
                 android:id="@+id/attempt"
@@ -28,7 +28,7 @@
                 android:title="Attempt" />
             <item
                 android:id="@+id/nav_dbhelp"
-                android:icon="@drawable/ic_menu_gallery"
+                android:icon="@drawable/information_variant"
                 android:title="DBHelper" />
         </menu>
     </item>

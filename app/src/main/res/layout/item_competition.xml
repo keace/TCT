@@ -7,7 +7,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,37 +29,34 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="О, это длинное название"
+        android:id="@+id/textViewItemCompName"
+        android:layout_weight="0"
+        android:layout_marginRight="10dp"
+        android:gravity="center" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Эсхар 2016"
-            android:id="@+id/textViewItemCompName"
-            android:layout_weight="0"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Партизанская поляна"
-            android:id="@+id/textViewItemCompPlace"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Месторасположение соревнований"
+        android:id="@+id/textViewItemCompPlace"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Фигурка"
+            android:text="Комплексная"
             android:id="@+id/textViewItemCompDist"
             android:layout_marginRight="10dp" />
 

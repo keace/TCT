@@ -38,7 +38,15 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         setContentView(R.layout.activity_stage_on_competition);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle("Этапы на соревновании");
+        toolbar.setNavigationIcon(R.drawable.home);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentToMainActivity = new Intent(StagesOnCompetitionActivity.this, MainActivity.class);
+                startActivity(intentToMainActivity);
+            }
+        });
 
         competitionId = getIntent().getLongExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
 
