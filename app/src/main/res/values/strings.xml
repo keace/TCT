@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TSTComp</string>
-    <string name="application_full_name">Техника Спортивного&#13;&#10;Туризма</string>
+    <string name="application_full_name">Техника Спортивного\nТуризма</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -28,7 +28,45 @@
         <item>Водный</item>
     </string-array>
 
-    <!--Drag sort list view handling-->
+    <!-- Calculator resources -->
+    <string name="calc_action_settings">Настройки</string>
+    <string name="calc_action_about">О программе</string>
+    <string name="calc_about_text">
+        Калькулятор для помощи в судействе соревнований по технике спортивного туризма. Пересчитывает время дистанции с учетом штрафов и суммирует время участников комманды.\n\n
+        Версия 2.0.\n
+        Создал Кислица Сергей.\n\nИзменения версии 2.0:\n
+        -Добавлено суммирование времени;\n
+        -Вместо миллисекунд теперь сотые;\n
+        -По кнопке ВВОД курсор переходит на следующее значение (кроме цены штрафа);\n
+        -По кнопке СБРОС курсор переходит на первую позицию.</string>
+    <string name="calc_button_ok">OK</string>
+
+    <string name="calc_tab_penalty">Штрафы</string>
+    <string name="calc_tab_time">Время</string>
+
+    <string name="calc_button_cancel">Сброс</string>
+    <string name="calc_button_result">Посчитать</string>
+
+    <string name="calc_string_minutes">Минуты</string>
+    <string name="calc_string_seconds">Секунды</string>
+    <string name="calc_string_millis">Сотые</string>
+
+    <string name="calc_string_penalty_sec">Штраф = сек</string>
+    <string name="calc_string_sum_penalty">Сумма штрафов</string>
+
+    <string name="calc_string_distance_time">Время дистанции</string>
+    <string name="calc_string_first_member">Первый участник</string>
+    <string name="calc_string_second_member">Второй участник</string>
+
+    <string name="calc_string_result_penalty">Результат (время с учетом штрафов)</string>
+    <string name="calc_string_result_time">Результат (время первого + время второго)</string>
+
+    <string name="calc_field_result">&#8230;нажмите посчитать&#8230;</string>
+
+    <string name="digit_0">0</string>
+    <string name="digit_5">5</string>
+
+    <!-- Drag sort list view handling -->
     <declare-styleable name="DragSortListView">
         <attr name="collapsed_height" format="dimension" />
         <attr name="drag_scroll_start" format="float" />

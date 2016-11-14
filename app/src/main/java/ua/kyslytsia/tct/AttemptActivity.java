@@ -2,7 +2,6 @@ package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.os.SystemClock;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,8 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
@@ -159,7 +155,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                     getContentResolver().insert(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, cv);
                     cv.clear();
                 }
-                cv.put(Contract.MemberEntry.COLUMN_TIME, resultTimeLong);
+                cv.put(Contract.MemberEntry.COLUMN_RESULT_TIME, resultTimeLong);
                 Log.i(LOG, "Try to update Member with id = " + memberId + ", add resultTimeLong = " + resultTimeLong);
                 getContentResolver().update(Uri.parse(ContentProvider.MEMBER_CONTENT_URI + "/" + memberId), cv, Contract.MemberEntry._ID + "=" + memberId, null);
                 cv.clear();

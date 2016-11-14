@@ -2,8 +2,10 @@ package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -27,7 +29,7 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
 
     ListView listView;
     private String LOG = "LOG ADD STAGE";
-    DbHelper dbHelper = MainActivity.dbHelper;
+    //DbHelper dbHelper = MainActivity.dbHelper;
     long competitionId;
     long distanceId;
     int lastPosition;
@@ -42,6 +44,8 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         setSupportActionBar(toolbar);
 
         competitionId = getIntent().getLongExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+        distanceId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0);
+        Log.d(LOG, "Catch distanceId from SharedPreferences = " + distanceId);
         lastPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
         Log.i(LOG, "Get competition_id from intent = " + competitionId);
 
@@ -85,7 +89,12 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = new CursorLoader(AddStageActivity.this, ContentProvider.STAGE_CONTENT_URI, null, null, null, null);
+        String selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
+        String[] selectionArgs = new String[] {String.valueOf(distanceId)};
+        if (distanceId == Contract.DISTANCE_COMPLEX_ID) {
+            selectionArgs = new String[] {String.valueOf(distanceId), String.valueOf(Contract.DISTANCE_FIGURE_ID), String.valueOf(Contract.DISTANCE_CROSS_ID), String.valueOf(Contract.DISTANCE_TRIAL_ID)};
+        }
+        CursorLoader cursorLoader = new CursorLoader(AddStageActivity.this, ContentProvider.STAGE_CONTENT_URI, null, selection, selectionArgs, null);
         return cursorLoader;
     }
 

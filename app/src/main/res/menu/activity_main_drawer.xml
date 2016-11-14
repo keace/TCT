@@ -9,11 +9,13 @@
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/account_multiple"
-            android:title="@string/navigation_drawer_item_peoples" />
+            android:title="@string/navigation_drawer_item_peoples"
+            android:enabled="false" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/book_open_page_variant"
-            android:title="@string/navigation_drawer_item_encyclopedia" />
+            android:title="@string/navigation_drawer_item_encyclopedia"
+            android:enabled="false" />
         <item
             android:id="@+id/nav_calculator"
             android:icon="@drawable/calculator"
@@ -24,7 +26,7 @@
         <menu>
             <item
                 android:id="@+id/attempt"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/magnify"
                 android:title="Attempt" />
             <item
                 android:id="@+id/nav_dbhelp"

@@ -40,7 +40,7 @@ public class MembersAdapter extends CursorAdapter {
         name.setText(sb.toString());
 
         TextView time = (TextView) view.findViewById(R.id.textViewMembersTime);
-        time.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)));
+        time.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_RESULT_TIME)));
         // getTime from Members
     }
 }

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/calc_string_first_member"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/calc_string_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="@string/calc_string_seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="@string/calc_string_millis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeFirstMin"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/editTextTimeFirstSec" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeFirstSec"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/editTextTimeFirstMil" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeFirstMil"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/editTextTimeSecondMin" />
+
+    </LinearLayout>
+
+    <TextView
+        android:text="@string/calc_string_second_member"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:text="@string/calc_string_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="@string/calc_string_seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:text="@string/calc_string_millis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.15"
+            android:gravity="center"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeSecondMin"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/editTextTimeSecondSec" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeSecondSec"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/editTextTimeSecondMil" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editTextTimeSecondMil"
+            android:layout_weight="1"
+            android:hint="@string/digit_0"
+            android:gravity="center"
+            android:focusable="true"
+            android:nextFocusDown="@+id/buttonTimeResult" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:text="@string/calc_button_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonTimeCancel"
+            android:layout_weight="5"
+            style="?attr/buttonBarNegativeButtonStyle"/>
+
+        <Button
+            android:text="@string/calc_button_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonTimeResult"
+            android:layout_weight="3"
+            style="?attr/buttonBarPositiveButtonStyle"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:text="@string/calc_string_result_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
+    <TextView
+        android:text="@string/calc_field_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewTimeResult"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceLarge"/>
+
+</LinearLayout>

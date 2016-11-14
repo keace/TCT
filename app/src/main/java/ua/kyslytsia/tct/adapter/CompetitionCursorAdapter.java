@@ -45,10 +45,15 @@ public class CompetitionCursorAdapter extends CursorAdapter {
         place.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_PLACE)));
 
         TextView dist = (TextView) view.findViewById(R.id.textViewItemCompDist);
-//        dist.setText(dbHelper.findDistanceById(cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID))));
         dist.setText(cursor.getString(cursor.getColumnIndex(Contract.DISTANCE_NAME_ADAPTED)));
+
+        TextView distId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
+        distId.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID)));
+        //        dist.setText(dbHelper.findDistanceById(cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID))));
 
         TextView rank = (TextView) view.findViewById(R.id.textViewItemCompRank); //same
         rank.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)) + "-й класс");
+
+
     }
 }

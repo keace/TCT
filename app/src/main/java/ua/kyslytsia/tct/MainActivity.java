@@ -1,9 +1,11 @@
 package ua.kyslytsia.tct;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -37,13 +39,14 @@ public class MainActivity extends AppCompatActivity
     CompetitionCursorAdapter competitionCursorAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle("Список соревнований");
         setSupportActionBar(toolbar);
 
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         dbHelper = new DbHelper(this);
         sqLiteDatabase = dbHelper.getWritableDatabase();
 
@@ -62,6 +65,11 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent membersIntent = new Intent(MainActivity.this, MembersActivity.class);
                 membersIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id);
+                sharedPreferences.edit().putLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id).apply();
+                TextView tv = (TextView) view.findViewById(R.id.textViewItemCompDistId);
+                sharedPreferences.edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, Long.parseLong(tv.getText().toString())).apply();
+                Log.i(LOG, "Get shared preferences competition id = " + sharedPreferences.getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0));
+                Log.i(LOG, "Get shared preferences distance id = " + sharedPreferences.getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0));
                 Log.i(LOG, "Put competition_id to intent = " + id);
                 startActivity(membersIntent);
 //                Intent stageOnCompetitionIntent = new Intent(MainActivity.this, StagesOnCompetitionActivity.class);
@@ -112,11 +120,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    @Override
+/*    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -129,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

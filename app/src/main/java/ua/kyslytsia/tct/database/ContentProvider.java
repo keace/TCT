@@ -152,6 +152,7 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.CompetitionEntry.COLUMN_PLACE,
                         Contract.CompetitionEntry.COLUMN_RANK,
                         Contract.CompetitionEntry.COLUMN_PENALTY_TIME,
+                        Contract.CompetitionEntry.COLUMN_DISTANCE_ID,
                         Contract.TypeEntry.TABLE_NAME + "." + Contract.TypeEntry.COLUMN_NAME + " AS " + Contract.TYPE_NAME_ADAPTED,
                         Contract.DistanceEntry.TABLE_NAME + "." + Contract.DistanceEntry.COLUMN_NAME + " AS " + Contract.DISTANCE_NAME_ADAPTED
                 };
@@ -199,6 +200,7 @@ public class ContentProvider extends android.content.ContentProvider {
                         " LEFT OUTER JOIN " + Contract.StageOnCompetitionEntry.TABLE_NAME +
                         " ON " + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID + "=" + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID);
                 queryBuilder.appendWhere(Contract.StageOnCompetitionEntry.COLUMN_POSITION + " IS NULL" );
+
                 break;
 
             case MEMBERS:
@@ -207,7 +209,7 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry._ID,
                         Contract.MemberEntry.COLUMN_START_NUMBER,
                         Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_PLACE + " AS " + Contract.MEMBER_PLACE_ADAPTED,
-                        Contract.MemberEntry.COLUMN_TIME,
+                        Contract.MemberEntry.COLUMN_RESULT_TIME,
                         Contract.MemberEntry.COLUMN_SPORT_RANK,
                         Contract.PersonEntry.COLUMN_LAST_NAME,
                         Contract.PersonEntry.COLUMN_FIRST_NAME,
@@ -232,8 +234,8 @@ public class ContentProvider extends android.content.ContentProvider {
 
             case STAGES_ON_ATTEMPTS:
                 Log.i(LOG, "Case: STAGES_ON_ATTEMPTS");
-
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

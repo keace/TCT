@@ -54,6 +54,12 @@ public class Contract {
     }
     public static final String DISTANCE_NAME_ADAPTED = DistanceEntry.TABLE_NAME + "_" + DistanceEntry.COLUMN_NAME;
 
+    public static final int DISTANCE_RALLY_ID = 1;
+    public static final int DISTANCE_FIGURE_ID = 2;
+    public static final int DISTANCE_CROSS_ID = 3;
+    public static final int DISTANCE_TRIAL_ID = 4;
+    public static final int DISTANCE_COMPLEX_ID = 5;
+
     public static final class CompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "competition";
         public static final String COLUMN_DATE = "date";
@@ -103,7 +109,7 @@ public class Contract {
         public static final String COLUMN_START_NUMBER = "start_number";
         public static final String COLUMN_SPORT_RANK = "sport_rank";
         public static final String COLUMN_BIKE = "bike";
-        public static final String COLUMN_TIME = "time";
+        public static final String COLUMN_RESULT_TIME = "time";
         public static final String COLUMN_PLACE = "place";
     }
     public static final String MEMBER_PLACE_ADAPTED = "member_place";
@@ -199,10 +205,10 @@ public class Contract {
             MemberEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_PERSON_ID + INTEGER + NOT_NULL + REFERENCES + PersonEntry.TABLE_NAME + "(" + PersonEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_TEAM_ID + INTEGER + REFERENCES + TeamEntry.TABLE_NAME  + "(" + TeamEntry._ID + ")" + COMMA_SPACE + //FK OK
-            MemberEntry.COLUMN_START_NUMBER + INTEGER + COMMA_SPACE +
+            MemberEntry.COLUMN_START_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             MemberEntry.COLUMN_SPORT_RANK + TEXT + COMMA_SPACE +
             MemberEntry.COLUMN_BIKE + TEXT + COMMA_SPACE +
-            MemberEntry.COLUMN_TIME + INTEGER + COMMA_SPACE +
+            MemberEntry.COLUMN_RESULT_TIME + INTEGER + COMMA_SPACE +
             MemberEntry.COLUMN_PLACE + INTEGER + BRACKET_SEMICOLON;
 
     public static final String SQL_CREATE_ATTEMPT_TABLE = CREATE_TABLE + AttemptEntry.TABLE_NAME + SPACE_BRACKET +

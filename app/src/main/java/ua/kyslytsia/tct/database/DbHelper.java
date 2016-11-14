@@ -26,9 +26,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
 
-        Log.d(LOG, "DB TEST PATH: " + db.getPath());
+        Log.i(LOG, "DB TEST PATH: " + db.getPath());
 
-        Log.d(LOG, Contract.SQL_CREATE_GENDER_TABLE);
+        Log.i(LOG, Contract.SQL_CREATE_GENDER_TABLE);
         db.execSQL(Contract.SQL_CREATE_GENDER_TABLE);
 
         cv.put(Contract.GenderEntry._ID, 0);
@@ -39,39 +39,121 @@ public class DbHelper extends SQLiteOpenHelper {
         db.insert(Contract.GenderEntry.TABLE_NAME, null, cv);
         cv.clear();
 
-        Log.d(LOG, Contract.SQL_CREATE_TYPE_TABLE);
+        Log.i(LOG, Contract.SQL_CREATE_TYPE_TABLE);
         db.execSQL(Contract.SQL_CREATE_TYPE_TABLE);
+        //Type id: 1
+        cv.put(Contract.TypeEntry._ID, 1);
         cv.put(Contract.TypeEntry.COLUMN_NAME, "Велосипедный");
         db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
-        cv.put(Contract.TypeEntry.COLUMN_NAME, "Горный");
-        db.insert(Contract.TypeEntry.TABLE_NAME, null, cv);
+        //Type id: 2
         cv.clear();
 
-        Log.d(LOG, Contract.SQL_CREATE_DISTANCE_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_STAGE_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_COMPETITION_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_PERSON_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_JUDGES_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_MEMBERS_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_ATTEMPT_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_STAGE_ON_COMPETITION_TABLE);
-        Log.d(LOG, Contract.SQL_CREATE_STAGE_ON_ATTEMPT_TABLE);
-
+        Log.i(LOG, Contract.SQL_CREATE_DISTANCE_TABLE);
         db.execSQL(Contract.SQL_CREATE_DISTANCE_TABLE);
-        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Фигурка");
+        /* Fill Distance for Bike tourism with type id = 1 */
+
         cv.put(Contract.DistanceEntry.COLUMN_TYPE_ID, 1);
+        cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_RALLY_ID);
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Велоралли"); //distance id: 1
+        db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_FIGURE_ID);
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Фигурное вождение"); //distance id: 2
+        db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_CROSS_ID);
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Велокросс"); //distance id: 3
+        db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_TRIAL_ID);
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Триал"); //distance id: 4
+        db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_COMPLEX_ID);
+        cv.put(Contract.DistanceEntry.COLUMN_NAME, "Комплексная дистанция"); //distance id: 5
         db.insert(Contract.DistanceEntry.TABLE_NAME, null, cv);
         cv.clear();
 
+        /* Create Stages for distances according to their id */
+        Log.i(LOG, Contract.SQL_CREATE_STAGE_TABLE);
         db.execSQL(Contract.SQL_CREATE_STAGE_TABLE);
-        cv.put(Contract.StageEntry.COLUMN_DISTANCE_ID, 1);
-        cv.put(Contract.StageEntry.COLUMN_NAME, "Восьмерка");
+        /* Велоралли, id: 1 */
+        cv.put(Contract.StageEntry.COLUMN_DISTANCE_ID, Contract.DISTANCE_RALLY_ID);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Правила дорожного движения");
         db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
-        cv.put(Contract.StageEntry.COLUMN_NAME, "Качеля");
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Оказание первой доврачебной помощи");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Крепление и перевозка груза");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Установка палатки");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Распаливание костра");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Определение азимута");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Ремонт велосипеда");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Движение по бездорожью");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Движение по графику");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Скоростной участок");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Подъем в гору");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Спуск по склону");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Песчаный этап");
         db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
         cv.put(Contract.StageEntry.COLUMN_NAME, "Колея");
         db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Движение по азимуту");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Ориентирование");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Преодоление брода");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Вязание узлов");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Переправа через реку или яр по колоде");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
+        /* Фигурное вождение, distance id: 2 */
+        cv.put(Contract.StageEntry.COLUMN_DISTANCE_ID, Contract.DISTANCE_FIGURE_ID);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Щель");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Змейка между стоек");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Корридор");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Колея");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Круг");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Восьмерка");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Ворота");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Кольцо");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Перенос предмета");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Зигзаг");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Качеля");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Змейка между фишек");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
         cv.put(Contract.StageEntry.COLUMN_NAME, "Стоп-линия");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
+        /* Велокросс, distance id: 3 */
+        cv.put(Contract.StageEntry.COLUMN_DISTANCE_ID, Contract.DISTANCE_CROSS_ID);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Велокросс");
+        db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
+        cv.clear();
+
+        /* Триал, distance id: 4 */
+        cv.put(Contract.StageEntry.COLUMN_DISTANCE_ID, Contract.DISTANCE_TRIAL_ID);
+        cv.put(Contract.StageEntry.COLUMN_NAME, "Триал");
         db.insert(Contract.StageEntry.TABLE_NAME, null, cv);
         cv.clear();
 
@@ -208,7 +290,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)),
                 c.getString(c.getColumnIndex(Contract.MemberEntry.COLUMN_SPORT_RANK)),
                 c.getString(c.getColumnIndex(Contract.MemberEntry.COLUMN_BIKE)),
-                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_TIME)),
+                c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_RESULT_TIME)),
                 c.getInt(c.getColumnIndex(Contract.MemberEntry.COLUMN_PLACE)));
         Log.d(LOG, member.toString());
         c.close();

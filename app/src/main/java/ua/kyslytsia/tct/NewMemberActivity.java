@@ -1,10 +1,13 @@
 package ua.kyslytsia.tct;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,14 +17,14 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
 
 public class NewMemberActivity extends AppCompatActivity {
-
     EditText lastName, firstName, middleName, birthday, startNumber, team;
     RadioGroup gender;
     int competitionId;
-    public static final String LOG = "LOG! NewMemberActivity";
+    public static final String LOG = "Log! NewMemberActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,6 @@ public class NewMemberActivity extends AppCompatActivity {
     }
 
     public boolean addNewMember() {
-
         int genderId = 1;
         long personId, teamId = 0;
         ContentValues cv = new ContentValues();
@@ -71,15 +73,22 @@ public class NewMemberActivity extends AppCompatActivity {
                 genderId = Contract.GENDER_FEMALE;
                 break;
         }
+
         /* not null fields handling */
         if (lastName.getText().toString().trim().equals("")){
             lastName.setError("Фамилия обязательна!");
         } else if (firstName.getText().toString().trim().equals("")) {
             firstName.setError("Имя обязательно!");
+        } else if (startNumber.getText().toString().trim().equals("")) {
+            firstName.setError("Стартовый номер нужно ввести!");
         } else {
             SQLiteDatabase sqLiteDatabase = MainActivity.dbHelper.getWritableDatabase();
 
-            Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;", new String[] {lastName.getText().toString(), firstName.getText().toString()});
+            String selection = Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;";
+            String[] selectionArgs = new String[] {lastName.getText().toString(), firstName.getText().toString()};
+
+            Cursor c = getContentResolver().query(ContentProvider.PERSON_CONTENT_URI, null, selection, selectionArgs, null);
+//            Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;", new String[] {lastName.getText().toString(), firstName.getText().toString()});
 //            SQLiteStatement stmt = sqLiteDatabase.compileStatement("SELECT * FROM " + Contract.PersonEntry.TABLE_NAME + " WHERE " + Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?;");
 //            stmt.bindString(1, lastName.getText().toString());
 //            stmt.bindString(2, firstName.getText().toString());
