@@ -18,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -64,17 +63,19 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent membersIntent = new Intent(MainActivity.this, MembersActivity.class);
-                membersIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id);
+                //membersIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id);
+                TextView textViewDistanceId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
+                TextView textViewIsClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
+                long distanceId = Long.parseLong(textViewDistanceId.getText().toString());
+                int isClosed = Integer.parseInt(textViewIsClosed.getText().toString());
                 sharedPreferences.edit().putLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id).apply();
-                TextView tv = (TextView) view.findViewById(R.id.textViewItemCompDistId);
-                sharedPreferences.edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, Long.parseLong(tv.getText().toString())).apply();
+                sharedPreferences.edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, distanceId).apply();
+                sharedPreferences.edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, isClosed).apply();
                 Log.i(LOG, "Get shared preferences competition id = " + sharedPreferences.getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0));
                 Log.i(LOG, "Get shared preferences distance id = " + sharedPreferences.getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0));
-                Log.i(LOG, "Put competition_id to intent = " + id);
+                Log.i(LOG, "Get shared preferences is closed = " + sharedPreferences.getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0));
+                //Log.i(LOG, "Put competition_id to intent = " + id);
                 startActivity(membersIntent);
-//                Intent stageOnCompetitionIntent = new Intent(MainActivity.this, StagesOnCompetitionActivity.class);
-//                stageOnCompetitionIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, (int) id);
-//                startActivity(stageOnCompetitionIntent);
             }
         });
 
@@ -117,12 +118,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
+    }*/
 
 /*    @Override
     public boolean onOptionsItemSelected(MenuItem item) {

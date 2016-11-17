@@ -43,12 +43,14 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/listViewAttempt" />
+            android:layout_height="wrap_content"
+            android:id="@+id/listViewAttempt"
+            />
     </LinearLayout>
 
     <TextView
@@ -141,19 +143,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
 
-        <Button
+ <!--       <Button
             android:text="Сбросить все"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonAttemptResetAll"
             android:layout_weight="1" />
-
+-->
         <Button
-            android:text="Записать и перейти к списку участников"
+            android:text="Записать"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonAttemptWrite"
-            android:layout_weight="1" />
+             />
     </LinearLayout>
 
 </LinearLayout>

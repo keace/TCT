@@ -68,7 +68,7 @@ public class Contract {
         public static final String COLUMN_TYPE_ID = "type_id";
         public static final String COLUMN_DISTANCE_ID = "distance_id";
         public static final String COLUMN_RANK = "rank";
-        public static final String COLUMN_PENALTY_TIME = "penalty_time";
+        public static final String COLUMN_PENALTY_COST = "penalty_time";
         public static final String COLUMN_IS_CLOSED = "is_closed";
     }
     public static final int COMPETITION_OPENED = 0;
@@ -108,6 +108,7 @@ public class Contract {
         public static final String COLUMN_TEAM_ID = "team_id";
         public static final String COLUMN_START_NUMBER = "start_number";
         public static final String COLUMN_SPORT_RANK = "sport_rank";
+        public static final String COLUMN_TRAINER = "trainer";
         public static final String COLUMN_BIKE = "bike";
         public static final String COLUMN_RESULT_TIME = "time";
         public static final String COLUMN_PLACE = "place";
@@ -116,11 +117,11 @@ public class Contract {
 
     public static final class AttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "attempt";
-        public static final String COLUMN_COMPETITION_ID = "competition_id"; ///////////////////////////////////////////
+        public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_MEMBERS_ID = "members_id";
         public static final String COLUMN_TRY_NUMBER = "try_number";
         public static final String COLUMN_PENALTY_TOTAL = "penalty_total";
-        public static final String COLUMN_TIME = "time";
+        public static final String COLUMN_DISTANCE_TIME = "time";
         public static final String COLUMN_RESULT_TIME = "result_time";
         public static final String COLUMN_IS_CLOSED = "is_closed";
     }
@@ -142,19 +143,15 @@ public class Contract {
     public static final String SQL_CREATE_GENDER_TABLE = CREATE_TABLE + GenderEntry.TABLE_NAME + SPACE_BRACKET +
             GenderEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             GenderEntry.COLUMN_GENDER + TEXT + NOT_NULL + BRACKET_SEMICOLON;
-//            INSERT_INTO + GenderEntry.TABLE_NAME + " (" + GenderEntry.COLUMN_GENDER + ")" + " VALUES ('Муж'); " +
-//            INSERT_INTO + GenderEntry.TABLE_NAME + " (" + GenderEntry.COLUMN_GENDER + ")" + " VALUES ('Жен'); ";
 
     public static final String SQL_CREATE_TYPE_TABLE = CREATE_TABLE + TypeEntry.TABLE_NAME + SPACE_BRACKET +
             TypeEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             TypeEntry.COLUMN_NAME + TEXT + NOT_NULL + BRACKET_SEMICOLON;
-//            INSERT_INTO + TypeEntry.TABLE_NAME + " (" + TypeEntry.COLUMN_NAME + ")" + " VALUES ('Велосипедный');";
 
     public static final String SQL_CREATE_DISTANCE_TABLE = CREATE_TABLE + DistanceEntry.TABLE_NAME + SPACE_BRACKET +
             DistanceEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             DistanceEntry.COLUMN_TYPE_ID + INTEGER + NOT_NULL + REFERENCES + TypeEntry.TABLE_NAME + "(" + TypeEntry._ID + ")" + COMMA_SPACE + //FK OK
             DistanceEntry.COLUMN_NAME + TEXT + NOT_NULL + BRACKET_SEMICOLON;
-//            INSERT_INTO + DistanceEntry.TABLE_NAME + " (" + DistanceEntry.COLUMN_TYPE_ID + "," + DistanceEntry.COLUMN_NAME + ")" + " VALUES (1, 'Фигурка');";
 
     public static final String SQL_CREATE_STAGE_TABLE = CREATE_TABLE + StageEntry.TABLE_NAME + SPACE_BRACKET +
             StageEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
@@ -163,10 +160,6 @@ public class Contract {
             StageEntry.COLUMN_DESCRIPTION_MOUNT + TEXT + COMMA_SPACE +
             StageEntry.COLUMN_DESCRIPTION_PENALTY + TEXT +
             StageEntry.COLUMN_BITMAP + TEXT + BRACKET_SEMICOLON;
-//            INSERT_INTO + StageEntry.TABLE_NAME + " (" + StageEntry.COLUMN_DISTANCE_ID + ", " + StageEntry.COLUMN_NAME + ")" + " VALUES (1, 'Восьмерка'); " +
-//            INSERT_INTO + StageEntry.TABLE_NAME + " (" + StageEntry.COLUMN_DISTANCE_ID + ", " + StageEntry.COLUMN_NAME + ")" + " VALUES (1, 'Качеля'); " +
-//            INSERT_INTO + StageEntry.TABLE_NAME + " (" + StageEntry.COLUMN_DISTANCE_ID + ", " + StageEntry.COLUMN_NAME + ")" + " VALUES (1, 'Колея'); " +
-//            INSERT_INTO + StageEntry.TABLE_NAME + " (" + StageEntry.COLUMN_DISTANCE_ID + ", " + StageEntry.COLUMN_NAME + ")" + " VALUES (1, 'Стоп-линия'); ";
 
     public static final String SQL_CREATE_COMPETITION_TABLE = CREATE_TABLE + CompetitionEntry.TABLE_NAME + SPACE_BRACKET +
             CompetitionEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
@@ -176,7 +169,7 @@ public class Contract {
             CompetitionEntry.COLUMN_TYPE_ID + INTEGER + NOT_NULL + REFERENCES + TypeEntry.TABLE_NAME + "(" + TypeEntry._ID + ")" + COMMA_SPACE + //FK OK
             CompetitionEntry.COLUMN_DISTANCE_ID + INTEGER + NOT_NULL + REFERENCES + DistanceEntry.TABLE_NAME + "(" + DistanceEntry._ID + ")" + COMMA_SPACE + //FK OK
             CompetitionEntry.COLUMN_RANK + INTEGER + NOT_NULL + COMMA_SPACE +
-            CompetitionEntry.COLUMN_PENALTY_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
+            CompetitionEntry.COLUMN_PENALTY_COST + INTEGER + NOT_NULL + COMMA_SPACE +
             CompetitionEntry.COLUMN_IS_CLOSED + INTEGER + NOT_NULL + BRACKET_SEMICOLON;
 
     public static final String SQL_CREATE_PERSON_TABLE = CREATE_TABLE + PersonEntry.TABLE_NAME + SPACE_BRACKET +
@@ -207,6 +200,7 @@ public class Contract {
             MemberEntry.COLUMN_TEAM_ID + INTEGER + REFERENCES + TeamEntry.TABLE_NAME  + "(" + TeamEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_START_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             MemberEntry.COLUMN_SPORT_RANK + TEXT + COMMA_SPACE +
+            MemberEntry.COLUMN_TRAINER + TEXT + COMMA_SPACE +
             MemberEntry.COLUMN_BIKE + TEXT + COMMA_SPACE +
             MemberEntry.COLUMN_RESULT_TIME + INTEGER + COMMA_SPACE +
             MemberEntry.COLUMN_PLACE + INTEGER + BRACKET_SEMICOLON;
@@ -217,7 +211,7 @@ public class Contract {
             AttemptEntry.COLUMN_MEMBERS_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_TRY_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_PENALTY_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
-            AttemptEntry.COLUMN_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
+            AttemptEntry.COLUMN_DISTANCE_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_RESULT_TIME + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_IS_CLOSED + INTEGER + NOT_NULL + BRACKET_SEMICOLON;
 

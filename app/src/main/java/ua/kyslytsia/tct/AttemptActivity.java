@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -50,17 +51,17 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
 
         //get Member_id from Intent
         final long memberId = getIntent().getLongExtra(Contract.MemberEntry._ID, 0);
-        competition_id = getIntent().getLongExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        competition_id = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
 
         textViewTime = (TextView) findViewById(R.id.textViewAttemptTime);
         textViewPenaltyCost = (TextView) findViewById(R.id.textViewAttemptPenaltyCost);
         textViewPenaltySum = (TextView) findViewById(R.id.textViewAttemptPenaltySum);
         textViewResult = (TextView) findViewById(R.id.textViewAttemptResultTime);
 
-        Cursor c = getContentResolver().query(Uri.parse(ContentProvider.COMPETITION_CONTENT_URI + "/" + competition_id), new String[]{Contract.CompetitionEntry.COLUMN_PENALTY_TIME}, null, null, null);
+        Cursor c = getContentResolver().query(Uri.parse(ContentProvider.COMPETITION_CONTENT_URI + "/" + competition_id), new String[]{Contract.CompetitionEntry.COLUMN_PENALTY_COST}, null, null, null);
         //Cursor c = MainActivity.dbHelper.getReadableDatabase().query(Contract.CompetitionEntry.TABLE_NAME, null, Contract.CompetitionEntry._ID, new String[]{String.valueOf(competition_id)}, null, null, null, null);
         c.moveToFirst();
-        String s = c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_TIME));
+        String s = c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_COST));
         textViewPenaltyCost.setText(s);
 
         listView = (ListView) findViewById(R.id.listViewAttempt);
@@ -118,16 +119,16 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        Button resetAllButton = (Button) findViewById(R.id.buttonAttemptResetAll);
-        resetAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textViewPenaltySum.setText("");
-                textViewTime.setText("");
-                textViewResult.setText("");
-                ch.setBase(SystemClock.elapsedRealtime());
-            }
-        });
+//        Button resetAllButton = (Button) findViewById(R.id.buttonAttemptResetAll);
+//        resetAllButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                textViewPenaltySum.setText("");
+//                textViewTime.setText("");
+//                textViewResult.setText("");
+//                ch.setBase(SystemClock.elapsedRealtime());
+//            }
+//        });
 
         Button writeButton = (Button) findViewById(R.id.buttonAttemptWrite);
         writeButton.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +141,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                 cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
                 cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  //TRY NUMBER NOT HANDLING
                 cv.put(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL, penaltyTotal);
-                cv.put(Contract.AttemptEntry.COLUMN_TIME, timeString);
+                cv.put(Contract.AttemptEntry.COLUMN_DISTANCE_TIME, timeString);
                 cv.put(Contract.AttemptEntry.COLUMN_RESULT_TIME, resultTimeLong);
                 cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, 1);
                 Log.i(LOG, "Try to insert Attempt: " + cv.toString());

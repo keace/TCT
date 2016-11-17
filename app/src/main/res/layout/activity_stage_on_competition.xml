@@ -15,8 +15,9 @@
 
     <ua.kyslytsia.tct.utils.dslv.DragSortListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewStageOnCompetition"
+        android:layout_weight="1"
         dslv:drag_enabled="true"
         dslv:drag_start_mode="onLongPress"
         dslv:remove_enabled="false"
@@ -24,7 +25,7 @@
         dslv:use_default_controller="true"
         dslv:float_background_color="@color/colorAccent"
         />
-
+<!--
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabSoc"
         android:layout_width="wrap_content"
@@ -32,15 +33,15 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_menu_add"
         android:layout_gravity="bottom|end"
-        android:foregroundGravity="bottom"/>
+        android:foregroundGravity="bottom"/>-->
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <Button
-            android:text="Участники"
+            android:text="К участникам"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonSoCToMembers"

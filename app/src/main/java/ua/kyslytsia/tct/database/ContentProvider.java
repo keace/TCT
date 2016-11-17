@@ -144,17 +144,19 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case COMPETITIONS:
-                Log.i(LOG, "Case: COMPETITIONS");
+                Log.i(LOG, "Query COMPETITIONS");
                 projection = new String[] {
                         Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry._ID,
                         Contract.CompetitionEntry.COLUMN_DATE,
                         Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry.COLUMN_NAME,
                         Contract.CompetitionEntry.COLUMN_PLACE,
-                        Contract.CompetitionEntry.COLUMN_RANK,
-                        Contract.CompetitionEntry.COLUMN_PENALTY_TIME,
-                        Contract.CompetitionEntry.COLUMN_DISTANCE_ID,
                         Contract.TypeEntry.TABLE_NAME + "." + Contract.TypeEntry.COLUMN_NAME + " AS " + Contract.TYPE_NAME_ADAPTED,
-                        Contract.DistanceEntry.TABLE_NAME + "." + Contract.DistanceEntry.COLUMN_NAME + " AS " + Contract.DISTANCE_NAME_ADAPTED
+                        Contract.DistanceEntry.TABLE_NAME + "." + Contract.DistanceEntry.COLUMN_NAME + " AS " + Contract.DISTANCE_NAME_ADAPTED,
+                        Contract.CompetitionEntry.COLUMN_RANK,
+                        Contract.CompetitionEntry.COLUMN_PENALTY_COST,
+                        Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry.COLUMN_TYPE_ID,
+                        Contract.CompetitionEntry.COLUMN_DISTANCE_ID,
+                        Contract.CompetitionEntry.COLUMN_IS_CLOSED,
                 };
                 queryBuilder.setTables(Contract.CompetitionEntry.TABLE_NAME +
                         " INNER JOIN " + Contract.TypeEntry.TABLE_NAME +
@@ -164,7 +166,7 @@ public class ContentProvider extends android.content.ContentProvider {
                 break;
 
             case COMPETITION_ID:
-                Log.i(LOG, "Case: COMPETITION_ID");
+                Log.i(LOG, "Query COMPETITION_ID");
                 queryBuilder.setTables(Contract.CompetitionEntry.TABLE_NAME);
                 queryBuilder.appendWhere(Contract.CompetitionEntry._ID + "=" + uri.getLastPathSegment());
                 break;
@@ -175,11 +177,15 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID,
                         Contract.StageOnCompetitionEntry.COLUMN_POSITION,
                         Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry.COLUMN_NAME + " AS " + Contract.STAGE_NAME_ADAPTED
+//                        Contract.StageOnAttemptEntry.COLUMN_PENALTY
                 };
 
                 queryBuilder.setTables(Contract.StageOnCompetitionEntry.TABLE_NAME +
                         " INNER JOIN " + Contract.StageEntry.TABLE_NAME +
-                        " ON " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID);
+                        " ON " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID
+//                        " LEFT OUTER JOIN " + Contract.StageOnAttemptEntry.TABLE_NAME +
+//                        " ON " + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID + "=" + Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID
+                );
                 sortOrder = Contract.StageOnCompetitionEntry.COLUMN_POSITION;
                 break;
 
@@ -232,8 +238,17 @@ public class ContentProvider extends android.content.ContentProvider {
                 Log.i(LOG, "Case: MEMBER_ID");
                 break;
 
+            case ATTEMPTS:
+                Log.i(LOG, "Query Attempts");
+                queryBuilder.setTables(Contract.AttemptEntry.TABLE_NAME);
+//                public static final String COLUMN_PENALTY_TOTAL = "penalty_total";
+//                public static final String COLUMN_DISTANCE_TIME = "time";
+//                public static final String COLUMN_RESULT_TIME = "result_time";
+                break;
+
             case STAGES_ON_ATTEMPTS:
-                Log.i(LOG, "Case: STAGES_ON_ATTEMPTS");
+                Log.i(LOG, "Query STAGES_ON_ATTEMPTS");
+                queryBuilder.setTables(Contract.StageOnAttemptEntry.TABLE_NAME);
                 break;
 
             default:
@@ -334,6 +349,11 @@ public class ContentProvider extends android.content.ContentProvider {
             case MEMBER_ID:
                 Log.i(LOG, "Update MEMBER_ID");
                 rowsUpdated = sqLiteDatabase.update(Contract.MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case COMPETITIONS:
+                Log.i(LOG, "Update COMPETITIONS");
+                rowsUpdated = sqLiteDatabase.update(Contract.CompetitionEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
 
             default:

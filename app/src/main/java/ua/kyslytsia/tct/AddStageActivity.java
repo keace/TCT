@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import java.util.Arrays;
+
 import ua.kyslytsia.tct.adapter.AddStageCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
@@ -43,7 +45,7 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         toolbar.setSubtitle("Добавить этапы");
         setSupportActionBar(toolbar);
 
-        competitionId = getIntent().getLongExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+        competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
         distanceId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0);
         Log.d(LOG, "Catch distanceId from SharedPreferences = " + distanceId);
         lastPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
@@ -89,11 +91,18 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
-        String[] selectionArgs = new String[] {String.valueOf(distanceId)};
+        String selection;
+        String[] selectionArgs;
+        Log.i(LOG, "Distance id = " + distanceId);
         if (distanceId == Contract.DISTANCE_COMPLEX_ID) {
-            selectionArgs = new String[] {String.valueOf(distanceId), String.valueOf(Contract.DISTANCE_FIGURE_ID), String.valueOf(Contract.DISTANCE_CROSS_ID), String.valueOf(Contract.DISTANCE_TRIAL_ID)};
+            Log.i(LOG, "Complex distance");
+            selection = Contract.StageEntry.COLUMN_DISTANCE_ID + " IN (?, ?, ?)";
+            selectionArgs = new String[]{String.valueOf(Contract.DISTANCE_FIGURE_ID), String.valueOf(Contract.DISTANCE_CROSS_ID), String.valueOf(Contract.DISTANCE_TRIAL_ID)};
+        } else {
+            selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
+            selectionArgs = new String[] {String.valueOf(distanceId)};
         }
+        Log.i(LOG, "selectionArgs = " + Arrays.asList(selectionArgs));
         CursorLoader cursorLoader = new CursorLoader(AddStageActivity.this, ContentProvider.STAGE_CONTENT_URI, null, selection, selectionArgs, null);
         return cursorLoader;
     }

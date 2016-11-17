@@ -2,6 +2,7 @@ package ua.kyslytsia.tct.mocks;
 
 public class Competition {
 
+    private int id;
     private String date;
     private String name;
     private String place;
@@ -22,7 +23,8 @@ public class Competition {
      * @param penalty_time
      * @param is_closed
      */
-    public Competition (String date, String name, String place, int type_id, int distance_id, int rank, int penalty_time, int is_closed) {
+    public Competition (int id, String date, String name, String place, int type_id, int distance_id, int rank, int penalty_time, int is_closed) {
+        this.id = id;
         this.date = date;
         this.name = name;
         this.place = place;
@@ -42,7 +44,8 @@ public class Competition {
      * @param rank
      * @param penalty_time
      */
-    public Competition (String date, String name, int type_id, int distance_id, int rank, int penalty_time) {
+    public Competition (int id, String date, String name, int type_id, int distance_id, int rank, int penalty_time) {
+        this.id = id;
         this.date = date;
         this.name = name;
         this.type_id = type_id;
@@ -50,6 +53,14 @@ public class Competition {
         this.rank = rank;
         this.penalty_time = penalty_time;
         this.is_closed = 0;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDate() {
@@ -119,7 +130,8 @@ public class Competition {
     @Override
     public String toString() {
         return "Competition{" +
-                "date='" + date + '\'' +
+                "id=" + id +
+                ", date='" + date + '\'' +
                 ", name='" + name + '\'' +
                 ", place='" + place + '\'' +
                 ", type_id=" + type_id +

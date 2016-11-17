@@ -164,7 +164,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
             cv.put(Contract.CompetitionEntry.COLUMN_TYPE_ID, selectedTypeId);
             cv.put(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, selectedDistanceId);
             cv.put(Contract.CompetitionEntry.COLUMN_RANK, rank.getText().toString());
-            cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_TIME, Integer.valueOf(penalty.getText().toString()));
+            cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_COST, Integer.valueOf(penalty.getText().toString()));
             cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
             sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
             }

@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import ua.kyslytsia.tct.MainActivity;
 import ua.kyslytsia.tct.R;
 import ua.kyslytsia.tct.database.Contract;
-import ua.kyslytsia.tct.database.DbHelper;
 
 public class StageOnCompetitionCursorAdapter extends CursorAdapter {
 
@@ -29,11 +27,9 @@ public class StageOnCompetitionCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor c) {
         TextView stagePosition = (TextView) view.findViewById(R.id.textViewSOCPosition);
-//        stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
         stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
 
         TextView stageName = (TextView) view.findViewById(R.id.textViewSOCName);
-//        stageName.setText(dbHelper.findStageNameById(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID))));
         stageName.setText(c.getString(c.getColumnIndex(Contract.STAGE_NAME_ADAPTED)));
     }
 }

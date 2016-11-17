@@ -1,13 +1,11 @@
 package ua.kyslytsia.tct;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,7 +21,7 @@ import ua.kyslytsia.tct.database.Contract;
 public class NewMemberActivity extends AppCompatActivity {
     EditText lastName, firstName, middleName, birthday, startNumber, team;
     RadioGroup gender;
-    int competitionId;
+    long competitionId;
     public static final String LOG = "Log! NewMemberActivity";
 
     @Override
@@ -34,7 +32,7 @@ public class NewMemberActivity extends AppCompatActivity {
         toolbar.setSubtitle("Добавить участника");
         setSupportActionBar(toolbar);
 
-        competitionId = getIntent().getIntExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
 
         lastName = (EditText) findViewById(R.id.editTextAddMemberLastName);
         firstName = (EditText) findViewById(R.id.editTextAddMemberFirstName);

@@ -1,13 +1,11 @@
 package ua.kyslytsia.tct;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -17,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Toast;
 
 import ua.kyslytsia.tct.adapter.StageOnCompetitionCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
@@ -38,7 +35,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         setContentView(R.layout.activity_stage_on_competition);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle("Этапы на соревновании");
-        toolbar.setNavigationIcon(R.drawable.home);
+        toolbar.setNavigationIcon(R.drawable.home_outline);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +45,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
             }
         });
 
-        competitionId = getIntent().getLongExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+        competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
 
         // FAB
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabSoc);

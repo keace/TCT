@@ -30,7 +30,7 @@ public class CompetitionCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
        // DbHelper dbHelper = MainActivity.dbHelper;
 
-        TextView date = (TextView) view.findViewById(R.id.textViewItemCompDate); //same
+        TextView date = (TextView) view.findViewById(R.id.textViewItemCompDate);
         date.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)));
 
         TextView type = (TextView) view.findViewById(R.id.textViewItemCompType);
@@ -41,7 +41,7 @@ public class CompetitionCursorAdapter extends CursorAdapter {
 //        name.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)));
         name.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)));
 
-        TextView place = (TextView) view.findViewById(R.id.textViewItemCompPlace); //same
+        TextView place = (TextView) view.findViewById(R.id.textViewItemCompPlace);
         place.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_PLACE)));
 
         TextView dist = (TextView) view.findViewById(R.id.textViewItemCompDist);
@@ -51,9 +51,10 @@ public class CompetitionCursorAdapter extends CursorAdapter {
         distId.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID)));
         //        dist.setText(dbHelper.findDistanceById(cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID))));
 
-        TextView rank = (TextView) view.findViewById(R.id.textViewItemCompRank); //same
+        TextView rank = (TextView) view.findViewById(R.id.textViewItemCompRank);
         rank.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)) + "-й класс");
 
-
+        TextView isClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
+        isClosed.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
     }
 }
