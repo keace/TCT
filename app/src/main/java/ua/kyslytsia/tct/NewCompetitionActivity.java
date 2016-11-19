@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,10 +22,10 @@ import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
 
 public class NewCompetitionActivity extends AppCompatActivity {
-
+    private final String LOG = "LOG NewCompetitiony";
     private EditText date, name, place, rank, penalty;
     private Spinner type, distance;
-    private Button buttonSaveToStage, buttonSaveToMembers;
+    private Button buttonSaveToStagesOnCompetitions, buttonSaveToMembers;
 
     long selectedTypeId, selectedDistanceId;
 
@@ -51,9 +53,10 @@ public class NewCompetitionActivity extends AppCompatActivity {
         type = (Spinner) findViewById(R.id.newCompetitionTypeSpinner);
         distance = (Spinner) findViewById(R.id.newCompetitionDistanceSpinner);
 
-        buttonSaveToStage = (Button) findViewById(R.id.buttonNewCompetitionSaveToStage);
+        buttonSaveToStagesOnCompetitions = (Button) findViewById(R.id.buttonNewCompetitionSaveToStage);
         buttonSaveToMembers = (Button) findViewById(R.id.buttonNewCompetitionSaveToMembers);
 
+        //TODO избавиться от ДБХелпера
         dbHelper = new DbHelper(this);
         sqLiteDatabase = dbHelper.getWritableDatabase();
 
@@ -89,6 +92,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
         int[] toDistance = new int[]{R.id.textViewItemDistance};
         adapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
 
+        //TODO Посмотреть что это за обсервер
         adapterDistance.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -128,30 +132,37 @@ public class NewCompetitionActivity extends AppCompatActivity {
         buttonSaveToMembers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    boolean b = makeNewCompetition();
-                    if (b == true) {
-                        Intent intentToMainActivity = new Intent(NewCompetitionActivity.this, MainActivity.class);
-                        startActivity(intentToMainActivity);
+                    if (makeNewCompetition()) {
+                        Intent intentToMembers = new Intent(NewCompetitionActivity.this, MembersActivity.class);
+                        startActivity(intentToMembers);
                     } else {
                         Toast.makeText(getApplicationContext(), "Error! New Competition not created!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
 
-        buttonSaveToStage.setOnClickListener(new View.OnClickListener() {
+        buttonSaveToStagesOnCompetitions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Не работает", Toast.LENGTH_SHORT).show();
+                if (makeNewCompetition()) {
+                    Intent intentToStagesOnCompetitions = new Intent(NewCompetitionActivity.this, StagesOnCompetitionActivity.class);
+                    startActivity(intentToStagesOnCompetitions);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error! New Competition not created!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
     public boolean makeNewCompetition() {
+        boolean isCreated = false;
         // required not null fields handling
-        if (name.getText().toString().trim().equals("")){
+        if (date.getText().toString().trim().equals("")){
+            date.setError("Дата обязательна!");
+        } else if (name.getText().toString().trim().equals("")) {
             name.setError("Название обязательно!");
         } else if (rank.getText().toString().trim().equals("")) {
-            place.setError("Класс соревнований обязателен!");
+            rank.setError("Класс соревнований обязателен!");
         } else if (penalty.getText().toString().trim().equals("")){
             penalty.setError("Стоимость штрафа обязательна!");
         }
@@ -166,9 +177,12 @@ public class NewCompetitionActivity extends AppCompatActivity {
             cv.put(Contract.CompetitionEntry.COLUMN_RANK, rank.getText().toString());
             cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_COST, Integer.valueOf(penalty.getText().toString()));
             cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
-            sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
+            long competitionId = sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId).apply();
+            isCreated = true;
+            Log.d(LOG, "Competition created with id = " + competitionId);
             }
-        return true;
+        return isCreated;
     }
 
 }

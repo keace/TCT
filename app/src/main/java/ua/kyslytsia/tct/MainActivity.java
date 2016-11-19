@@ -49,9 +49,11 @@ public class MainActivity extends AppCompatActivity
         dbHelper = new DbHelper(this);
         sqLiteDatabase = dbHelper.getWritableDatabase();
 
-        TextView textViewMain = (TextView) findViewById(R.id.textViewMain);
+        //dbHelper.onUpgrade(sqLiteDatabase, 6, 7);
 
-        textViewMain.setText(dbHelper.getDatabaseName());
+        //TextView textViewMain = (TextView) findViewById(R.id.textViewMain);
+
+        //textViewMain.setText(dbHelper.getDatabaseName());
 
         listViewMain = (ListView) findViewById(R.id.listViewMain);
         getSupportLoaderManager().initLoader(Contract.COMPETITIONS_LOADER_ID, null, this);

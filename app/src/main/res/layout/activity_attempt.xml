@@ -44,6 +44,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:minHeight="0dp"
         android:layout_weight="1">
 
         <ListView
@@ -73,11 +74,12 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="(Время)"
+            android:hint="@string/digit_0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptTime"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout
@@ -92,11 +94,12 @@
             android:layout_weight="1" />
 
         <TextView
-            android:text="(штрафы)"
+            android:hint="@string/digit_0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptPenaltySum"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout
@@ -105,17 +108,18 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="1 штраф = сек"
+            android:text="Цена штрафа, сек"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
-            android:text="(цена штрафа)"
+            android:hint="@string/digit_5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptPenaltyCost"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout
@@ -124,17 +128,18 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Время с учетом штрафов"
+            android:text="Результат"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
-            android:text="(Результат)"
+            android:hint="@string/digit_0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewAttemptResultTime"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout

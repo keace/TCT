@@ -10,10 +10,11 @@ import android.widget.TextView;
 
 import ua.kyslytsia.tct.R;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.utils.Chronometer;
 
 public class MembersAdapter extends CursorAdapter {
 
-    //int competitionId; // from Intent
+    private String timeString;
 
     public MembersAdapter(Context context, Cursor c, int flag) {
         super(context, c, flag);
@@ -22,8 +23,7 @@ public class MembersAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_member, parent, false);
-        return view;
+        return inflater.inflate(R.layout.item_member, parent, false);
     }
 
     @Override
@@ -35,12 +35,15 @@ public class MembersAdapter extends CursorAdapter {
         number.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)));
 
         TextView name = (TextView) view.findViewById(R.id.textViewMembersName);
-        StringBuffer sb = new StringBuffer();
-        sb.append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME))).append(" ").append(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
-        name.setText(sb.toString());
+        name.setText(cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME)) + " " + cursor.getString(cursor.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
 
-        TextView time = (TextView) view.findViewById(R.id.textViewMembersTime);
-        time.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_RESULT_TIME)));
-        // getTime from Members
+        TextView timeTextView = (TextView) view.findViewById(R.id.textViewMembersTime);
+
+        if (cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_RESULT_TIME)) != null) {
+            Long timeMillis = Long.parseLong(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_RESULT_TIME)));
+            timeString = new Chronometer(view.getContext()).timeLongMillisToString(timeMillis);
+        }
+        timeTextView.setText(timeString);
+        timeString = "";
     }
 }

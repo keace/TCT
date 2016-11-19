@@ -114,6 +114,8 @@ public class Contract {
         public static final String COLUMN_PLACE = "place";
     }
     public static final String MEMBER_PLACE_ADAPTED = "member_place";
+    public static final String MEMBER_ID_ADAPTED = "member_id";
+
 
     public static final class AttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "attempt";
@@ -198,7 +200,7 @@ public class Contract {
             MemberEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_PERSON_ID + INTEGER + NOT_NULL + REFERENCES + PersonEntry.TABLE_NAME + "(" + PersonEntry._ID + ")" + COMMA_SPACE + //FK OK
             MemberEntry.COLUMN_TEAM_ID + INTEGER + REFERENCES + TeamEntry.TABLE_NAME  + "(" + TeamEntry._ID + ")" + COMMA_SPACE + //FK OK
-            MemberEntry.COLUMN_START_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
+            MemberEntry.COLUMN_START_NUMBER + INTEGER + COMMA_SPACE +
             MemberEntry.COLUMN_SPORT_RANK + TEXT + COMMA_SPACE +
             MemberEntry.COLUMN_TRAINER + TEXT + COMMA_SPACE +
             MemberEntry.COLUMN_BIKE + TEXT + COMMA_SPACE +

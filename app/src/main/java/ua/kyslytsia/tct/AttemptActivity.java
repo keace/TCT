@@ -93,7 +93,6 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                 textViewTime.setText(ch.getText());
 
                 for (int i=0; i<listView.getChildCount(); i++) {
-
                     View view = listView.getChildAt(i);
                     EditText editTextPenaltyOnStage = (EditText) view.findViewById(R.id.editTextSOAPenaltyOnStage);
                     if (editTextPenaltyOnStage.getText().toString().equals("")) {
@@ -101,9 +100,8 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                     } else {
                         penaltyOnStage = editTextPenaltyOnStage.getText().toString();
                     }
-
                     stageOnAttemptList.add(new StageOnAttempt(listView.getAdapter().getItemId(i), Long.parseLong(penaltyOnStage)));
-                    Log.d(LOG, "StageOnAttempt: " + stageOnAttemptList.get(i));
+                    Log.d(LOG, "StageOnAttempt elements: " + stageOnAttemptList.get(i));
                     if(!penaltyOnStage.equals(""))
                         penaltyTotal+=Integer.parseInt(penaltyOnStage);
                 }
@@ -148,6 +146,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
                 attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
                 Log.i(LOG, "Insert ok. attemptId = " + attemptId);
                 cv.clear();
+                Log.d(LOG, "StageOnAttempt size " + stageOnAttemptList.size());
                 for (int i = 0; i < stageOnAttemptList.size(); i++){
                     cv.put(Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID, attemptId);
                     cv.put(Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID, stageOnAttemptList.get(i).getStage_on_competition_id());

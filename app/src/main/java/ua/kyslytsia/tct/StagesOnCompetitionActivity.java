@@ -1,6 +1,7 @@
 package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -74,24 +76,17 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Uri uri = Uri.parse(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI + "/" + id);
-                String where = Contract.StageOnCompetitionEntry._ID + "=?";
-                String[] selectionArgs = new String[] {String.valueOf(id)};
-                getContentResolver().delete(uri, where, selectionArgs);
-
-                //displayed position and position in db = position in adapter + 1
-                position = position+1;
-                if (adapter.getItem(position) != null) {
-                    for (int i = position; i < adapter.getCount(); i++) {
-                        Uri u = ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI;
-                        ContentValues cv = new ContentValues();
-                        cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, i);
-                        String wherePosition = Contract.StageOnCompetitionEntry.COLUMN_POSITION + "=?";
-                        String[] selectionPosition= new String[] {String.valueOf(i+1)};
-                        getContentResolver().update(u, cv, wherePosition, selectionPosition);
+            public void onItemClick(AdapterView<?> parent, View view, final int position, final long id) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(StagesOnCompetitionActivity.this);
+                alertDialog.setTitle("Удалить?");
+                alertDialog.setNegativeButton("Отмена", null);
+                alertDialog.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteStage(position, id);
                     }
-                }
+                });
+                alertDialog.create().show();
             }
         });
 
@@ -118,6 +113,26 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
                 startActivity(intentToAddStageActivity);
             }
         });
+    }
+
+    private void deleteStage (int position, long id){
+        Uri uri = Uri.parse(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI + "/" + id);
+        String where = Contract.StageOnCompetitionEntry._ID + "=?";
+        String[] selectionArgs = new String[] {String.valueOf(id)};
+        getContentResolver().delete(uri, where, selectionArgs);
+
+        //displayed position and position in db = position in adapter + 1
+        position = position+1;
+        if (adapter.getItem(position) != null) {
+            for (int i = position; i < adapter.getCount(); i++) {
+                Uri u = ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI;
+                ContentValues cv = new ContentValues();
+                cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, i);
+                String wherePosition = Contract.StageOnCompetitionEntry.COLUMN_POSITION + "=?";
+                String[] selectionPosition= new String[] {String.valueOf(i+1)};
+                getContentResolver().update(u, cv, wherePosition, selectionPosition);
+            }
+        }
     }
 
     @Override

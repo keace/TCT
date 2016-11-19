@@ -199,6 +199,7 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID,
                         Contract.StageEntry.COLUMN_DISTANCE_ID,
                         Contract.StageEntry.COLUMN_NAME,
+                        Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID,
                         Contract.StageOnCompetitionEntry.COLUMN_POSITION
                 };
                 //queryBuilder.setTables(Contract.StageEntry.TABLE_NAME);
@@ -226,11 +227,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 };
 
                 queryBuilder.setTables(Contract.MemberEntry.TABLE_NAME +
-                " INNER JOIN " + Contract.TeamEntry.TABLE_NAME +
+                " LEFT OUTER JOIN " + Contract.TeamEntry.TABLE_NAME +
                 " ON " + Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_TEAM_ID + "=" + Contract.TeamEntry.TABLE_NAME + "." + Contract.TeamEntry._ID +
-                " INNER JOIN " + Contract.PersonEntry.TABLE_NAME +
+                " LEFT OUTER JOIN " + Contract.PersonEntry.TABLE_NAME +
                 " ON " + Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_PERSON_ID + "=" + Contract.PersonEntry.TABLE_NAME + "." + Contract.PersonEntry._ID +
-                " INNER JOIN " + Contract.GenderEntry.TABLE_NAME +
+                " LEFT OUTER JOIN " + Contract.GenderEntry.TABLE_NAME +
                 " ON " + Contract.PersonEntry.TABLE_NAME + "." + Contract.PersonEntry.COLUMN_GENDER_ID + "=" + Contract.GenderEntry.TABLE_NAME + "." + Contract.GenderEntry._ID);
                 break;
 
@@ -291,9 +292,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 resultUri = Uri.parse(STAGE_ON_COMPETITION_CONTENT_URI + "/" + id);
                 break;
 
-//            case STAGE_ON_COMPETITION_ID:
-//
-//                break;
+            case TEAMS:
+                Log.i(LOG, "Insert TEAMS");
+                id = sqLiteDatabase.insert(Contract.TeamEntry.TABLE_NAME, null, values);
+                resultUri = Uri.parse(STAGE_ON_COMPETITION_CONTENT_URI + "/" + id);
+                break;
 
             case ATTEMPTS:
                 Log.i(LOG, "Insert ATTEMPTS");
@@ -326,6 +329,10 @@ public class ContentProvider extends android.content.ContentProvider {
                 rowsDeleted = sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
+            case MEMBERS:
+                Log.i(LOG, "Delete MEMBERS");
+                rowsDeleted = sqLiteDatabase.delete(Contract.MemberEntry.TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
@@ -349,6 +356,21 @@ public class ContentProvider extends android.content.ContentProvider {
             case MEMBER_ID:
                 Log.i(LOG, "Update MEMBER_ID");
                 rowsUpdated = sqLiteDatabase.update(Contract.MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case MEMBERS:
+                Log.i(LOG, "Update MEMBERS");
+                rowsUpdated = sqLiteDatabase.update(Contract.MemberEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case TEAMS:
+                Log.i(LOG, "Update TEAMS");
+                rowsUpdated = sqLiteDatabase.update(Contract.TeamEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+            case PERSONS:
+                Log.i(LOG, "Update PERSONS");
+                rowsUpdated = sqLiteDatabase.update(Contract.PersonEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
 
             case COMPETITIONS:

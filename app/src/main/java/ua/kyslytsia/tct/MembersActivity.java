@@ -1,13 +1,18 @@
 package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,12 +27,13 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
-import jxl.CellView;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import ua.kyslytsia.tct.adapter.MembersAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.dialog.MembersDialogFragment;
+import ua.kyslytsia.tct.utils.Chronometer;
 import ua.kyslytsia.tct.utils.WriteExcel;
 
 public class MembersActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -57,7 +63,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         ListView listView = (ListView) findViewById(R.id.listViewMembers);
 
         competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
-        competitionIsClosed = PreferenceManager.getDefaultSharedPreferences(this).getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0);
+        //competitionIsClosed = PreferenceManager.getDefaultSharedPreferences(this).getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0);
         //SQLiteDatabase sqLiteDatabase = MainActivity.dbHelper.getReadableDatabase();
 
         Button buttonToNewMember = (Button) findViewById(R.id.buttonMembersToNewMember);
@@ -88,12 +94,19 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        if (competitionIsClosed == Contract.COMPETITION_CLOSED) {
+        String where = Contract.CompetitionEntry.COLUMN_IS_CLOSED + "=?";
+        String[] whereArgs = new String[] {String.valueOf(Contract.COMPETITION_CLOSED)};
+        Cursor cursor = getContentResolver().query(ContentProvider.COMPETITION_CONTENT_URI, null, where, whereArgs, null);
+        Log.i(LOG, "Cursor getCount = " + cursor.getCount());
+        if (cursor.getCount() > 0) {
             buttonToNewMember.setEnabled(false);
             buttonToStages.setEnabled(false);
             buttonExportToExcel.setVisibility(View.VISIBLE);
             sortOrder = Contract.MemberEntry.COLUMN_RESULT_TIME + " ASC";
         } else {
+            buttonToNewMember.setEnabled(true);
+            buttonToStages.setEnabled(true);
+            buttonExportToExcel.setVisibility(View.GONE);
             sortOrder = Contract.MemberEntry.COLUMN_START_NUMBER + " ASC";
         }
 
@@ -120,6 +133,18 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 }
             }
         });
+
+        //TODO onLongClickListener - menu with delete (with confirm) and edit...
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(LOG, "to constructor memberId = " + id);
+                android.app.FragmentManager fm = getFragmentManager();
+                MembersDialogFragment membersDialogFragment = MembersDialogFragment.newInstance(id);
+                membersDialogFragment.show(fm, "membersDialog");
+                return true;
+            }
+        });
     }
 
     @Override
@@ -136,12 +161,24 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_competition_complete:
-                ContentValues cv = new ContentValues();
-                cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED);
-                String where = Contract.CompetitionEntry._ID + "=?";
-                String[] args = new String[]{String.valueOf(competitionId)};
-                getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
-                PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 1).apply();
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("Завершить соревнование?");
+                alertDialog.setMessage("Поменять уже ничего нельзя будет...");
+                alertDialog.setNegativeButton("Отмена", null);
+                alertDialog.setPositiveButton("Завершить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ContentValues cv = new ContentValues();
+                        cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED);
+                        String where = Contract.CompetitionEntry._ID + "=?";
+                        String[] args = new String[]{String.valueOf(competitionId)};
+                        getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
+                        PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 1).apply();
+                        getSupportLoaderManager().restartLoader(Contract.MEMBERS_LOADER_ID, null, MembersActivity.this);
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -150,7 +187,9 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = new CursorLoader(MembersActivity.this, ContentProvider.MEMBER_CONTENT_URI, null, null, null, sortOrder);
+        String selection = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_COMPETITION_ID + "=?";
+        String[] selectionArgs = new String[] {String.valueOf(competitionId)};
+        CursorLoader cursorLoader = new CursorLoader(MembersActivity.this, ContentProvider.MEMBER_CONTENT_URI, null, selection, selectionArgs, sortOrder);
         return cursorLoader;
     }
 
@@ -271,39 +310,48 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 Cursor cursorAttempt = getContentResolver().query(ContentProvider.ATTEMPT_CONTENT_URI, null, whereAttempt, whereArgsAttempt, null);
                 cursorAttempt.moveToFirst();
                 Log.d(LOG, "Cursor Attempt count = " + cursorAttempt.getCount() + ", position = " + cursorAttempt.getPosition() + ", columnNames = " + Arrays.asList(cursorAttempt.getColumnNames()));
-                String attemptId = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry._ID));
-                String penaltyTotal = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL));
-                String distanceTime = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_DISTANCE_TIME));
-                String resultTime = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_RESULT_TIME));
+                String attemptId = "";
+                String penaltyTotal = "";
+                String distanceTime = "";
+                String resultTime = "";
+                if (cursorAttempt.getCount() > 0) {
+                    attemptId = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry._ID));
+                    penaltyTotal = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL));
+                    distanceTime = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_DISTANCE_TIME));
+                    long resultTimeMillis = Long.parseLong(cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_RESULT_TIME)));
+                    resultTime = new Chronometer(this).timeLongMillisToString(resultTimeMillis);
+                    //resultTime = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_RESULT_TIME));
 
-                //write stages penalty
-                String whereSOA = Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID + "=?";
-                Log.i(LOG, "Attempt.id = " + attemptId);
-                String[] whereArgsSOA = new String[] {attemptId};
-                Cursor cursorSOA = getContentResolver().query(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, null, whereSOA, whereArgsSOA, null);
-                cursorSOA.moveToFirst();
-                for (int j = 0; j < cursorSOA.getCount(); j++ ) {
-                    Log.d(LOG, "Cursor SOA count = " + cursorSOA.getCount() + ", position = " + cursorSOA.getPosition() + ", columnNames = " + Arrays.asList(cursorSOA.getColumnNames()));
-                    String stagePenalty = cursorSOA.getString(cursorSOA.getColumnIndex(Contract.StageOnAttemptEntry.COLUMN_PENALTY));
-                    writeExcel.writeCell(writableSheet, column++, row, stagePenalty, false);
-                    Log.i(LOG, "Stage penalty = " + stagePenalty);
-                    cursorSOA.moveToNext();
+                    //write stages penalty
+                    String whereSOA = Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID + "=?";
+                    Log.i(LOG, "Attempt.id = " + attemptId);
+                    String[] whereArgsSOA = new String[] {attemptId};
+                    Cursor cursorSOA = getContentResolver().query(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, null, whereSOA, whereArgsSOA, null);
+                    cursorSOA.moveToFirst();
+                    for (int j = 0; j < cursorSOA.getCount(); j++ ) {
+                        Log.d(LOG, "Cursor SOA count = " + cursorSOA.getCount() + ", position = " + cursorSOA.getPosition() + ", columnNames = " + Arrays.asList(cursorSOA.getColumnNames()));
+                        String stagePenalty = cursorSOA.getString(cursorSOA.getColumnIndex(Contract.StageOnAttemptEntry.COLUMN_PENALTY));
+                        writeExcel.writeCell(writableSheet, column++, row, stagePenalty, false);
+                        Log.i(LOG, "Stage penalty = " + stagePenalty);
+                        cursorSOA.moveToNext();
+                    }
+
+                    //write result
+                    writeExcel.writeCell(writableSheet, column++, row, distanceTime, false);
+                    writeExcel.writeCell(writableSheet, column++, row, penaltyTotal, false);
+                    writeExcel.writeCell(writableSheet, column++, row, resultTime, false);
+                    writeExcel.writeCell(writableSheet, column++, row, placeNumber, false);
+
+                    //Запись
+                    writableWorkbook.write();
+                    Log.d(LOG, "Write to excel");
+                    writableWorkbook.close();
                 }
-
-                //write result
-                writeExcel.writeCell(writableSheet, column++, row, distanceTime, false);
-                writeExcel.writeCell(writableSheet, column++, row, penaltyTotal, false);
-                writeExcel.writeCell(writableSheet, column++, row, resultTime, false);
-                writeExcel.writeCell(writableSheet, column++, row, placeNumber, false);
                 row += 1;
                 column = 0;
                 cursorMembers.moveToNext();
-            }
 
-            //Запись
-            writableWorkbook.write();
-            Log.d(LOG, "Write to excel");
-            writableWorkbook.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

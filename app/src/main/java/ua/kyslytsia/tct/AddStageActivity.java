@@ -99,6 +99,7 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
             selection = Contract.StageEntry.COLUMN_DISTANCE_ID + " IN (?, ?, ?)";
             selectionArgs = new String[]{String.valueOf(Contract.DISTANCE_FIGURE_ID), String.valueOf(Contract.DISTANCE_CROSS_ID), String.valueOf(Contract.DISTANCE_TRIAL_ID)};
         } else {
+            Log.i(LOG, "Not complex distance");
             selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
             selectionArgs = new String[] {String.valueOf(distanceId)};
         }
