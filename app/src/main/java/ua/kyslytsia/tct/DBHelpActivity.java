@@ -1,17 +1,20 @@
 package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -80,6 +83,25 @@ public class DBHelpActivity extends AppCompatActivity implements LoaderManager.L
         int[] toPerson = new int[] {R.id.textView_personId, R.id.textView_personFirstName, R.id.textView_personLastName};
         personAdapter = new SimpleCursorAdapter(this, R.layout.item_person, null, fromPerson, toPerson, 0);
         person.setAdapter(personAdapter);
+
+        Button buttonDeleteAll = (Button) findViewById(R.id.buttonDbHelpDeleteAll);
+        buttonDeleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(DBHelpActivity.this);
+                alertDialog.setTitle("Очистить все таблицы?");
+                alertDialog.setNegativeButton("Отмена", null);
+                alertDialog.setPositiveButton("Все очистить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbHelper.onUpgrade(sqLiteDatabase, 6, 7);
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+
+            }
+        });
     }
 
     public void addGender(View v) {

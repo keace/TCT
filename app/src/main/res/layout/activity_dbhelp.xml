@@ -24,7 +24,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewGender"
     />
 
@@ -36,9 +36,8 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listViewType"
-        />
+        android:layout_height="0dp"
+        android:id="@+id/listViewType" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -48,7 +47,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewDistance"
         />
 
@@ -60,7 +59,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewStage"
         />
 
@@ -72,7 +71,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewCompetition"
         />
 
@@ -84,7 +83,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewPerson"
         />
 
@@ -96,7 +95,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewJudge"
         />
 
@@ -108,7 +107,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewMember"
         />
 
@@ -120,7 +119,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewAttempt"
         />
 
@@ -132,7 +131,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewStageOnCompetition"
         />
 
@@ -144,8 +143,16 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:id="@+id/listViewStageOnAttempt"
         />
+
+    <Button
+        android:text="Удалить все таблицы"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonDbHelpDeleteAll"
+        android:gravity="center"
+        android:layout_gravity="bottom" />
 
 </LinearLayout>

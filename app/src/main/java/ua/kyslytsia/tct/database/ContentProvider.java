@@ -313,7 +313,7 @@ public class ContentProvider extends android.content.ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        Log.i(LOG, "result uri: " + resultUri.getPath());
+        Log.i(LOG, "Inserted uri: " + resultUri.getPath());
         getContext().getContentResolver().notifyChange(uri, null);
         return resultUri;
     }
@@ -329,14 +329,20 @@ public class ContentProvider extends android.content.ContentProvider {
                 rowsDeleted = sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
+            case COMPETITIONS:
+                Log.i(LOG, "Delete COMPETITIONS");
+                rowsDeleted = sqLiteDatabase.delete(Contract.CompetitionEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+
             case MEMBERS:
                 Log.i(LOG, "Delete MEMBERS");
                 rowsDeleted = sqLiteDatabase.delete(Contract.MemberEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        Log.i(LOG, "rowsDeleted = " + rowsDeleted);
+        Log.i(LOG, "Rows Deleted = " + rowsDeleted);
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsDeleted;
     }
@@ -381,7 +387,7 @@ public class ContentProvider extends android.content.ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        Log.i(LOG, "rowsUpdated = " + rowsUpdated);
+        Log.i(LOG, "Rows Updated = " + rowsUpdated);
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsUpdated;
     }

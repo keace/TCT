@@ -1,5 +1,7 @@
 package ua.kyslytsia.tct;
 
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -10,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -78,6 +81,26 @@ public class MainActivity extends AppCompatActivity
                 Log.i(LOG, "Get shared preferences is closed = " + sharedPreferences.getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0));
                 //Log.i(LOG, "Put competition_id to intent = " + id);
                 startActivity(membersIntent);
+            }
+        });
+
+        listViewMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                alertDialog.setTitle("Удалить соревнование?");
+                alertDialog.setNegativeButton("Отмена", null);
+                alertDialog.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String where = Contract.CompetitionEntry._ID + "=?";
+                        String[] args = new String[]{String.valueOf(id)};
+                        getContentResolver().delete(ContentProvider.COMPETITION_CONTENT_URI, where, args);
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+                return true;
             }
         });
 
@@ -158,11 +181,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(dbHelpIntent);
                 break;
             }
-            case R.id.attempt: {
-                Intent dbAttemptIntent = new Intent(this, AttemptActivity.class);
-                startActivity(dbAttemptIntent);
-                break;
-            }
+//            case R.id.attempt: {
+//                Intent dbAttemptIntent = new Intent(this, AttemptActivity.class);
+//                startActivity(dbAttemptIntent);
+//                break;
+//            }
         }
         /*if (competitionId == R.competitionId.nav_dbhelp) {
 

@@ -71,14 +71,14 @@ public class NewCompetitionActivity extends AppCompatActivity {
         type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Selected TYPE competitionId = " + id, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Selected TYPE competitionId = " + id, Toast.LENGTH_SHORT).show();
                 selectedTypeId = id;
                 adapterDistance.notifyDataSetChanged();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Toast.makeText(getApplicationContext(), "TYPE NOT SELECTED", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "TYPE NOT SELECTED", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,7 +99,7 @@ public class NewCompetitionActivity extends AppCompatActivity {
                 super.onChanged();
                 String selection = Contract.DistanceEntry.COLUMN_TYPE_ID + " = ?";
                 String[] selectionArgs = new String[]{String.valueOf(selectedTypeId)};
-                Toast.makeText(NewCompetitionActivity.this, "TYPE_ID = " + String.valueOf(selectedTypeId), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NewCompetitionActivity.this, "TYPE_ID = " + String.valueOf(selectedTypeId), Toast.LENGTH_SHORT).show();
                 Cursor cursorDistance = sqLiteDatabase.query(Contract.DistanceEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
                 String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_NAME};
                 int[] toDistance = new int[]{R.id.textViewItemDistance};
@@ -118,13 +118,13 @@ public class NewCompetitionActivity extends AppCompatActivity {
         distance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Selected DISTANCE competitionId = " + id, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), "Selected DISTANCE competitionId = " + id, Toast.LENGTH_SHORT).show();
                 selectedDistanceId = id;
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Toast.makeText(getApplicationContext(), "DISTANCE NOT SELECTED", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "DISTANCE NOT SELECTED", Toast.LENGTH_SHORT).show();
             }
         });
 

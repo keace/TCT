@@ -174,7 +174,8 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                         String[] args = new String[]{String.valueOf(competitionId)};
                         getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
                         PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 1).apply();
-                        getSupportLoaderManager().restartLoader(Contract.MEMBERS_LOADER_ID, null, MembersActivity.this);
+                        //getSupportLoaderManager().restartLoader(Contract.MEMBERS_LOADER_ID, null, MembersActivity.this);
+                        getContentResolver().notifyChange(ContentProvider.COMPETITION_CONTENT_URI, null);
                     }
                 });
                 alertDialog.create();
@@ -216,6 +217,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         String distance = c.getString(c.getColumnIndex(Contract.DISTANCE_NAME_ADAPTED));
         int rank = c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK));
         int penaltyCost = c.getInt(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_COST));
+
 
         try {
             WriteExcel writeExcel= new WriteExcel();
@@ -280,12 +282,13 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
             Cursor cursorMembers = getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, whereMember, whereArgsMember, sortMember);
             Log.i(LOG, "CursorMembers getCount = " + cursorMembers.getCount());
             cursorMembers.moveToFirst();
-            column = 0;
-            int row = 10;
+
+            int row = 9;
             Log.d(LOG, "Cursor Members count = " + cursorMembers.getCount() + ", position = " + cursorMembers.getPosition() + ", columnNames = " + Arrays.asList(cursorMembers.getColumnNames()));
             cursorMembers.moveToFirst();
             for (int i = 0; i < cursorMembers.getCount(); i++) {
-                Log.i(LOG, "i = " + i);
+                ++row;
+                column = 0;
                 String memberId = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MemberEntry._ID));
                 String startNumber = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER));
                 String team = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.TEAM_NAME_ADAPTED));
@@ -294,16 +297,16 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 String middleName = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_MIDDLE_NAME));
                 String birthday = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_BIRTHDAY));
                 String placeNumber = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MEMBER_PLACE_ADAPTED));
-                Log.i(LOG, "Member: " + lastName + " " + firstName);
-                StringBuffer sb = new StringBuffer();
+
+                StringBuilder sb = new StringBuilder();
                 sb.append(lastName).append(" ").append(firstName).append(" ").append(middleName);
                 String fullName = sb.toString();
                 sb.delete(0, sb.length());
+                Log.i(LOG, "Member = " + fullName + ", i = " + i + ", write to row = " + row + ", column from = " + column);
                 writeExcel.writeCell(writableSheet, column++, row, startNumber, false);
                 writeExcel.writeCell(writableSheet, column++, row, team, false);
                 writeExcel.writeCell(writableSheet, column++, row, fullName, false);
                 writeExcel.writeCell(writableSheet, column++, row, birthday, false);
-                //TODO implement Attempt entries and StageOnAttempt penalty on it
 
                 String whereAttempt = Contract.AttemptEntry.COLUMN_COMPETITION_ID + "=? and " + Contract.AttemptEntry.COLUMN_MEMBERS_ID + "=?";
                 String[] whereArgsAttempt = new String[] {String.valueOf(competitionId), memberId};
@@ -315,6 +318,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 String distanceTime = "";
                 String resultTime = "";
                 if (cursorAttempt.getCount() > 0) {
+                    Log.i(LOG, "cursorAttempt getCount = " + cursorAttempt.getCount());
                     attemptId = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry._ID));
                     penaltyTotal = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL));
                     distanceTime = cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_DISTANCE_TIME));
@@ -343,15 +347,16 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                     writeExcel.writeCell(writableSheet, column++, row, placeNumber, false);
 
                     //Запись
-                    writableWorkbook.write();
+//                    writableWorkbook.write();
                     Log.d(LOG, "Write to excel");
-                    writableWorkbook.close();
                 }
-                row += 1;
-                column = 0;
+//                row += 1;
+//                column = 0;
+//                writableWorkbook.write();
                 cursorMembers.moveToNext();
-
             }
+            writableWorkbook.write();
+            writableWorkbook.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
