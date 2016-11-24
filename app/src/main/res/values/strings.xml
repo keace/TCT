@@ -2,6 +2,7 @@
     <string name="app_name">TSTComp</string>
     <string name="application_full_name">Техника Спортивного\nТуризма</string>
 
+    <!-- Navigation Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -10,9 +11,8 @@
     <string name="navigation_drawer_item_encyclopedia">Энциклопедия</string>
     <string name="navigation_drawer_item_calculator">Калькулятор</string>
 
-    <string name="action_settings">Settings</string>
+    <!-- Titles -->
     <string name="title_calculator">Калькулятор</string>
-
     <string name="title_competition">Соревнования</string>
     <string name="title_new_competition">Новое соревнование</string>
     <string name="title_stage_on_competition">Этапы соревнования</string>
@@ -20,6 +20,9 @@
     <string name="title_members">Участники соревнования</string>
     <string name="title_new_members">Добавить участника</string>
     <string name="title_attempt">Заезд</string>
+
+    <!-- Actions -->
+    <string name="action_settings">Настройки</string>
     <string name="action_home">Соревнования</string>
 
     <string-array name="types">
@@ -28,7 +31,14 @@
         <item>Водный</item>
     </string-array>
 
-    <!-- Calculator resources -->
+    <!-- Main Activity (Competitions) -->
+    <string name="main_activity_toolbar_subtitle">Список соревнований</string>
+
+    <string name="main_activity_alert_dialog_title">Удалить соревнование?</string>
+    <string name="main_activity_alert_dialog_positive">Удалить</string>
+    <string name="main_activity_alert_dialog_negative">Отмена</string>
+
+    <!-- Calculator -->
     <string name="calc_action_settings">Настройки</string>
     <string name="calc_action_about">О программе</string>
     <string name="calc_about_text">

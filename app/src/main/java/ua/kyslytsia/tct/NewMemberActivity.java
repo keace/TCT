@@ -20,11 +20,15 @@ import java.util.Arrays;
 
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.database.DbHelper;
 
 public class NewMemberActivity extends AppCompatActivity {
     EditText lastName, firstName, middleName, birthday, startNumber, team;
     RadioGroup gender;
     long competitionId, memberId;
+
+    DbHelper dbHelper = new DbHelper(this);
+
     public static final String LOG = "Log! NewMemberActivity";
 
     @Override
@@ -102,7 +106,7 @@ public class NewMemberActivity extends AppCompatActivity {
 //            startNumber.setError("Стартовый номер нужно ввести!");
         } else {
             //TODO Refactor to use ContentResolver
-            SQLiteDatabase sqLiteDatabase = MainActivity.dbHelper.getWritableDatabase();
+            SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
 
             String selection = Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?";
             String[] selectionArgs = new String[] {lastName.getText().toString(), firstName.getText().toString()};

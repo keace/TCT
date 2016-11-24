@@ -1,11 +1,9 @@
 package ua.kyslytsia.tct;
 
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -29,117 +27,37 @@ import android.widget.TextView;
 import ua.kyslytsia.tct.adapter.CompetitionCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
-import ua.kyslytsia.tct.database.DbHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG = "Log! Main Activity";
-    public static DbHelper dbHelper;
-    public SQLiteDatabase sqLiteDatabase;
+
     ListView listViewMain;
     CompetitionCursorAdapter competitionCursorAdapter;
+    SharedPreferences sharedPreferences;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle("Список соревнований");
-        setSupportActionBar(toolbar);
+        toolbar = initToolbar();
 
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        dbHelper = new DbHelper(this);
-        sqLiteDatabase = dbHelper.getWritableDatabase();
-
-        //dbHelper.onUpgrade(sqLiteDatabase, 6, 7);
-
-        //TextView textViewMain = (TextView) findViewById(R.id.textViewMain);
-
-        //textViewMain.setText(dbHelper.getDatabaseName());
-
-        listViewMain = (ListView) findViewById(R.id.listViewMain);
-        getSupportLoaderManager().initLoader(Contract.COMPETITIONS_LOADER_ID, null, this);
-        //Cursor cursorComp = sqLiteDatabase.query(Contract.CompetitionEntry.TABLE_NAME, null, null, null, null, null, null);
-
-        competitionCursorAdapter = new CompetitionCursorAdapter(this, null, Contract.COMPETITIONS_LOADER_ID);
-        listViewMain.setAdapter(competitionCursorAdapter);
-        listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent membersIntent = new Intent(MainActivity.this, MembersActivity.class);
-                //membersIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id);
-                TextView textViewDistanceId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
-                TextView textViewIsClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
-                long distanceId = Long.parseLong(textViewDistanceId.getText().toString());
-                int isClosed = Integer.parseInt(textViewIsClosed.getText().toString());
-                sharedPreferences.edit().putLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, id).apply();
-                sharedPreferences.edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, distanceId).apply();
-                sharedPreferences.edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, isClosed).apply();
-                Log.i(LOG, "Get shared preferences competition id = " + sharedPreferences.getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0));
-                Log.i(LOG, "Get shared preferences distance id = " + sharedPreferences.getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0));
-                Log.i(LOG, "Get shared preferences is closed = " + sharedPreferences.getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0));
-                //Log.i(LOG, "Put competition_id to intent = " + id);
-                startActivity(membersIntent);
-            }
-        });
-
-        listViewMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-                alertDialog.setTitle("Удалить соревнование?");
-                alertDialog.setNegativeButton("Отмена", null);
-                alertDialog.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String where = Contract.CompetitionEntry._ID + "=?";
-                        String[] args = new String[]{String.valueOf(id)};
-                        getContentResolver().delete(ContentProvider.COMPETITION_CONTENT_URI, where, args);
-                    }
-                });
-                alertDialog.create();
-                alertDialog.show();
-                return true;
-            }
-        });
-
-        // FAB
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent newCompetitionIntent = new Intent(MainActivity.this, NewCompetitionActivity.class);
-                    startActivity(newCompetitionIntent);
-                    /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT)
-                            .setAction("Action", null).show();
-                            */
-                }
-            });
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        if (drawer != null) {
-            drawer.addDrawerListener(toggle);
-        }
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            navigationView.setNavigationItemSelectedListener(this);
-        }
+        initCompetitionsListView();
+        initFAB();
+        initNavigationDrawer(toolbar);
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (drawer != null) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -167,7 +85,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
@@ -181,36 +98,18 @@ public class MainActivity extends AppCompatActivity
                 startActivity(dbHelpIntent);
                 break;
             }
-//            case R.id.attempt: {
-//                Intent dbAttemptIntent = new Intent(this, AttemptActivity.class);
-//                startActivity(dbAttemptIntent);
-//                break;
-//            }
         }
-        /*if (competitionId == R.competitionId.nav_dbhelp) {
 
-        }
-        /*else if (competitionId == R.competitionId.nav_gallery) {
-
-        } else if (competitionId == R.competitionId.nav_slideshow) {
-
-        } else if (competitionId == R.competitionId.nav_manage) {
-
-        } else if (competitionId == R.competitionId.nav_share) {
-
-        } else if (competitionId == R.competitionId.nav_send) {
-
-        }
-*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = new CursorLoader(MainActivity.this, ContentProvider.COMPETITION_CONTENT_URI, null, null, null, null);
-        return cursorLoader;
+        return new CursorLoader(this, ContentProvider.COMPETITION_CONTENT_URI, null, null, null, null);
     }
 
     @Override
@@ -221,5 +120,101 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         competitionCursorAdapter.swapCursor(null);
+    }
+
+    private Toolbar initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setSubtitle(R.string.main_activity_toolbar_subtitle);
+        }
+        setSupportActionBar(toolbar);
+        return toolbar;
+    }
+
+    private void initFAB() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent newCompetitionIntent = new Intent(MainActivity.this, NewCompetitionActivity.class);
+                    startActivity(newCompetitionIntent);
+                }
+            });
+        }
+    }
+
+    private void initNavigationDrawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        if (drawer != null) {
+            drawer.addDrawerListener(toggle);
+        }
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+        }
+    }
+
+    private void initCompetitionsListView(){
+        listViewMain = (ListView) findViewById(R.id.listViewMain);
+        getSupportLoaderManager().initLoader(Contract.COMPETITIONS_LOADER_ID, null, this);
+        competitionCursorAdapter = new CompetitionCursorAdapter(this, null, Contract.COMPETITIONS_LOADER_ID);
+
+        listViewMain.setAdapter(competitionCursorAdapter);
+        listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setSharedPreferencesAndGoToMembers(view, id);
+            }
+        });
+
+        listViewMain.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+                showCompetitionAlertDialog(id);
+                return true;
+            }
+        });
+    }
+    private void showCompetitionAlertDialog(final long id){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle(R.string.main_activity_alert_dialog_title)
+                .setNegativeButton(R.string.main_activity_alert_dialog_negative, null)
+                .setPositiveButton(R.string.main_activity_alert_dialog_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteCompetition(id);
+            }
+        });
+        alertDialog.create();
+        alertDialog.show();
+    }
+
+    private void setSharedPreferencesAndGoToMembers (View view, long competitionId){
+        TextView textViewDistanceId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
+        TextView textViewIsClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
+        long distanceId = Long.parseLong(textViewDistanceId.getText().toString());
+        int isClosed = Integer.parseInt(textViewIsClosed.getText().toString());
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.edit().putLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId).apply();
+        sharedPreferences.edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, distanceId).apply();
+        sharedPreferences.edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, isClosed).apply();
+        Log.i(LOG, "Get shared preferences competition id = " + sharedPreferences.getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0) +
+                "distance id = " + sharedPreferences.getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0) +
+                "is closed = " + sharedPreferences.getInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 0));
+
+        Intent membersIntent = new Intent(MainActivity.this, MembersActivity.class);
+        startActivity(membersIntent);
+    }
+
+    private void deleteCompetition (long id) {
+        String where = Contract.CompetitionEntry._ID + "=?";
+        String[] args = new String[]{String.valueOf(id)};
+        getContentResolver().delete(ContentProvider.COMPETITION_CONTENT_URI, where, args);
     }
 }
