@@ -252,6 +252,10 @@ public class ContentProvider extends android.content.ContentProvider {
                 queryBuilder.setTables(Contract.StageOnAttemptEntry.TABLE_NAME);
                 break;
 
+            case TYPES:
+                Log.i(LOG, "Query TYPES");
+                queryBuilder.setTables(Contract.TypeEntry.TABLE_NAME);
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }

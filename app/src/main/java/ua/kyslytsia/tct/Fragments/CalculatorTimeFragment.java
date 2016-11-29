@@ -15,10 +15,6 @@ import java.util.GregorianCalendar;
 import ua.kyslytsia.tct.R;
 
 public class CalculatorTimeFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int FRAGMENT_TIME_ID = 1;
 
@@ -31,10 +27,6 @@ public class CalculatorTimeFragment extends Fragment {
     public CalculatorTimeFragment() {
     }
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
     public static CalculatorTimeFragment newInstance() {
         CalculatorTimeFragment fragment = new CalculatorTimeFragment();
         Bundle args = new Bundle();

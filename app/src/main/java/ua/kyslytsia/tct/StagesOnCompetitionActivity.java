@@ -109,7 +109,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
                 Intent intentToAddStageActivity = new Intent(StagesOnCompetitionActivity.this, AddStageActivity.class);
                 intentToAddStageActivity.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
                 intentToAddStageActivity.putExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, adapter.getCount());
-                Log.i(LOG, "Put to AddStageActivity Intent lastPosition = " + adapter.getCount());
+                Log.i(LOG, "Put to AddStageActivity Intent lastElementPosition = " + adapter.getCount());
                 startActivity(intentToAddStageActivity);
             }
         });
@@ -121,7 +121,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         String[] selectionArgs = new String[] {String.valueOf(id)};
         getContentResolver().delete(uri, where, selectionArgs);
 
-        //displayed position and position in db = position in adapter + 1
+        //displayed position and position in db = position in adapterAddStage + 1
         position = position+1;
         if (adapter.getItem(position) != null) {
             for (int i = position; i < adapter.getCount(); i++) {

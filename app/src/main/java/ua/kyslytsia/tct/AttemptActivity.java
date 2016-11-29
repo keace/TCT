@@ -28,58 +28,81 @@ import ua.kyslytsia.tct.mocks.StageOnAttempt;
 import ua.kyslytsia.tct.utils.Chronometer;
 
 
-public class AttemptActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-        SimpleCursorAdapter adapter;
+public class AttemptActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    SimpleCursorAdapter adapter;
+    private static final String LOG = "Log! Attempt Activity";
 
-    private static final String LOG = "Log Attempt Activity";
     TextView textViewTime, textViewPenaltySum, textViewPenaltyCost, textViewResult;
-    TextView minutes, seconds, millis;
-    ListView listView;
-    int penaltyCost, penaltyTotal = 0;
+    ListView listViewStages;
+    int penaltyTotal;
     String timeString, resultTimeString;
     long timeLong, resultTimeLong;
-    long competition_id;
+    long competitionId, memberId;
     private ArrayList<StageOnAttempt> stageOnAttemptList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attempt);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle("Заезд");
-        setSupportActionBar(toolbar);
+        initToolbar();
 
-        //get Member_id from Intent
-        final long memberId = getIntent().getLongExtra(Contract.MemberEntry._ID, 0);
-        competition_id = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        memberId = getIntent().getLongExtra(Contract.MemberEntry._ID, 0);
+        competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
 
         textViewTime = (TextView) findViewById(R.id.textViewAttemptTime);
         textViewPenaltyCost = (TextView) findViewById(R.id.textViewAttemptPenaltyCost);
         textViewPenaltySum = (TextView) findViewById(R.id.textViewAttemptPenaltySum);
         textViewResult = (TextView) findViewById(R.id.textViewAttemptResultTime);
 
-        Cursor c = getContentResolver().query(Uri.parse(ContentProvider.COMPETITION_CONTENT_URI + "/" + competition_id), new String[]{Contract.CompetitionEntry.COLUMN_PENALTY_COST}, null, null, null);
-        //Cursor c = MainActivity.dbHelper.getReadableDatabase().query(Contract.CompetitionEntry.TABLE_NAME, null, Contract.CompetitionEntry._ID, new String[]{String.valueOf(competition_id)}, null, null, null, null);
-        c.moveToFirst();
-        String s = c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_COST));
-        textViewPenaltyCost.setText(s);
+        String penaltyCost = getPenaltyCost();
+        textViewPenaltyCost.setText(penaltyCost);
 
-        listView = (ListView) findViewById(R.id.listViewAttempt);
-        getSupportLoaderManager().initLoader(Contract.ATTEMPT_LOADER_ID, null, this);
-        String[] from = new String[] {Contract.StageOnCompetitionEntry.COLUMN_POSITION, Contract.STAGE_NAME_ADAPTED};
-        int[] to = new int[] {R.id.textViewSOAStagePosition, R.id.textViewSOAStageName};
-        adapter = new SimpleCursorAdapter(AttemptActivity.this, R.layout.item_stage_on_attempt, null, from, to, Contract.ATTEMPT_LOADER_ID);
-        listView.setAdapter(adapter);
+        initListViewWithStages();
+        initChronometerWithButtons();
 
-        final Chronometer ch = (Chronometer) findViewById(R.id.chronometer);
+        Button buttonWriteResults = (Button) findViewById(R.id.buttonAttemptWriteResults);
+        buttonWriteResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                long attemptId = insertAttemptToDb();
+                insertAllStagesOnAttemptToDb(attemptId);
+                updateResultTimeInMember();
+                Intent toMembersIntent = new Intent(AttemptActivity.this, MembersActivity.class);
+                startActivity(toMembersIntent);
+            }
+        });
+    }
+
+    private void updateResultTimeInMember() {
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.MemberEntry.COLUMN_RESULT_TIME, resultTimeLong);
+        Log.i(LOG, "Try to update Member with id = " + memberId + ", add resultTimeLong = " + resultTimeLong);
+        getContentResolver().update(Uri.parse(ContentProvider.MEMBER_CONTENT_URI + "/" + memberId), cv, Contract.MemberEntry._ID + "=" + memberId, null);
+    }
+
+    private void insertAllStagesOnAttemptToDb(long attemptId) {
+        ContentValues cv = new ContentValues();
+        Log.d(LOG, "StageOnAttempt size " + stageOnAttemptList.size());
+
+        for (int i = 0; i < stageOnAttemptList.size(); i++) {
+            cv.put(Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID, attemptId);
+            cv.put(Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID, stageOnAttemptList.get(i).getStage_on_competition_id());
+            cv.put(Contract.StageOnAttemptEntry.COLUMN_PENALTY, stageOnAttemptList.get(i).getPenalty());
+            Log.i(LOG, "Try to insert Stage on attempt: " + cv.toString());
+            getContentResolver().insert(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, cv);
+            cv.clear();
+        }
+    }
+
+    private void initChronometerWithButtons() {
+        final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
 
         Button buttonStart = (Button) findViewById(R.id.buttonAttemptStart);
-
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ch.setBase(SystemClock.elapsedRealtime());
-                ch.start();
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
             }
         });
 
@@ -87,108 +110,98 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ch.stop();
+                chronometer.stop();
                 penaltyTotal = 0;
-                String penaltyOnStage;
-                textViewTime.setText(ch.getText());
+                textViewTime.setText(chronometer.getText());
 
-                for (int i=0; i<listView.getChildCount(); i++) {
-                    View view = listView.getChildAt(i);
-                    EditText editTextPenaltyOnStage = (EditText) view.findViewById(R.id.editTextSOAPenaltyOnStage);
-                    if (editTextPenaltyOnStage.getText().toString().equals("")) {
-                        penaltyOnStage = "0";
-                    } else {
-                        penaltyOnStage = editTextPenaltyOnStage.getText().toString();
-                    }
-                    stageOnAttemptList.add(new StageOnAttempt(listView.getAdapter().getItemId(i), Long.parseLong(penaltyOnStage)));
-                    Log.d(LOG, "StageOnAttempt elements: " + stageOnAttemptList.get(i));
-                    if(!penaltyOnStage.equals(""))
-                        penaltyTotal+=Integer.parseInt(penaltyOnStage);
-                }
+                processThePenaltiesResults();
                 textViewPenaltySum.setText(String.valueOf(penaltyTotal));
 
-                timeLong = ch.getTimeElapsed();
-                timeString = ch.timeLongMillisToString(timeLong);
+                timeLong = chronometer.getTimeElapsed();
+                timeString = chronometer.timeLongMillisToString(timeLong);
 
                 resultTimeLong = Long.valueOf(textViewPenaltyCost.getText().toString()) * Long.valueOf(textViewPenaltySum.getText().toString()) * 1000L + timeLong;
-                resultTimeString = ch.timeLongMillisToString(resultTimeLong);
+                resultTimeString = chronometer.timeLongMillisToString(resultTimeLong);
 
                 textViewResult.setText(resultTimeString);
             }
         });
+    }
 
-//        Button resetAllButton = (Button) findViewById(R.id.buttonAttemptResetAll);
-//        resetAllButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                textViewPenaltySum.setText("");
-//                textViewTime.setText("");
-//                textViewResult.setText("");
-//                ch.setBase(SystemClock.elapsedRealtime());
-//            }
-//        });
+    private void initListViewWithStages() {
+        listViewStages = (ListView) findViewById(R.id.listViewAttempt);
+        getSupportLoaderManager().initLoader(Contract.ATTEMPT_LOADER_ID, null, this);
+        String[] from = new String[]{Contract.StageOnCompetitionEntry.COLUMN_POSITION, Contract.STAGE_NAME_ADAPTED};
+        int[] to = new int[]{R.id.textViewSOAStagePosition, R.id.textViewSOAStageName};
+        adapter = new SimpleCursorAdapter(AttemptActivity.this, R.layout.item_stage_on_attempt, null, from, to, Contract.ATTEMPT_LOADER_ID);
+        listViewStages.setAdapter(adapter);
+    }
 
-        Button writeButton = (Button) findViewById(R.id.buttonAttemptWrite);
-        writeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long attemptId;
+    private String getPenaltyCost() {
+        Cursor c = getContentResolver().query(Uri.parse(ContentProvider.COMPETITION_CONTENT_URI + "/" + competitionId), new String[]{Contract.CompetitionEntry.COLUMN_PENALTY_COST}, null, null, null);
+        c.moveToFirst();
+        return c.getString(c.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_COST));
+    }
 
-                ContentValues cv = new ContentValues();
-                cv.put(Contract.AttemptEntry.COLUMN_COMPETITION_ID, competition_id);
-                cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
-                cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  //TRY NUMBER NOT HANDLING
-                cv.put(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL, penaltyTotal);
-                cv.put(Contract.AttemptEntry.COLUMN_DISTANCE_TIME, timeString);
-                cv.put(Contract.AttemptEntry.COLUMN_RESULT_TIME, resultTimeLong);
-                cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, 1);
-                Log.i(LOG, "Try to insert Attempt: " + cv.toString());
-                attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
-                Log.i(LOG, "Insert ok. attemptId = " + attemptId);
-                cv.clear();
-                Log.d(LOG, "StageOnAttempt size " + stageOnAttemptList.size());
-                for (int i = 0; i < stageOnAttemptList.size(); i++){
-                    cv.put(Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID, attemptId);
-                    cv.put(Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID, stageOnAttemptList.get(i).getStage_on_competition_id());
-                    cv.put(Contract.StageOnAttemptEntry.COLUMN_PENALTY, stageOnAttemptList.get(i).getPenalty());
-                    Log.i(LOG, "Try to insert Stage on attempt: " + cv.toString());
-                    getContentResolver().insert(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, cv);
-                    cv.clear();
-                }
-                cv.put(Contract.MemberEntry.COLUMN_RESULT_TIME, resultTimeLong);
-                Log.i(LOG, "Try to update Member with id = " + memberId + ", add resultTimeLong = " + resultTimeLong);
-                getContentResolver().update(Uri.parse(ContentProvider.MEMBER_CONTENT_URI + "/" + memberId), cv, Contract.MemberEntry._ID + "=" + memberId, null);
-                cv.clear();
-                Intent toMembersIntent = new Intent(AttemptActivity.this, MembersActivity.class);
-                toMembersIntent.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competition_id);
-                startActivity(toMembersIntent);
-            }
-        });
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setSubtitle(R.string.attempt_activity_toolbar_subtitle);
+        }
+        setSupportActionBar(toolbar);
+    }
 
-//        Button buttonReset = (Button) findViewById(R.id.buttonAttemptReset);
-//        buttonReset.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ch.setBase(SystemClock.elapsedRealtime());
-//                ch.stop();
-//            }
-//        });
+    public long insertAttemptToDb() {
+        long attemptId;
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.AttemptEntry.COLUMN_COMPETITION_ID, competitionId);
+        cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
+        cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  //TRY NUMBER NOT HANDLING
+        cv.put(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL, penaltyTotal);
+        cv.put(Contract.AttemptEntry.COLUMN_DISTANCE_TIME, timeString);
+        cv.put(Contract.AttemptEntry.COLUMN_RESULT_TIME, resultTimeLong);
+        cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, 1);
+        Log.i(LOG, "Try to insert Attempt: " + cv.toString());
+        attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
+        Log.i(LOG, "Insert ok. attemptId = " + attemptId);
+        return attemptId;
+    }
+
+    private void processThePenaltiesResults() {
+        String penaltyOnStage;
+        for (int stagePosition = 0; stagePosition < listViewStages.getChildCount(); stagePosition++) {
+            penaltyOnStage = getPenaltyOnStage(stagePosition);
+
+            saveStageAndPenaltyToList(stagePosition, penaltyOnStage);
+            countPenaltyTotal(penaltyOnStage);
+        }
+    }
+
+    private void countPenaltyTotal(String penaltyOnStage) {
+        if (!penaltyOnStage.equals(""))
+            penaltyTotal += Integer.parseInt(penaltyOnStage);
+    }
+
+    private void saveStageAndPenaltyToList(int i, String penaltyOnStage) {
+        stageOnAttemptList.add(new StageOnAttempt(listViewStages.getAdapter().getItemId(i), Long.parseLong(penaltyOnStage)));
+        Log.d(LOG, "StageOnAttempt elements: " + stageOnAttemptList.get(i));
+    }
+
+    private String getPenaltyOnStage(int position) {
+        String penaltyOnStage;
+        View view = listViewStages.getChildAt(position);
+        EditText editTextPenaltyOnStage = (EditText) view.findViewById(R.id.editTextSOAPenaltyOnStage);
+        if (editTextPenaltyOnStage.getText().toString().equals("")) {
+            penaltyOnStage = "0";
+        } else {
+            penaltyOnStage = editTextPenaltyOnStage.getText().toString();
+        }
+        return penaltyOnStage;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader cursorLoader = null;
-        switch (id) {
-            case Contract.ATTEMPT_LOADER_ID:
-                cursorLoader = new CursorLoader(AttemptActivity.this, ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, null, null, null, null);
-                break;
-
-//            case Contract.COMPETITIONS_LOADER_ID:
-//                cursorLoader = new CursorLoader(AttemptActivity.this, ContentProvider.COMPETITION_CONTENT_URI, null, null, null, null);
-//                break;
-        }
-
-        return cursorLoader;
+        return new CursorLoader(AttemptActivity.this, ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, null, null, null, null);
     }
 
     @Override

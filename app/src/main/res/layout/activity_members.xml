@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonMembersExportToExcel"
         android:layout_gravity="bottom"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:onClick="writeFullResultToExcel"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -34,12 +35,13 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:text="Этапы"
+            android:text="К этапам"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/buttonMembersToStages"
             android:layout_weight="1"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"
+            android:onClick="startStagesOnCompetitionActivity"/>
 
         <Button
             android:text="Новый участник"
@@ -47,7 +49,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/buttonMembersToNewMember"
             android:layout_weight="1"
-            android:layout_gravity="bottom" />
+            android:layout_gravity="bottom"
+            android:onClick="startNewMemberActivity"/>
 
     </LinearLayout>
 </LinearLayout>

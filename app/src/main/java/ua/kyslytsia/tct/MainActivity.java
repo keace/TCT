@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
         listViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                setSharedPreferencesAndGoToMembers(view, id);
+                putIdsToSharedPreferencesAndGoToMembers(view, id);
             }
         });
 
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-    private void setSharedPreferencesAndGoToMembers (View view, long competitionId){
+    private void putIdsToSharedPreferencesAndGoToMembers(View view, long competitionId){
         TextView textViewDistanceId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
         TextView textViewIsClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
         long distanceId = Long.parseLong(textViewDistanceId.getText().toString());

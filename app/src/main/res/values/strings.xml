@@ -25,11 +25,11 @@
     <string name="action_settings">Настройки</string>
     <string name="action_home">Соревнования</string>
 
-    <string-array name="types">
+    <!--<string-array name="types">
         <item>Велосипедный</item>
         <item>Горный</item>
         <item>Водный</item>
-    </string-array>
+    </string-array>-->
 
     <!-- Main Activity (Competitions) -->
     <string name="main_activity_toolbar_subtitle">Список соревнований</string>
@@ -38,7 +38,28 @@
     <string name="main_activity_alert_dialog_positive">Удалить</string>
     <string name="main_activity_alert_dialog_negative">Отмена</string>
 
-    <!-- Calculator -->
+    <!-- Add Stage Activity -->
+    <string name="add_stage_activity_toolbar_subtitle">Добавить этапы</string>
+
+    <!-- Attempt Activity -->
+    <string name="attempt_activity_toolbar_subtitle">Заезд</string>
+
+    <!-- New Competition Activity -->
+    <string name="new_competition_activity_toolbar_subtitle">Создать соревнование</string>
+
+    <!-- Export to Excel -->
+    <string name="excel_sheet_title">Протокол соревновний по спортивному туризму</string>
+    <string-array name="competition_header">
+        <item>Дата</item>
+        <item>Название</item>
+        <item>Место проведения</item>
+        <item>Вид туризма</item>
+        <item>Дистанция</item>
+        <item>Класс</item>
+        <item>Штраф, сек</item>
+    </string-array>
+
+    <!-- Calculator Activity -->
     <string name="calc_action_settings">Настройки</string>
     <string name="calc_action_about">О программе</string>
     <string name="calc_about_text">

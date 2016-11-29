@@ -15,9 +15,6 @@ import java.util.GregorianCalendar;
 import ua.kyslytsia.tct.R;
 
 public class CalculatorPenaltyFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this fragment.
-     */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int FRAGMENT_PENALTY_ID = 0;
 
@@ -30,10 +27,6 @@ public class CalculatorPenaltyFragment extends Fragment {
     public CalculatorPenaltyFragment() {
     }
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
     public static CalculatorPenaltyFragment newInstance() {
         CalculatorPenaltyFragment fragment = new CalculatorPenaltyFragment();
         Bundle args = new Bundle();
