@@ -2,7 +2,6 @@ package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,74 +16,83 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
-
 
 import java.util.Arrays;
 
 import ua.kyslytsia.tct.adapter.AddStageCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
-import ua.kyslytsia.tct.database.DbHelper;
 
 public class AddStageActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    ListView listView;
-    private String LOG = "LOG ADD STAGE";
-    //DbHelper dbHelper = MainActivity.dbHelper;
+    ListView listViewAddStage;
+    private String LOG = "LOG! Add Stage";
     long competitionId;
     long distanceId;
-    int lastPosition;
-    AddStageCursorAdapter adapter;
+    int lastElementPosition;
+    AddStageCursorAdapter adapterAddStage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_stage);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle("Добавить этапы");
-        setSupportActionBar(toolbar);
+        initToolbar();
 
         competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
         distanceId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0);
-        Log.d(LOG, "Catch distanceId from SharedPreferences = " + distanceId);
-        lastPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
-        Log.i(LOG, "Get competition_id from intent = " + competitionId);
+        lastElementPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
+        Log.d(LOG, "Get Ids from SharedPreferences: competitionId = " + competitionId + ", distanceId = " + distanceId +
+                ". Get lastElementPosition from intent = " + lastElementPosition);
 
-        getSupportLoaderManager().initLoader(Contract.ADD_STAGE_LOADER_ID, null, this);
-        listView = (ListView) findViewById(R.id.listViewAddStage);
-        adapter = new AddStageCursorAdapter(this, null, Contract.ADD_STAGE_LOADER_ID);
-        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(AddStageActivity.this, "id = " + id, Toast.LENGTH_SHORT).show();
-            }
-        });
+        initAddStageListView();
 
         Button buttonAddStages = (Button) findViewById(R.id.buttonAddStages);
-        buttonAddStages.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ContentValues cv = new ContentValues();
-                long[] stageIds = listView.getCheckedItemIds();
-                int length = stageIds.length;
-                Log.i(LOG, "Count of items to add = " + length);
-                for (int i = 0; i < stageIds.length; i++) {
-                //for (long stageId : stageIds) {
-                    //Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageId);
-                    Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIds[i]);
-                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
-                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageIds[i]);
-                    cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, lastPosition+i+1);
-                    //dbHelper.addStageOnCompetition(competitionId, stageIds[i], lastPosition+i);
-                    getContentResolver().insert(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv);
+        if (buttonAddStages != null) {
+            buttonAddStages.setOnClickListener(new Button.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addStageToCompetition();
+                    Intent intent = new Intent(AddStageActivity.this, StagesOnCompetitionActivity.class);
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(AddStageActivity.this, StagesOnCompetitionActivity.class);
-                intent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
-                startActivity(intent);
+            });
+        }
+    }
+
+    private void addStageToCompetition() {
+        ContentValues cv = new ContentValues();
+        long[] stageIdsToAdd = listViewAddStage.getCheckedItemIds();
+        Log.i(LOG, "Count of items to add = " + stageIdsToAdd.length);
+        for (int i = 0; i < stageIdsToAdd.length; i++) {
+            Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIdsToAdd[i]);
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID, stageIdsToAdd[i]);
+            cv.put(Contract.StageOnCompetitionEntry.COLUMN_POSITION, lastElementPosition+i+1);
+            getContentResolver().insert(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, cv);
+        }
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setSubtitle(R.string.add_stage_activity_toolbar_subtitle);
+        }
+        setSupportActionBar(toolbar);
+    }
+
+    private void initAddStageListView() {
+        getSupportLoaderManager().initLoader(Contract.ADD_STAGE_LOADER_ID, null, this);
+        listViewAddStage = (ListView) findViewById(R.id.listViewAddStage);
+        adapterAddStage = new AddStageCursorAdapter(this, null, Contract.ADD_STAGE_LOADER_ID);
+        listViewAddStage.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+        listViewAddStage.setAdapter(adapterAddStage);
+
+        listViewAddStage.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //TODO show dialog with info about stage
+                Log.i(LOG, "Long click for id = " + id);
+                return false;
             }
         });
     }
@@ -94,27 +102,32 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         String selection;
         String[] selectionArgs;
         Log.i(LOG, "Distance id = " + distanceId);
-        if (distanceId == Contract.DISTANCE_COMPLEX_ID) {
+        if (isComplexDistance(distanceId)) {
             Log.i(LOG, "Complex distance");
             selection = Contract.StageEntry.COLUMN_DISTANCE_ID + " IN (?, ?, ?)";
-            selectionArgs = new String[]{String.valueOf(Contract.DISTANCE_FIGURE_ID), String.valueOf(Contract.DISTANCE_CROSS_ID), String.valueOf(Contract.DISTANCE_TRIAL_ID)};
+            selectionArgs = new String[]{
+                    String.valueOf(Contract.DISTANCE_FIGURE_ID),
+                    String.valueOf(Contract.DISTANCE_CROSS_ID),
+                    String.valueOf(Contract.DISTANCE_TRIAL_ID)};
         } else {
             Log.i(LOG, "Not complex distance");
             selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
             selectionArgs = new String[] {String.valueOf(distanceId)};
         }
         Log.i(LOG, "selectionArgs = " + Arrays.asList(selectionArgs));
-        CursorLoader cursorLoader = new CursorLoader(AddStageActivity.this, ContentProvider.STAGE_CONTENT_URI, null, selection, selectionArgs, null);
-        return cursorLoader;
+        return new CursorLoader(this, ContentProvider.STAGE_CONTENT_URI, null, selection, selectionArgs, null);
     }
 
+    public boolean isComplexDistance(long distanceId) {
+        return distanceId == Contract.DISTANCE_COMPLEX_ID;
+    }
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
+        adapterAddStage.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        adapterAddStage.swapCursor(null);
     }
 }
