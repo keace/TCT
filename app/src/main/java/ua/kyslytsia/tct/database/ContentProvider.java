@@ -242,9 +242,6 @@ public class ContentProvider extends android.content.ContentProvider {
             case ATTEMPTS:
                 Log.i(LOG, "Query Attempts");
                 queryBuilder.setTables(Contract.AttemptEntry.TABLE_NAME);
-//                public static final String COLUMN_PENALTY_TOTAL = "penalty_total";
-//                public static final String COLUMN_DISTANCE_TIME = "time";
-//                public static final String COLUMN_RESULT_TIME = "result_time";
                 break;
 
             case STAGES_ON_ATTEMPTS:

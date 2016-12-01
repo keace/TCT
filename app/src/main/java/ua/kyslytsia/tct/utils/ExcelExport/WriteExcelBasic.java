@@ -1,8 +1,6 @@
-package ua.kyslytsia.tct.utils;
+package ua.kyslytsia.tct.utils.ExcelExport;
 
-import android.app.Application;
 import android.os.Environment;
-import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -17,11 +15,9 @@ import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import ua.kyslytsia.tct.MainActivity;
-import ua.kyslytsia.tct.MembersActivity;
 
-public class WriteExcel {
-    private static final String LOG = "Log WriteExcel";
+public class WriteExcelBasic {
+    private static final String LOG = "Log WriteExcelBasic";
 
     /**
      *
@@ -35,9 +31,6 @@ public class WriteExcel {
 
         //get the sdcard's storage directory
         File sdCard = Environment.getExternalStorageDirectory();
-        Log.d(LOG, "Can write = " + Environment.getDataDirectory().canWrite());
-        Log.d(LOG, "Get absolute path = " + Environment.getDataDirectory().getAbsolutePath());
-        //File deviceMemory = Environment.getDataDirectory().canWrite();
 
         //add on the your app's path
         File dir = new File(sdCard.getAbsolutePath() + "/JExcelApiTest");
@@ -97,6 +90,7 @@ public class WriteExcel {
             headerFormat.setAlignment(Alignment.CENTRE);
             newCell.setCellFormat(headerFormat);
         }
+
         //TODO можно сделать Left-Header with no-center align and set constants to different formatting
         sheet.addCell(newCell);
     }

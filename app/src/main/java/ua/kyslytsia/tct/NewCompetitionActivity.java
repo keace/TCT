@@ -22,7 +22,7 @@ import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
 
 public class NewCompetitionActivity extends AppCompatActivity {
-    private final String LOG = "LOG NewCompetitiony";
+    private static final String LOG = "LOG New Competition";
     private EditText date, name, place, rank, penalty;
     private Spinner type, distance;
     private Button buttonSaveToStagesOnCompetitions, buttonSaveToMembers;

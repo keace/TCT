@@ -25,12 +25,6 @@
     <string name="action_settings">Настройки</string>
     <string name="action_home">Соревнования</string>
 
-    <!--<string-array name="types">
-        <item>Велосипедный</item>
-        <item>Горный</item>
-        <item>Водный</item>
-    </string-array>-->
-
     <!-- Main Activity (Competitions) -->
     <string name="main_activity_toolbar_subtitle">Список соревнований</string>
 
@@ -47,8 +41,20 @@
     <!-- New Competition Activity -->
     <string name="new_competition_activity_toolbar_subtitle">Создать соревнование</string>
 
+    <!-- Members Activity -->
+    <string name="members_activity_toolbar_subtitle">Список участников</string>
+
+    <string name="members_activity_toast_error_already_finished">Этот участник уже прошел дистанцию</string>
+
+    <!-- Dialogs -->
+    <string name="competition_complete_dialog_title">Завершить соревнование?</string>
+    <string name="competition_complete_dialog_message">Поменять ничего нелдьзя будет</string>
+    <string name="competition_complete_dialog_negative">Отмена</string>
+    <string name="competition_complete_dialog_positive">Завершить</string>
+
     <!-- Export to Excel -->
     <string name="excel_sheet_title">Протокол соревновний по спортивному туризму</string>
+
     <string-array name="competition_header">
         <item>Дата</item>
         <item>Название</item>
@@ -59,6 +65,14 @@
         <item>Штраф, сек</item>
     </string-array>
 
+    <string name="excel_result_start_number">Стартовый номер</string>
+    <string name="excel_result_team">Команда</string>
+    <string name="excel_result_full_name">ФИО</string>
+    <string name="excel_result_birthday">Дата рождения</string>
+    <string name="excel_result_distance_time">Время дистанции</string>
+    <string name="excel_result_penalty_total">Сумма штрафов</string>
+    <string name="excel_result_result_time">Результат</string>
+    <string name="excel_result_place_number">Место</string>
     <!-- Calculator Activity -->
     <string name="calc_action_settings">Настройки</string>
     <string name="calc_action_about">О программе</string>
