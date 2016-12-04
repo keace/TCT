@@ -58,13 +58,4 @@ public class MembersDialogFragment extends DialogFragment {
         });
         return dialogBuilder.create();
     }
-
-//    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity().getApplicationContext());
-//    builder.setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            Log.i(LOG, "Удалить нажато");
-//        }
-//    });
-//    builder.setNeutralButton("Отмена", null);
 }

@@ -47,6 +47,8 @@ public class Contract {
     }
     public static final String TYPE_NAME_ADAPTED = TypeEntry.TABLE_NAME + "_" + TypeEntry.COLUMN_NAME;
 
+    public static final int TYPE_BIKE_ID = 1;
+
     public static final class DistanceEntry implements BaseColumns {
         public static final String TABLE_NAME = "distance";
         public static final String COLUMN_TYPE_ID = "type_id";

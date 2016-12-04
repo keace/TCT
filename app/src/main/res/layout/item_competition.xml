@@ -1,84 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_menu_manage"
+            android:id="@+id/imageViewItemCompType"
+            android:contentDescription="bike"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:text="25.12.2016"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textViewItemCompDate"
-            android:text="Дата"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginRight="10dp"
-            />
+            android:gravity="center"
+            android:textSize="12sp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:text="4й класс"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Велосипедный"
-            android:id="@+id/textViewItemCompType"
-            android:layout_marginRight="10dp" />
-
+            android:id="@+id/textViewItemCompRank"
+            android:gravity="center"
+            android:textSize="10sp"
+            android:textStyle="normal|bold" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="О, это длинное название"
-        android:id="@+id/textViewItemCompName"
-        android:layout_weight="0"
-        android:layout_marginRight="10dp"
-        android:gravity="center" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Месторасположение соревнований"
-        android:id="@+id/textViewItemCompPlace"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:gravity="center" />
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="3"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
 
         <TextView
-            android:id="@+id/textViewItemCompDistId"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
+            android:text="125й открытый международный фестиваль песни и пляски имени В.И.мандельштама"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Комплексная"
+            android:id="@+id/textViewItemCompName"
+            android:gravity="center"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:text="Украина, Харьковская обл., Эсхар, Партизанская поляна"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewItemCompPlace"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="normal|italic" />
+
+        <TextView
+            android:text="Комплексная дистанция"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/textViewItemCompDist"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2й-класс"
-            android:id="@+id/textViewItemCompRank"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:id="@+id/textViewItemCompIsClosed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible" />
-
+            android:gravity="center"
+            android:textSize="10sp"
+            android:textStyle="normal|bold" />
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="0.5"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="gone">
+
+        <TextView
+            android:text="125"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewItemCompMembersCount"
+            android:gravity="center"
+            android:textSize="12sp" />
+
+        <TextView
+            android:text="уч"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewItemCompDistId"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewItemCompIsClosed"
+            android:visibility="gone"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewItemCompType"
+            android:visibility="gone"/>
+
+    </LinearLayout>
 </LinearLayout>

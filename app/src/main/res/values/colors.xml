@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="colorFromLogoYellowLight">#FFD86B</color>
+    <color name="colorFromLogoYellowMiddle">#FFB103</color>
+
+    <color name="colorFromLogoBrownMiddle">#B16B34</color>
+    <color name="colorFromLogoBrownDark">#8E4915</color>
+
+    <color name="colorFromLogoRedMiddle">#E2573F</color>
+
 </resources>

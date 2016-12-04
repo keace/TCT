@@ -1,6 +1,7 @@
 package ua.kyslytsia.tct;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,17 +12,23 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
+import ua.kyslytsia.tct.adapter.AttemptCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.mocks.StageOnAttempt;
@@ -29,16 +36,20 @@ import ua.kyslytsia.tct.utils.Chronometer;
 
 
 public class AttemptActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    SimpleCursorAdapter adapter;
+//    SimpleCursorAdapter adapter;
+    AttemptCursorAdapter adapter;
     private static final String LOG = "Log! Attempt Activity";
 
     TextView textViewTime, textViewPenaltySum, textViewPenaltyCost, textViewResult;
     ListView listViewStages;
+    GridView gridViewStages;
     int penaltyTotal;
     String timeString, resultTimeString;
     long timeLong, resultTimeLong;
     long competitionId, memberId;
+    Button buttonStart, buttonStop, buttonWriteResults;
     private ArrayList<StageOnAttempt> stageOnAttemptList = new ArrayList<>();
+    private HashMap<Integer, String> penalties = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +71,11 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         initListViewWithStages();
         initChronometerWithButtons();
 
-        Button buttonWriteResults = (Button) findViewById(R.id.buttonAttemptWriteResults);
+        buttonWriteResults = (Button) findViewById(R.id.buttonAttemptWriteResults);
         buttonWriteResults.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                buttonStop.performClick();  /* if user not click "Stop" button before clicking "Save results" */
                 long attemptId = insertAttemptToDb();
                 insertAllStagesOnAttemptToDb(attemptId);
                 updateResultTimeInMember();
@@ -97,7 +109,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
     private void initChronometerWithButtons() {
         final Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
 
-        Button buttonStart = (Button) findViewById(R.id.buttonAttemptStart);
+        buttonStart = (Button) findViewById(R.id.buttonAttemptStart);
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,11 +118,13 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        Button buttonStop = (Button) findViewById(R.id.buttonAttemptStop);
+        buttonStop = (Button) findViewById(R.id.buttonAttemptStop);
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 chronometer.stop();
+                gridViewStages.clearFocus(); /* Clear focus is important! For work with onChangeFocusListener in Adapter with ViewHolder (editText in listView or gridView is amazing) */
+
                 penaltyTotal = 0;
                 textViewTime.setText(chronometer.getText());
 
@@ -130,11 +144,15 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
 
     private void initListViewWithStages() {
         listViewStages = (ListView) findViewById(R.id.listViewAttempt);
+        gridViewStages = (GridView) findViewById(R.id.gridViewAttempt);
+
         getSupportLoaderManager().initLoader(Contract.ATTEMPT_LOADER_ID, null, this);
-        String[] from = new String[]{Contract.StageOnCompetitionEntry.COLUMN_POSITION, Contract.STAGE_NAME_ADAPTED};
-        int[] to = new int[]{R.id.textViewSOAStagePosition, R.id.textViewSOAStageName};
-        adapter = new SimpleCursorAdapter(AttemptActivity.this, R.layout.item_stage_on_attempt, null, from, to, Contract.ATTEMPT_LOADER_ID);
-        listViewStages.setAdapter(adapter);
+//        String[] from = new String[]{Contract.StageOnCompetitionEntry.COLUMN_POSITION, Contract.STAGE_NAME_ADAPTED};
+//        int[] to = new int[]{R.id.textViewSOAStagePosition, R.id.textViewSOAStageName};
+//        adapter = new SimpleCursorAdapter(AttemptActivity.this, R.layout.item_stage_on_attempt, null, from, to, Contract.ATTEMPT_LOADER_ID);
+        adapter = new AttemptCursorAdapter(this, null, Contract.ATTEMPT_LOADER_ID);
+
+        gridViewStages.setAdapter(adapter);
     }
 
     private String getPenaltyCost() {
@@ -156,11 +174,11 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         ContentValues cv = new ContentValues();
         cv.put(Contract.AttemptEntry.COLUMN_COMPETITION_ID, competitionId);
         cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
-        cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  //TRY NUMBER NOT HANDLING
+        cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  /* Try number not handling yet */
         cv.put(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL, penaltyTotal);
         cv.put(Contract.AttemptEntry.COLUMN_DISTANCE_TIME, timeString);
         cv.put(Contract.AttemptEntry.COLUMN_RESULT_TIME, resultTimeLong);
-        cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, 1);
+        cv.put(Contract.AttemptEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED);
         Log.i(LOG, "Try to insert Attempt: " + cv.toString());
         attemptId = Long.parseLong(getContentResolver().insert(ContentProvider.ATTEMPT_CONTENT_URI, cv).getLastPathSegment());
         Log.i(LOG, "Insert ok. attemptId = " + attemptId);
@@ -175,11 +193,16 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
             saveStageAndPenaltyToList(stagePosition, penaltyOnStage);
             countPenaltyTotal(penaltyOnStage);
         }
+
+        Iterator iterator = adapter.getInputValues().values().iterator();
+        while (iterator.hasNext()) {
+            penaltyTotal += Integer.parseInt(iterator.next().toString());
+        }
     }
 
     private void countPenaltyTotal(String penaltyOnStage) {
-        if (!penaltyOnStage.equals(""))
-            penaltyTotal += Integer.parseInt(penaltyOnStage);
+//        if (!penaltyOnStage.equals(""))
+//            penaltyTotal += Integer.parseInt(penaltyOnStage);
     }
 
     private void saveStageAndPenaltyToList(int i, String penaltyOnStage) {

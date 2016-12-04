@@ -52,6 +52,9 @@
     <string name="competition_complete_dialog_negative">Отмена</string>
     <string name="competition_complete_dialog_positive">Завершить</string>
 
+    <!-- Main Layout -->
+    <string name="maim_layout_rank_concat">"-й класс"</string>
+
     <!-- Export to Excel -->
     <string name="excel_sheet_title">Протокол соревновний по спортивному туризму</string>
 

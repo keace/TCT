@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import ua.kyslytsia.tct.MainActivity;
@@ -22,23 +23,26 @@ public class CompetitionCursorAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.item_competition, parent, false);
-        return view;
+        return inflater.inflate(R.layout.item_competition, parent, false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-       // DbHelper dbHelper = MainActivity.dbHelper;
+
+        ImageView type = (ImageView) view.findViewById(R.id.imageViewItemCompType);
+        int typeId = cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_TYPE_ID));
+        switch (typeId) {
+            case Contract.TYPE_BIKE_ID:
+                type.setImageResource(R.drawable.bike);
+        }
 
         TextView date = (TextView) view.findViewById(R.id.textViewItemCompDate);
         date.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)));
 
-        TextView type = (TextView) view.findViewById(R.id.textViewItemCompType);
-//        type.setText(dbHelper.findTypeNameById(cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_TYPE_ID))));
-        type.setText(cursor.getString(cursor.getColumnIndex(Contract.TYPE_NAME_ADAPTED)));
+        TextView typeName = (TextView) view.findViewById(R.id.textViewItemCompType);
+        typeName.setText(cursor.getString(cursor.getColumnIndex(Contract.TYPE_NAME_ADAPTED)));
 
         TextView name = (TextView) view.findViewById(R.id.textViewItemCompName);
-//        name.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)));
         name.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)));
 
         TextView place = (TextView) view.findViewById(R.id.textViewItemCompPlace);
@@ -49,10 +53,11 @@ public class CompetitionCursorAdapter extends CursorAdapter {
 
         TextView distId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
         distId.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID)));
-        //        dist.setText(dbHelper.findDistanceById(cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID))));
 
         TextView rank = (TextView) view.findViewById(R.id.textViewItemCompRank);
-        rank.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)) + "-й класс");
+        rank.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)) + context.getString(R.string.maim_layout_rank_concat));
+
+        TextView membersCount = (TextView) view.findViewById(R.id.textViewItemCompMembersCount);
 
         TextView isClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
         isClosed.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));

@@ -131,6 +131,12 @@ public class MainActivity extends AppCompatActivity
         return toolbar;
     }
 
+    @Override
+    protected void onRestart() {
+        getContentResolver().notifyChange(ContentProvider.COMPETITION_CONTENT_URI, null);
+        super.onRestart();
+    }
+
     private void initFAB() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
