@@ -179,8 +179,9 @@ public class NewCompetitionActivity extends AppCompatActivity {
             cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
             long competitionId = sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, cv);
             PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId).apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, selectedDistanceId).apply();
             isCreated = true;
-            Log.d(LOG, "Competition created with id = " + competitionId);
+            Log.d(LOG, "Competition created with competitionId = " + competitionId + ", distanceId = " + selectedDistanceId);
             }
         return isCreated;
     }

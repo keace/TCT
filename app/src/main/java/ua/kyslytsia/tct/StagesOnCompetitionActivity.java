@@ -72,8 +72,6 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
         getSupportLoaderManager().initLoader(Contract.STAGE_ON_COMPETITION_LOADER_ID, null, this);
         listView.setAdapter(adapter);
 
-
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, final long id) {

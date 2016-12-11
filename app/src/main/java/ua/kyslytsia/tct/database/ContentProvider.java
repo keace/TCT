@@ -10,15 +10,12 @@ import android.util.Log;
 
 public class ContentProvider extends android.content.ContentProvider {
 
-    private final String LOG = "LOG! " + getClass().getSimpleName();
+    private final String LOG = "Log! Content Provider";
     private DbHelper dbHelper;
 
     private static final String SLASH_LATTICE = "/#";
 
     private static final String AUTHORITY = "ua.kyslytsia.tct.database";
-
-//    private static final String PERSON_BASE_PATH = Contract.PersonEntry.TABLE_NAME;
-//    private static final String COMPETITION_BASE_PATH = Contract.CompetitionEntry.TABLE_NAME;
 
     public static final Uri GENDER_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + Contract.GenderEntry.TABLE_NAME);
     public static final Uri PERSON_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + Contract.PersonEntry.TABLE_NAME);
@@ -66,16 +63,9 @@ public class ContentProvider extends android.content.ContentProvider {
 
     private static final int STAGES_ON_COMPETITIONS = 1200;
     private static final int STAGE_ON_COMPETITION_ID = 1201;
-//    private static final int STAGE_ON_COMPETITION_ADD = 1202;
 
     private static final int STAGES_ON_ATTEMPTS = 1300;
     private static final int STAGE_ON_ATTEMPT_ID = 1301;
-
-//    private static final int PERSON_LASTNAME = 1002;
-//    private static final int PERSON_FIRST_NAME = 1003;
-//    private static final int PERSON_MIDDLE_NAME = 1004;
-//    private static final int PERSON_GENDER_ID = 1005;
-//    private static final int PERSON_BIRTHDAY = 1006;
 
     private static final UriMatcher sURI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -112,7 +102,6 @@ public class ContentProvider extends android.content.ContentProvider {
 
         sURI_MATCHER.addURI(AUTHORITY, Contract.StageOnCompetitionEntry.TABLE_NAME, STAGES_ON_COMPETITIONS);
         sURI_MATCHER.addURI(AUTHORITY, Contract.StageOnCompetitionEntry.TABLE_NAME + SLASH_LATTICE, STAGE_ON_COMPETITION_ID);
- //       sURI_MATCHER.addURI(AUTHORITY, Contract.StageOnCompetitionEntry.TABLE_NAME + SLASH_LATTICE + ",#,#", STAGE_ON_COMPETITION_ADD);
 
         sURI_MATCHER.addURI(AUTHORITY, Contract.StageOnAttemptEntry.TABLE_NAME, STAGES_ON_ATTEMPTS);
         sURI_MATCHER.addURI(AUTHORITY, Contract.StageOnAttemptEntry.TABLE_NAME + SLASH_LATTICE, STAGE_ON_ATTEMPT_ID);
@@ -177,14 +166,11 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID,
                         Contract.StageOnCompetitionEntry.COLUMN_POSITION,
                         Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry.COLUMN_NAME + " AS " + Contract.STAGE_NAME_ADAPTED
-//                        Contract.StageOnAttemptEntry.COLUMN_PENALTY
                 };
 
                 queryBuilder.setTables(Contract.StageOnCompetitionEntry.TABLE_NAME +
                         " INNER JOIN " + Contract.StageEntry.TABLE_NAME +
                         " ON " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID
-//                        " LEFT OUTER JOIN " + Contract.StageOnAttemptEntry.TABLE_NAME +
-//                        " ON " + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID + "=" + Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID
                 );
                 sortOrder = Contract.StageOnCompetitionEntry.COLUMN_POSITION;
                 break;
@@ -202,12 +188,9 @@ public class ContentProvider extends android.content.ContentProvider {
                         Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID,
                         Contract.StageOnCompetitionEntry.COLUMN_POSITION
                 };
-                //queryBuilder.setTables(Contract.StageEntry.TABLE_NAME);
                 queryBuilder.setTables(Contract.StageEntry.TABLE_NAME +
                         " LEFT OUTER JOIN " + Contract.StageOnCompetitionEntry.TABLE_NAME +
                         " ON " + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID + "=" + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID);
-                queryBuilder.appendWhere(Contract.StageOnCompetitionEntry.COLUMN_POSITION + " IS NULL" );
-
                 break;
 
             case MEMBERS:
@@ -246,7 +229,11 @@ public class ContentProvider extends android.content.ContentProvider {
 
             case STAGES_ON_ATTEMPTS:
                 Log.i(LOG, "Query STAGES_ON_ATTEMPTS");
-                queryBuilder.setTables(Contract.StageOnAttemptEntry.TABLE_NAME);
+                queryBuilder.setTables(Contract.StageOnAttemptEntry.TABLE_NAME +
+                " INNER JOIN " + Contract.StageOnCompetitionEntry.TABLE_NAME +
+                " ON " + Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID + "=" + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID +
+                " INNER JOIN " + Contract.StageEntry.TABLE_NAME +
+                " ON " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + "=" + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID);
                 break;
 
             case TYPES:
@@ -277,12 +264,13 @@ public class ContentProvider extends android.content.ContentProvider {
         Uri resultUri;
         switch (uriType) {
             case PERSONS:
+                Log.i(LOG, "Insert PERSONS");
                 id = sqLiteDatabase.insert(Contract.PersonEntry.TABLE_NAME, null, values);
                 resultUri = Uri.parse(PERSON_CONTENT_URI + "/" + id);
                 break;
 
             case MEMBERS:
-                Log.i(LOG, "Insert MEMBER_ID");
+                Log.i(LOG, "Insert MEMBERS");
                 id = sqLiteDatabase.insert(Contract.MemberEntry.TABLE_NAME, null, values);
                 resultUri = Uri.parse(MEMBER_CONTENT_URI + "/" + id);
                 break;
@@ -356,7 +344,6 @@ public class ContentProvider extends android.content.ContentProvider {
         switch (uriType){
             case STAGES_ON_COMPETITIONS:
                 Log.i(LOG, "Update STAGES_ON_COMPETITIONS");
-                // !!! May be transaction?
                 rowsUpdated = sqLiteDatabase.update(Contract.StageOnCompetitionEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
 

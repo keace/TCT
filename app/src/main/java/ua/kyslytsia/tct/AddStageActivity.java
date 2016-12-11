@@ -25,8 +25,8 @@ import ua.kyslytsia.tct.database.Contract;
 
 public class AddStageActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    ListView listViewAddStage;
     private String LOG = "LOG! Add Stage";
+    ListView listViewAddStage;
     long competitionId;
     long distanceId;
     int lastElementPosition;
@@ -62,7 +62,7 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
     private void addStageToCompetition() {
         ContentValues cv = new ContentValues();
         long[] stageIdsToAdd = listViewAddStage.getCheckedItemIds();
-        Log.i(LOG, "Count of items to add = " + stageIdsToAdd.length);
+        Log.d(LOG, "Count of items to add = " + stageIdsToAdd.length);
         for (int i = 0; i < stageIdsToAdd.length; i++) {
             Log.d(LOG, "TRY TO ADD compId = " + competitionId + ", stageId = " + stageIdsToAdd[i]);
             cv.put(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
@@ -97,30 +97,38 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         });
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String selection;
-        String[] selectionArgs;
-        Log.i(LOG, "Distance id = " + distanceId);
-        if (isComplexDistance(distanceId)) {
-            Log.i(LOG, "Complex distance");
-            selection = Contract.StageEntry.COLUMN_DISTANCE_ID + " IN (?, ?, ?)";
-            selectionArgs = new String[]{
-                    String.valueOf(Contract.DISTANCE_FIGURE_ID),
-                    String.valueOf(Contract.DISTANCE_CROSS_ID),
-                    String.valueOf(Contract.DISTANCE_TRIAL_ID)};
-        } else {
-            Log.i(LOG, "Not complex distance");
-            selection = Contract.StageEntry.COLUMN_DISTANCE_ID + "=?";
-            selectionArgs = new String[] {String.valueOf(distanceId)};
-        }
-        Log.i(LOG, "selectionArgs = " + Arrays.asList(selectionArgs));
-        return new CursorLoader(this, ContentProvider.STAGE_CONTENT_URI, null, selection, selectionArgs, null);
-    }
-
     public boolean isComplexDistance(long distanceId) {
         return distanceId == Contract.DISTANCE_COMPLEX_ID;
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String selectionAddStage;
+        String[] selectionArgsAddStage;
+        Log.i(LOG, "Distance id = " + distanceId);
+        if (isComplexDistance(distanceId)) {
+            Log.i(LOG, "Complex distance");
+            selectionAddStage = Contract.StageEntry.COLUMN_DISTANCE_ID + " IN (?, ?, ?) AND (" +
+                    Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "!=? OR " +
+                    Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " IS NULL)";
+            selectionArgsAddStage = new String[]{
+                    String.valueOf(Contract.DISTANCE_FIGURE_ID),
+                    String.valueOf(Contract.DISTANCE_CROSS_ID),
+                    String.valueOf(Contract.DISTANCE_TRIAL_ID),
+                    String.valueOf(competitionId)};
+        } else {
+            Log.i(LOG, "Not complex distance");
+            selectionAddStage = Contract.StageEntry.COLUMN_DISTANCE_ID + "=? AND (" +
+                    Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "!=? OR " +
+                    Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " IS NULL)";
+            selectionArgsAddStage = new String[] {
+                    String.valueOf(distanceId),
+                    String.valueOf(competitionId)};
+        }
+        Log.i(LOG, "selectionArgsAddStage = " + Arrays.asList(selectionArgsAddStage));
+        return new CursorLoader(this, ContentProvider.STAGE_CONTENT_URI, null, selectionAddStage, selectionArgsAddStage, null);
+    }
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapterAddStage.swapCursor(data);

@@ -188,9 +188,9 @@ public class MainActivity extends AppCompatActivity
     }
     private void showCompetitionAlertDialog(final long id){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle(R.string.main_activity_alert_dialog_title)
-                .setNegativeButton(R.string.main_activity_alert_dialog_negative, null)
-                .setPositiveButton(R.string.main_activity_alert_dialog_positive, new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(R.string.main_activity_longclick_dialog_title)
+                .setNegativeButton(R.string.main_activity_longclick_dialog_negative, null)
+                .setPositiveButton(R.string.main_activity_longclick_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteCompetition(id);

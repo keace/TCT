@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
@@ -29,7 +30,7 @@ import ua.kyslytsia.tct.adapter.MembersAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.dialog.MembersDialogFragment;
-import ua.kyslytsia.tct.utils.ExcelExport.ExportCompetitionDataToExcel;
+import ua.kyslytsia.tct.utils.excelExport.ExportCompetitionDataToExcel;
 
 public class MembersActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG = "LOG! Members Activity";
@@ -97,14 +98,40 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
             buttonToStages.setEnabled(true);
             buttonExportToExcel.setVisibility(View.GONE);
         }
+
+        buttonToNewMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNewMemberActivity();
+            }
+        });
+
+        buttonToStages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStagesOnCompetitionActivity();
+            }
+        });
+
+        buttonExportToExcel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    writeFullResultToExcel();
+                } catch (IOException | WriteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
-    public void startNewMemberActivity(View buttonView) {
+    public void startNewMemberActivity() {
         Intent intentToNewMember = new Intent(MembersActivity.this, NewMemberActivity.class);
         startActivity(intentToNewMember);
     }
 
-    public void startStagesOnCompetitionActivity(View buttonView) {
+    public void startStagesOnCompetitionActivity() {
         Intent intentToStagesOnCompetition = new Intent(MembersActivity.this, StagesOnCompetitionActivity.class);
         startActivity(intentToStagesOnCompetition);
     }
@@ -115,7 +142,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void startAttemptActivityWithParameters(long memberId) {
-        Log.i(LOG, "Time is null. Starting Attempt Activity");
+        Log.i(LOG, "Starting Attempt Activity");
         Intent intentToAttempt = new Intent(MembersActivity.this, AttemptActivity.class);
         intentToAttempt.putExtra(Contract.MemberEntry._ID, memberId);
         intentToAttempt.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId);
@@ -123,11 +150,11 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private boolean competitionIsClosed(){
-        String where = Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry._ID + "=? AND " + Contract.CompetitionEntry.COLUMN_IS_CLOSED + "=?";
-        String[] whereArgs = new String[] {String.valueOf(competitionId), String.valueOf(Contract.COMPETITION_CLOSED)};
-        Cursor cursor = getContentResolver().query(ContentProvider.COMPETITION_CONTENT_URI, null, where, whereArgs, null);
-        Log.i(LOG, "Cursor getCount = " + cursor.getCount());
-        return cursor.getCount() > 0;
+        Uri uriCompetitionWithId = ContentProvider.COMPETITION_CONTENT_URI.buildUpon().appendPath(String.valueOf(competitionId)).build();
+        Cursor cursor = getContentResolver().query(uriCompetitionWithId, null, null, null, null);
+        cursor.moveToFirst();
+        Log.d(LOG, "Is closed id = " + cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
+        return cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)) == Contract.COMPETITION_CLOSED;
     }
 
     private void initToolbar() {
@@ -166,7 +193,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         alertDialog.setTitle(R.string.competition_complete_dialog_title);
         alertDialog.setMessage(R.string.competition_complete_dialog_message);
         alertDialog.setNegativeButton(R.string.competition_complete_dialog_negative, null);
-        alertDialog.setPositiveButton(R.string.main_activity_alert_dialog_positive, new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(R.string.competition_complete_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ContentValues cv = new ContentValues();
@@ -175,10 +202,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
                 String[] args = new String[]{String.valueOf(competitionId)};
                 getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
                 PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 1).apply();
-
-                //TODO refresh list not work
-                //getSupportLoaderManager().restartLoader(Contract.MEMBERS_LOADER_ID, null, MembersActivity.this);
-                //getContentResolver().notifyChange(ContentProvider.COMPETITION_CONTENT_URI, null);
+                initButtons(); /* reinitialize buttons to set "Export to Excel" button active and other disactivate */
             }
         });
         alertDialog.create();
@@ -208,7 +232,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         adapter.swapCursor(null);
     }
 
-    public void writeFullResultToExcel(View buttonView) throws IOException, WriteException {
+    public void writeFullResultToExcel() throws IOException, WriteException {
         try {
         ExportCompetitionDataToExcel exportToExcel = new ExportCompetitionDataToExcel(MembersActivity.this);
         exportToExcel.writeDataToExcel();

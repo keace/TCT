@@ -4,11 +4,21 @@ public class StageOnAttempt {
     private long id;
     private long attempt_id;
     private long stage_on_competition_id;
-    private long penalty;
+    private int penalty;
+    private String name;
 
-    public StageOnAttempt(long stage_on_competition_id, long penalty) {
+    public StageOnAttempt(long stage_on_competition_id, int penalty, String name) {
         this.stage_on_competition_id = stage_on_competition_id;
         this.penalty = penalty;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getId() {
@@ -39,7 +49,7 @@ public class StageOnAttempt {
         return penalty;
     }
 
-    public void setPenalty(long penalty) {
+    public void setPenalty(int penalty) {
         this.penalty = penalty;
     }
 

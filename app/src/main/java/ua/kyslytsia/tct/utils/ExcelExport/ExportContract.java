@@ -1,6 +1,6 @@
-package ua.kyslytsia.tct.utils.ExcelExport;
+package ua.kyslytsia.tct.utils.excelExport;
 
-public class ExportContact {
+public class ExportContract {
 
     public static final String START_NUMBER = "startNumber";
     public static final String TEAM = "team";

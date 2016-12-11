@@ -50,7 +50,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         Log.i(LOG, Contract.SQL_CREATE_DISTANCE_TABLE);
         db.execSQL(Contract.SQL_CREATE_DISTANCE_TABLE);
-        /* Fill Distance for Bike tourism with type id = 1 */
 
         cv.put(Contract.DistanceEntry.COLUMN_TYPE_ID, 1);
         cv.put(Contract.DistanceEntry._ID, Contract.DISTANCE_RALLY_ID);

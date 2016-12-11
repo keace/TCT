@@ -1,4 +1,4 @@
-package ua.kyslytsia.tct.utils.ExcelExport;
+package ua.kyslytsia.tct.utils.excelExport;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
@@ -96,28 +97,31 @@ public class ExportCompetitionDataToExcel {
     private void fillResultsHeader() throws WriteException {
         Log.i(LOG, "fillResultsHeader() START");
 
-        mResultMap.put(ExportContact.START_NUMBER, mContext.getString(R.string.excel_result_start_number));
-        mResultMap.put(ExportContact.TEAM, mContext.getString(R.string.excel_result_team));
-        mResultMap.put(ExportContact.FULL_NAME, mContext.getString(R.string.excel_result_full_name));
-        mResultMap.put(ExportContact.BIRTHDAY, mContext.getString(R.string.excel_result_birthday));
+        mResultMap.put(ExportContract.START_NUMBER, mContext.getString(R.string.excel_result_start_number));
+        mResultMap.put(ExportContract.TEAM, mContext.getString(R.string.excel_result_team));
+        mResultMap.put(ExportContract.FULL_NAME, mContext.getString(R.string.excel_result_full_name));
+        mResultMap.put(ExportContract.BIRTHDAY, mContext.getString(R.string.excel_result_birthday));
 
         ArrayList<String> stageNames = findStageNamesForCompetition();
         for (int i = 0; i < stageNames.size(); i++) {
             mResultMap.put(stageNames.get(i), stageNames.get(i));
         }
-        mResultMap.put(ExportContact.DISTANCE_TIME, mContext.getString(R.string.excel_result_distance_time));
-        mResultMap.put(ExportContact.PENALTY_TOTAL, mContext.getString(R.string.excel_result_penalty_total));
-        mResultMap.put(ExportContact.RESULT_TIME, mContext.getString(R.string.excel_result_result_time));
-        mResultMap.put(ExportContact.PLACE, mContext.getString(R.string.excel_result_place_number));
+        mResultMap.put(ExportContract.DISTANCE_TIME, mContext.getString(R.string.excel_result_distance_time));
+        mResultMap.put(ExportContract.PENALTY_TOTAL, mContext.getString(R.string.excel_result_penalty_total));
+        mResultMap.put(ExportContract.RESULT_TIME, mContext.getString(R.string.excel_result_result_time));
+        mResultMap.put(ExportContract.PLACE, mContext.getString(R.string.excel_result_place_number));
 
         mColumn = 0;
-        Iterator<String> iterator = mResultMap.values().iterator();
+
+        Iterator<Map.Entry<String, String>> iterator = mResultMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            String headerValue = iterator.next();
-            Log.i(LOG, "ITERATOR Write to mColumn " + mColumn + ", mRow " + mRow + ": " + headerValue);
-            mWriteExcelBasic.writeCell(mWritableSheet, mColumn++, mRow, headerValue, true);
+            Map.Entry<String, String> headerValue = iterator.next();
+            Log.i(LOG, "ITERATOR Write to mColumn " + mColumn + ", mRow " + mRow + ": " + headerValue.getValue());
+            mWriteExcelBasic.writeCell(mWritableSheet, mColumn++, mRow, headerValue.getValue(), true);
+            mResultMap.put(headerValue.getKey(), "0"); //Clear the values to properly export
         }
         mRow++;
+        Log.i(LOG, "fillResultsHeader() END");
     }
 
     private ArrayList<String> findStageNamesForCompetition() throws WriteException {
@@ -150,18 +154,19 @@ public class ExportCompetitionDataToExcel {
         String sortMember = Contract.MemberEntry.COLUMN_RESULT_TIME;
         Cursor cursorMembers = mContext.getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, whereMember, whereArgsMember, sortMember);
 
-        Log.d(LOG, "Cursor Members count = " + cursorMembers.getCount() + ", position = " + cursorMembers.getPosition() + ", columnNames = " + Arrays.asList(cursorMembers.getColumnNames()));
+        Log.d(LOG, "Cursor Members count = " + cursorMembers.getCount() + ", columnNames = " + Arrays.asList(cursorMembers.getColumnNames()));
         cursorMembers.moveToFirst();
         for (int i = 0; i < cursorMembers.getCount(); i++) {
             long memberId = cursorMembers.getLong(cursorMembers.getColumnIndex(Contract.MemberEntry._ID));
             findAllDataForMember(memberId);
 
             mColumn = 0;
-            Iterator<String> iterator = mResultMap.values().iterator();
+            Iterator<Map.Entry<String, String>> iterator = mResultMap.entrySet().iterator();
             while (iterator.hasNext()) {
-                String valueTiWrite = iterator.next();
-                Log.i(LOG, "ITERATOR RESULTS write to mColumn " + mColumn + ", mRow " + mRow + " value: " + valueTiWrite);
-                mWriteExcelBasic.writeCell(mWritableSheet, mColumn++, mRow, valueTiWrite, false);
+                Map.Entry<String, String> valueToWrite = iterator.next();
+                Log.i(LOG, "ITERATOR RESULTS write to mColumn " + mColumn + ", mRow " + mRow + " value: " + valueToWrite.getValue());
+                mWriteExcelBasic.writeCell(mWritableSheet, mColumn++, mRow, valueToWrite.getValue(), false);
+                mResultMap.put(valueToWrite.getKey(), "0"); // Clear the value for future
             }
                 mRow++;
             cursorMembers.moveToNext();
@@ -198,11 +203,11 @@ public class ExportCompetitionDataToExcel {
         sb.delete(0, sb.length());
 
         Log.i(LOG, "findMainDataForMember() data: " + startNumber + ", " + ", " + team + ", " + fullName + ", " + birthday);
-        mResultMap.put(ExportContact.START_NUMBER, startNumber);
-        mResultMap.put(ExportContact.TEAM, team);
-        mResultMap.put(ExportContact.FULL_NAME, fullName);
-        mResultMap.put(ExportContact.BIRTHDAY, birthday);
-        mResultMap.put(ExportContact.PLACE, placeNumber);
+        mResultMap.put(ExportContract.START_NUMBER, startNumber);
+        mResultMap.put(ExportContract.TEAM, team);
+        mResultMap.put(ExportContract.FULL_NAME, fullName);
+        mResultMap.put(ExportContract.BIRTHDAY, birthday);
+        mResultMap.put(ExportContract.PLACE, placeNumber);
         cursorMembers.close();
         Log.i(LOG, "findMainDataForMember() END");
     }
@@ -224,9 +229,9 @@ public class ExportCompetitionDataToExcel {
             long resultTimeMillis = Long.parseLong(cursorAttempt.getString(cursorAttempt.getColumnIndex(Contract.AttemptEntry.COLUMN_RESULT_TIME)));
             String resultTime = new Chronometer(mContext).timeLongMillisToString(resultTimeMillis);
 
-            mResultMap.put(ExportContact.PENALTY_TOTAL, penaltyTotal);
-            mResultMap.put(ExportContact.DISTANCE_TIME, distanceTime);
-            mResultMap.put(ExportContact.RESULT_TIME, resultTime);
+            mResultMap.put(ExportContract.PENALTY_TOTAL, penaltyTotal);
+            mResultMap.put(ExportContract.DISTANCE_TIME, distanceTime);
+            mResultMap.put(ExportContract.RESULT_TIME, resultTime);
         }
         cursorAttempt.close();
         Log.i(LOG, "findCompetitionResultsForMember() END, attemptId = " + attemptId);
@@ -240,18 +245,12 @@ public class ExportCompetitionDataToExcel {
         String whereSOA = Contract.StageOnAttemptEntry.COLUMN_ATTEMPT_ID + "=?";
         String[] whereArgsSOA = new String[]{String.valueOf(attemptId)};
         Cursor cursorSOA = mContext.getContentResolver().query(ContentProvider.STAGE_ON_ATTEMPT_CONTENT_URI, null, whereSOA, whereArgsSOA, null);
-        Log.d(LOG, "Cursor SOA count = " + cursorSOA.getCount() + ", position = " + cursorSOA.getPosition() + ", columnNames = " + Arrays.asList(cursorSOA.getColumnNames()));
+        Log.d(LOG, "Cursor SOA count = " + cursorSOA.getCount() + ", columnNames = " + Arrays.asList(cursorSOA.getColumnNames()));
         cursorSOA.moveToFirst();
         for (int j = 0; j < cursorSOA.getCount(); j++) {
-            long stageOnCompetitionId = cursorSOA.getLong(cursorSOA.getColumnIndex(Contract.StageOnAttemptEntry.COLUMN_STAGE_ON_COMPETITION_ID));
-
-            String where = Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID + "=?";
-            String[] whereArgs = new String[] {String.valueOf(stageOnCompetitionId)};
-            Cursor cursorStageOnCompetition = mContext.getContentResolver().query(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, null, where, whereArgs, null);
-            cursorStageOnCompetition.moveToFirst();
-
-            String stageName = cursorStageOnCompetition.getString(cursorStageOnCompetition.getColumnIndex(Contract.STAGE_NAME_ADAPTED));
+            String stageName = cursorSOA.getString(cursorSOA.getColumnIndex(Contract.StageEntry.COLUMN_NAME));
             String stagePenalty = cursorSOA.getString(cursorSOA.getColumnIndex(Contract.StageOnAttemptEntry.COLUMN_PENALTY));
+
             mResultMap.put(stageName, stagePenalty);
             Log.i(LOG, "Write to Map: StageName = " + stageName + ", StagePenalty = " + stagePenalty);
             cursorSOA.moveToNext();

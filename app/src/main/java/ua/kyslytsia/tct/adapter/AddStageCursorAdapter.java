@@ -23,19 +23,13 @@ public class AddStageCursorAdapter extends CursorAdapter {
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             View view = inflater.inflate(R.layout.item_add_stage, parent, false);
-
-            /* We can use layout from android template: */
-            //View view = inflater.inflate(android.R.layout.simple_list_item_multiple_choice, parent, false);
             return view;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor c) {
-            //DbHelper dbHelper = MainActivity.dbHelper;
 
             CheckedTextView addStage = (CheckedTextView) view.findViewById(R.id.checkBoxAddStage);
-//            String text = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)) + " pos:" + c.getString(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION));
-//            addStage.setText(text);
             addStage.setText(c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)));
         }
 }
