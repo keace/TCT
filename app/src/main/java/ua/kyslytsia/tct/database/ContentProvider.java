@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class ContentProvider extends android.content.ContentProvider {
@@ -181,16 +182,12 @@ public class ContentProvider extends android.content.ContentProvider {
 
             case STAGES:
                 Log.i(LOG, "Query: STAGES");
-                projection = new String[] {
-                        Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID,
-                        Contract.StageEntry.COLUMN_DISTANCE_ID,
-                        Contract.StageEntry.COLUMN_NAME,
-                        Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID,
-                        Contract.StageOnCompetitionEntry.COLUMN_POSITION
-                };
-                queryBuilder.setTables(Contract.StageEntry.TABLE_NAME +
-                        " LEFT OUTER JOIN " + Contract.StageOnCompetitionEntry.TABLE_NAME +
-                        " ON " + Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry._ID + "=" + Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID);
+                queryBuilder.setTables(Contract.StageEntry.TABLE_NAME);
+                long competitionId = PreferenceManager.getDefaultSharedPreferences(getContext()).getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
+                queryBuilder.appendWhere(
+                        Contract.StageEntry._ID + " Not IN " +
+                        " (SELECT DISTINCT " + Contract.StageOnCompetitionEntry.COLUMN_STAGE_ID + " FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME +
+                        " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + "=" + competitionId + ")");
                 break;
 
             case MEMBERS:

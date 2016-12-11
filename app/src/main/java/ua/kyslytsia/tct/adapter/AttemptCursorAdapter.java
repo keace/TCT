@@ -18,7 +18,7 @@ import ua.kyslytsia.tct.database.Contract;
 public class AttemptCursorAdapter extends CursorAdapter {
 
     private HashMap<Integer, Integer> inputValues = new HashMap<>();
-    private GridView lv;
+    private GridView gridView;
     private int position = 0;
 
     public HashMap<Integer, Integer> getInputValues() {
@@ -63,8 +63,8 @@ public class AttemptCursorAdapter extends CursorAdapter {
                     }
                     position = holder.stagePosition;
                     inputValues.put(holder.stagePosition, holder.stagePenalty);
-                    if (lv == null) {
-                        lv = (GridView) v.getParent().getParent();
+                    if (gridView == null) {
+                        gridView = (GridView) v.getParent().getParent();
                     }
                 }
             }
