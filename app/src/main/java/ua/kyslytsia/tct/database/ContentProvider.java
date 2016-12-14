@@ -127,6 +127,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 queryBuilder.setTables(Contract.PersonEntry.TABLE_NAME);
                 break;
 
+            case DISTANCES:
+                Log.i(LOG, "Case: DISTANCES");
+                queryBuilder.setTables(Contract.DistanceEntry.TABLE_NAME);
+                break;
+
             case PERSON_ID:
                 Log.i(LOG, "Case: PERSON_ID");
                 queryBuilder.setTables(Contract.PersonEntry.TABLE_NAME);
@@ -236,6 +241,7 @@ public class ContentProvider extends android.content.ContentProvider {
             case TYPES:
                 Log.i(LOG, "Query TYPES");
                 queryBuilder.setTables(Contract.TypeEntry.TABLE_NAME);
+                break;
 
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -259,7 +265,14 @@ public class ContentProvider extends android.content.ContentProvider {
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         long id;
         Uri resultUri;
+
         switch (uriType) {
+            case COMPETITIONS:
+                Log.i(LOG, "Insert COMPETITIONS");
+                id = sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, values);
+                resultUri = Uri.parse(PERSON_CONTENT_URI + "/" + id);
+                break;
+
             case PERSONS:
                 Log.i(LOG, "Insert PERSONS");
                 id = sqLiteDatabase.insert(Contract.PersonEntry.TABLE_NAME, null, values);

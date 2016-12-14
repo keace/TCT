@@ -45,5 +45,10 @@ public class MembersAdapter extends CursorAdapter {
         }
         timeTextView.setText(timeString);
         timeString = "";
+
+        TextView place = (TextView) view.findViewById(R.id.textViewMembersPlace);
+        if (cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_PLACE)) != null) {
+            place.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_PLACE)));
+        }
     }
 }

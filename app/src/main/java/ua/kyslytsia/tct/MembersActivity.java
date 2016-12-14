@@ -154,7 +154,9 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         Cursor cursor = getContentResolver().query(uriCompetitionWithId, null, null, null, null);
         cursor.moveToFirst();
         Log.d(LOG, "Is closed id = " + cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
-        return cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)) == Contract.COMPETITION_CLOSED;
+        boolean isClosed = cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)) == Contract.COMPETITION_CLOSED;
+        cursor.close();
+        return isClosed;
     }
 
     private void initToolbar() {
@@ -183,6 +185,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
             case R.id.action_competition_complete:
                 showCompetitionCompleteDialog();
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -196,17 +199,35 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         alertDialog.setPositiveButton(R.string.competition_complete_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ContentValues cv = new ContentValues();
-                cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED);
-                String where = Contract.CompetitionEntry._ID + "=?";
-                String[] args = new String[]{String.valueOf(competitionId)};
-                getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
-                PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, 1).apply();
+                updateCompetitionIsClosed();
+                PreferenceManager.getDefaultSharedPreferences(MembersActivity.this).edit().putInt(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED).apply();
+                getSupportLoaderManager().restartLoader(Contract.MEMBERS_LOADER_ID, null, MembersActivity.this);
                 initButtons(); /* reinitialize buttons to set "Export to Excel" button active and other disactivate */
             }
         });
         alertDialog.create();
         alertDialog.show();
+    }
+
+    private void updateMembersPlaces() {
+        ContentValues cv = new ContentValues();
+        String where = Contract.MemberEntry._ID + "=?";
+        for (int i = 0; i < adapter.getCount(); i++) {
+            long memberId = adapter.getItemId(i);
+            int place = i+1;
+            Log.i(LOG, "id = " + memberId + ", place = " + place);
+            cv.put(Contract.MemberEntry.COLUMN_PLACE, place);
+            String[] whereArgs = new String[] {String.valueOf(memberId)};
+            getContentResolver().update(ContentProvider.MEMBER_CONTENT_URI, cv, where, whereArgs);
+        }
+    }
+
+    private void updateCompetitionIsClosed() {
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_CLOSED);
+        String where = Contract.CompetitionEntry._ID + "=?";
+        String[] args = new String[]{String.valueOf(competitionId)};
+        getContentResolver().update(ContentProvider.COMPETITION_CONTENT_URI, cv, where, args);
     }
 
     @Override
@@ -215,6 +236,7 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         String[] selectionArgs = new String[] {String.valueOf(competitionId)};
         String sortOrder;
         if (competitionIsClosed()) {
+            selection = selection.concat(" AND " + Contract.MemberEntry.COLUMN_RESULT_TIME + " NOT NULL");
             sortOrder = Contract.MemberEntry.COLUMN_RESULT_TIME + " ASC";
         } else {
             sortOrder = Contract.MemberEntry.COLUMN_START_NUMBER + " ASC";
@@ -225,6 +247,9 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
+        if (competitionIsClosed()) {
+            updateMembersPlaces();
+        }
     }
 
     @Override

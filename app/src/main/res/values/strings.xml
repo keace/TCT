@@ -41,6 +41,12 @@
     <!-- New Competition Activity -->
     <string name="new_competition_activity_toolbar_subtitle">Создать соревнование</string>
 
+    <string name="new_competition_activity_error_no_date">Введите дату!</string>
+    <string name="new_competition_activity_error_no_name">Введите название!</string>
+    <string name="new_competition_activity_error_no_rank">Класс соревнований обязателен!</string>
+    <string name="new_competition_activity_error_no_penalty_cost">Введите стоимость штрафа!</string>
+
+
     <!-- Members Activity -->
     <string name="members_activity_toolbar_subtitle">Список участников</string>
 
@@ -76,6 +82,60 @@
     <string name="excel_result_penalty_total">Сумма штрафов</string>
     <string name="excel_result_result_time">Результат</string>
     <string name="excel_result_place_number">Место</string>
+
+    <!-- DATABASE FIRST IMPORT-->
+
+    <!-- Gender table-->
+    <string-array name="import_to_db_genders">
+        <item>Жен</item>
+        <item>Муж</item>
+    </string-array>
+
+    <!-- Types table-->
+    <string name="type_bike">Велосипедный</string>
+
+    <string-array name="import_to_db_types_of_tourism">
+        <item>@string/type_bike</item>
+    </string-array>
+
+    <!-- Distance table -->
+    <string name="bike_distance_rally">Ралли</string>
+    <string name="bike_distance_figure_ride">Фигурное вождение</string>
+    <string name="bike_distance_cross">Кросс</string>
+    <string name="bike_distance_trial">Триал</string>
+    <string name="bike_distance_complex">Комплексная дистанция</string>
+
+    <string-array name="import_to_db_distances_for_bike">
+        <item>@string/bike_distance_rally</item>
+        <item>@string/bike_distance_figure_ride</item>
+        <item>@string/bike_distance_cross</item>
+        <item>@string/bike_distance_trial</item>
+        <item>@string/bike_distance_complex</item>
+    </string-array>
+
+    <!-- Stage table-->
+    <array name="import_to_db_rally_stages">
+        <item>Правила дорожного движения</item>
+        <item>Оказание первой доврачебной помощи</item>
+        <item>Крепление и перевозка груза</item>
+        <item>Установка палатки</item>
+        <item>Распаливание костра</item>
+        <item>Определение азимута</item>
+        <item>Ремонт велосипеда</item>
+        <item>Движение по бездорожью</item>
+        <item>Движение по графику</item>
+        <item>Скоростной участок</item>
+        <item>Подъем в гору</item>
+        <item>Спуск по склону</item>
+        <item>Песчаный этап</item>
+        <item>Колея</item>
+        <item>Движение по азимуту</item>
+        <item>Ориентирование</item>
+        <item>Преодоление брода</item>
+        <item>Вязание узлов</item>
+        <item>Переправа через реку или яр по колоде</item>
+    </array>
+
     <!-- Calculator Activity -->
     <string name="calc_action_settings">Настройки</string>
     <string name="calc_action_about">О программе</string>

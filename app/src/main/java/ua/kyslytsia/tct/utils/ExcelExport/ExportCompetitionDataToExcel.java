@@ -149,7 +149,7 @@ public class ExportCompetitionDataToExcel {
     private void fillResultsValues() throws WriteException {
         Log.i(LOG, "fillResultValues() START");
 
-        String whereMember = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_COMPETITION_ID + "=?";
+        String whereMember = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_COMPETITION_ID + "=? AND " + Contract.MemberEntry.COLUMN_RESULT_TIME + " NOT NULL";
         String[] whereArgsMember = new String[]{String.valueOf(competitionId)};
         String sortMember = Contract.MemberEntry.COLUMN_RESULT_TIME;
         Cursor cursorMembers = mContext.getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, whereMember, whereArgsMember, sortMember);

@@ -40,7 +40,7 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
 
         competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, 0);
         distanceId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, 0);
-        lastElementPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 1);
+        lastElementPosition = getIntent().getIntExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, 0);
         Log.d(LOG, "Get Ids from SharedPreferences: competitionId = " + competitionId + ", distanceId = " + distanceId +
                 ". Get lastElementPosition from intent = " + lastElementPosition);
 

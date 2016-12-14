@@ -20,4 +20,12 @@
         android:title="Завершить соревнование"
         android:icon="@drawable/flag_checkered"
         app:showAsAction="ifRoom" />
+
+    <!--<item-->
+        <!--android:id="@+id/action_update_places"-->
+        <!--android:orderInCategory="102"-->
+        <!--android:title="Проставить места"-->
+        <!--android:icon="@drawable/account_multiple"-->
+        <!--android:visible="false"-->
+        <!--app:showAsAction="withText" />-->
 </menu>

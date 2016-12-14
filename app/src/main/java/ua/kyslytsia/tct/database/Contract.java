@@ -23,6 +23,7 @@ public class Contract {
     public static final int ADD_STAGE_LOADER_ID = 3;
     public static final int MEMBERS_LOADER_ID = 4;
     public static final int ATTEMPT_LOADER_ID = 5;
+    public static final int TYPES_LOADER_ID = 6;
 
     public static final class GenderEntry implements BaseColumns {
         public static final String TABLE_NAME = "gender";
