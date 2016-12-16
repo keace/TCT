@@ -1,6 +1,10 @@
 package ua.kyslytsia.tct.database;
 
+import android.content.Context;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+
+import ua.kyslytsia.tct.R;
 
 public class Contract {
 
@@ -48,7 +52,7 @@ public class Contract {
     }
     public static final String TYPE_NAME_ADAPTED = TypeEntry.TABLE_NAME + "_" + TypeEntry.COLUMN_NAME;
 
-    public static final int TYPE_BIKE_ID = 1;
+    public static final int TYPE_BIKE_ID = 0;
 
     public static final class DistanceEntry implements BaseColumns {
         public static final String TABLE_NAME = "distance";
@@ -56,12 +60,6 @@ public class Contract {
         public static final String COLUMN_NAME = "name";
     }
     public static final String DISTANCE_NAME_ADAPTED = DistanceEntry.TABLE_NAME + "_" + DistanceEntry.COLUMN_NAME;
-
-    public static final int DISTANCE_RALLY_ID = 1;
-    public static final int DISTANCE_FIGURE_ID = 2;
-    public static final int DISTANCE_CROSS_ID = 3;
-    public static final int DISTANCE_TRIAL_ID = 4;
-    public static final int DISTANCE_COMPLEX_ID = 5;
 
     public static final class CompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "competition";

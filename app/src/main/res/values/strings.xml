@@ -102,7 +102,7 @@
     <string name="bike_distance_rally">Ралли</string>
     <string name="bike_distance_figure_ride">Фигурное вождение</string>
     <string name="bike_distance_cross">Кросс</string>
-    <string name="bike_distance_trial">Триал</string>
+    <string name="bike_distance_trial">Туристский триал</string>
     <string name="bike_distance_complex">Комплексная дистанция</string>
 
     <string-array name="import_to_db_distances_for_bike">
@@ -114,35 +114,101 @@
     </string-array>
 
     <!-- Stage table-->
+    <!-- Rally stages -->
+    <string name="bike_rally_stage_traffic_laws">Правила дорожного движения</string>
+    <string name="bike_rally_stage_medicine">Оказание первой доврачебной помощи</string>
+    <string name="bike_rally_stage_cargo">Крепление и перевозка груза</string>
+    <string name="bike_rally_stage_tent">Установка палатки</string>
+    <string name="bike_rally_stage_bonfire">Распаливание костра</string>
+    <string name="bike_rally_stage_azimuth_spot">Определение азимута</string>
+    <string name="bike_rally_stage_repair">Ремонт велосипеда</string>
+    <string name="bike_rally_stage_off_road">Движение по бездорожью</string>
+    <string name="bike_rally_stage_schedule">Движение по графику</string>
+    <string name="bike_rally_stage_speed">Скоростной участок</string>
+    <string name="bike_rally_stage_uphill">Подъем в гору</string>
+    <string name="bike_rally_stage_downhill">Спуск по склону</string>
+    <string name="bike_rally_stage_sand">Песчаный этап</string>
+    <string name="bike_rally_stage_furrow">Колея</string>
+    <string name="bike_rally_stage_azimuth_ride">Движение по азимуту</string>
+    <string name="bike_rally_stage_orienteering">Ориентирование</string>
+    <string name="bike_rally_stage_wade">Преодоление брода</string>
+    <string name="bike_rally_stage_knots">Вязание узлов</string>
+    <string name="bike_rally_stage_crossing_on_deck">Переправа через реку или яр по колоде</string>
+    
     <array name="import_to_db_rally_stages">
-        <item>Правила дорожного движения</item>
-        <item>Оказание первой доврачебной помощи</item>
-        <item>Крепление и перевозка груза</item>
-        <item>Установка палатки</item>
-        <item>Распаливание костра</item>
-        <item>Определение азимута</item>
-        <item>Ремонт велосипеда</item>
-        <item>Движение по бездорожью</item>
-        <item>Движение по графику</item>
-        <item>Скоростной участок</item>
-        <item>Подъем в гору</item>
-        <item>Спуск по склону</item>
-        <item>Песчаный этап</item>
-        <item>Колея</item>
-        <item>Движение по азимуту</item>
-        <item>Ориентирование</item>
-        <item>Преодоление брода</item>
-        <item>Вязание узлов</item>
-        <item>Переправа через реку или яр по колоде</item>
+        <item>@string/bike_rally_stage_traffic_laws</item>
+        <item>@string/bike_rally_stage_medicine</item>
+        <item>@string/bike_rally_stage_cargo</item>
+        <item>@string/bike_rally_stage_tent</item>
+        <item>@string/bike_rally_stage_bonfire</item>
+        <item>@string/bike_rally_stage_azimuth_spot</item>
+        <item>@string/bike_rally_stage_repair</item>
+        <item>@string/bike_rally_stage_off_road</item>
+        <item>@string/bike_rally_stage_schedule</item>
+        <item>@string/bike_rally_stage_speed</item>
+        <item>@string/bike_rally_stage_uphill</item>
+        <item>@string/bike_rally_stage_downhill</item>
+        <item>@string/bike_rally_stage_sand</item>
+        <item>@string/bike_rally_stage_furrow</item>
+        <item>@string/bike_rally_stage_azimuth_ride</item>
+        <item>@string/bike_rally_stage_orienteering</item>
+        <item>@string/bike_rally_stage_wade</item>
+        <item>@string/bike_rally_stage_knots</item>
+        <item>@string/bike_rally_stage_crossing_on_deck</item>
     </array>
+
+    <!-- Figure stages-->
+    <string name="bike_figure_stage_slit">Щель</string>
+    <string name="bike_figure_stage_snake_between_racks">Змейка между стоек</string>
+    <string name="bike_figure_stage_corridor">Корридор</string>
+    <string name="bike_figure_stage_furrow">Колея</string>
+    <string name="bike_figure_stage_circle">Круг</string>
+    <string name="bike_figure_stage_eight">Восьмерка</string>
+    <string name="bike_figure_stage_gate">Ворота</string>
+    <string name="bike_figure_stage_ring">Кольцо</string>
+    <string name="bike_figure_stage_object_transfer">Перенос предмета</string>
+    <string name="bike_figure_stage_zigzag">Зигзаг</string>
+    <string name="bike_figure_stage_swing">Качеля</string>
+    <string name="bike_figure_stage_snake_between_chips">Змейка между фишек</string>
+    <string name="bike_figure_stage_stop_line">Стоп-линия</string>
+
+    <string-array name="import_to_db_figure_ride_stages">
+        <item>@string/bike_figure_stage_slit</item>
+        <item>@string/bike_figure_stage_snake_between_racks</item>
+        <item>@string/bike_figure_stage_corridor</item>
+        <item>@string/bike_figure_stage_furrow</item>
+        <item>@string/bike_figure_stage_circle</item>
+        <item>@string/bike_figure_stage_eight</item>
+        <item>@string/bike_figure_stage_gate</item>
+        <item>@string/bike_figure_stage_ring</item>
+        <item>@string/bike_figure_stage_object_transfer</item>
+        <item>@string/bike_figure_stage_zigzag</item>
+        <item>@string/bike_figure_stage_swing</item>
+        <item>@string/bike_figure_stage_snake_between_chips</item>
+        <item>@string/bike_figure_stage_stop_line</item>
+    </string-array>
+
+    <!-- Cross stages -->
+    <string name="bike_cross_stage_cross">Кросс</string>
+
+    <string-array name="import_to_db_cross_stages">
+        <item>@string/bike_cross_stage_cross</item>
+    </string-array>
+
+    <!-- Trial stages -->
+    <string name="bike_trial_stage_trial">Триал</string>
+
+    <string-array name="import_to_db_trial_stages">
+        <item>@string/bike_trial_stage_trial</item>
+    </string-array>
 
     <!-- Calculator Activity -->
     <string name="calc_action_settings">Настройки</string>
     <string name="calc_action_about">О программе</string>
     <string name="calc_about_text">
         Калькулятор для помощи в судействе соревнований по технике спортивного туризма. Пересчитывает время дистанции с учетом штрафов и суммирует время участников комманды.\n\n
-        Версия 2.0.\n
-        Создал Кислица Сергей.\n\nИзменения версии 2.0:\n
+        Версия 2.0.\n\n
+        Изменения версии 2.0:\n
         -Добавлено суммирование времени;\n
         -Вместо миллисекунд теперь сотые;\n
         -По кнопке ВВОД курсор переходит на следующее значение (кроме цены штрафа);\n

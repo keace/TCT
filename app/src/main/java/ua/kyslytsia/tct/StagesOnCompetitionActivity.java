@@ -56,7 +56,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
 //                @Override
 //                public void onClick(View view) {
 //                    Intent addStageIntent = new Intent(StagesOnCompetitionActivity.this, AddStageActivity.class);
-//                    addStageIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
+//                    addStageIntent.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, mCompetitionId);
 //                    startActivity(addStageIntent);
 //                    /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_SHORT)
 //                            .setAction("Action", null).show();
@@ -67,7 +67,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
 
         listView = (DragSortListView) findViewById(R.id.listViewStageOnCompetition);
 
-        //REFACTOR TO CONTENT LOADER c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + competitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
+        //REFACTOR TO CONTENT LOADER c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.StageOnCompetitionEntry.TABLE_NAME + " WHERE " + Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID + " = " + mCompetitionId + " ORDER BY " + Contract.StageOnCompetitionEntry.COLUMN_POSITION, null);
         adapter = new StageOnCompetitionCursorAdapter(this, null, Contract.STAGE_ON_COMPETITION_LOADER_ID);
         getSupportLoaderManager().initLoader(Contract.STAGE_ON_COMPETITION_LOADER_ID, null, this);
         listView.setAdapter(adapter);
@@ -107,7 +107,7 @@ public class StagesOnCompetitionActivity extends AppCompatActivity implements Lo
                 Intent intentToAddStageActivity = new Intent(StagesOnCompetitionActivity.this, AddStageActivity.class);
                 intentToAddStageActivity.putExtra(Contract.StageOnCompetitionEntry.COLUMN_COMPETITION_ID, competitionId);
                 intentToAddStageActivity.putExtra(Contract.StageOnCompetitionEntry.COLUMN_POSITION, adapter.getCount());
-                Log.i(LOG, "Put to AddStageActivity Intent lastElementPosition = " + adapter.getCount());
+                Log.i(LOG, "Put to AddStageActivity Intent mLastElementPosition = " + adapter.getCount());
                 startActivity(intentToAddStageActivity);
             }
         });

@@ -57,19 +57,20 @@ public class NewCompetitionActivity extends AppCompatActivity implements LoaderM
         mPenalty = (EditText) findViewById(R.id.newCompetitionPenalty);
     }
 
-    private void initSpinnerDistance() {
-        Cursor cursorDistance = getContentResolver().query(ContentProvider.DISTANCE_CONTENT_URI, null, null, null, null);
+    private void initSpinnerType() {
+        getSupportLoaderManager().initLoader(Contract.TYPES_LOADER_ID, null, this);
 
-        Spinner distance = (Spinner) findViewById(R.id.newCompetitionDistanceSpinner);
-        String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_NAME};
-        int[] toDistance = new int[]{R.id.textViewItemDistance};
-        mAdapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
-        distance.setAdapter(mAdapterDistance);
+        Spinner spinnerType = (Spinner) findViewById(R.id.newCompetitionTypeSpinner);
+        String[] fromType = new String[]{Contract.TypeEntry.COLUMN_NAME};
+        int[] toType = new int[]{R.id.textViewItemType};
+        mAdapterType = new SimpleCursorAdapter(this, R.layout.item_type, null, fromType, toType, Contract.TYPES_LOADER_ID);
+        spinnerType.setAdapter(mAdapterType);
 
-        distance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedDistanceId = id;
+                mSelectedTypeId = id;
+                mAdapterDistance.notifyDataSetChanged();
             }
 
             @Override
@@ -79,20 +80,20 @@ public class NewCompetitionActivity extends AppCompatActivity implements LoaderM
         });
     }
 
-    private void initSpinnerType() {
-        getSupportLoaderManager().initLoader(Contract.TYPES_LOADER_ID, null, this);
+    private void initSpinnerDistance() {
+        Cursor cursorDistance = getContentResolver().query(ContentProvider.DISTANCE_CONTENT_URI, null, null, null, null);
 
-        Spinner type = (Spinner) findViewById(R.id.newCompetitionTypeSpinner);
-        String[] fromType = new String[]{Contract.TypeEntry.COLUMN_NAME};
-        int[] toType = new int[]{R.id.textViewItemType};
-        mAdapterType = new SimpleCursorAdapter(this, R.layout.item_type, null, fromType, toType, Contract.TYPES_LOADER_ID);
-        type.setAdapter(mAdapterType);
+        Spinner spinnerDistance = (Spinner) findViewById(R.id.newCompetitionDistanceSpinner);
+        String[] fromDistance = new String[]{Contract.DistanceEntry.COLUMN_NAME};
+        int[] toDistance = new int[]{R.id.textViewItemDistance};
+        mAdapterDistance = new SimpleCursorAdapter(this, R.layout.item_distance, cursorDistance, fromDistance, toDistance, 1);
+        spinnerDistance.setAdapter(mAdapterDistance);
 
-        type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerDistance.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedTypeId = id;
-                mAdapterDistance.notifyDataSetChanged();
+                mSelectedDistanceId = id;
+                Log.i(LOG, "Dist id = " + mSelectedDistanceId);
             }
 
             @Override
@@ -125,7 +126,7 @@ public class NewCompetitionActivity extends AppCompatActivity implements LoaderM
     }
 
     public void makeNewCompetition() {
-        // not null db fields sets required to fill
+        // not null db fields sets required
         if (mDate.getText().toString().trim().equals("")) {
             mDate.setError(getString(R.string.new_competition_activity_error_no_date));
         } else if (mName.getText().toString().trim().equals("")) {
@@ -151,13 +152,14 @@ public class NewCompetitionActivity extends AppCompatActivity implements LoaderM
         cv.put(Contract.CompetitionEntry.COLUMN_PENALTY_COST, Integer.valueOf(mPenalty.getText().toString()));
         cv.put(Contract.CompetitionEntry.COLUMN_IS_CLOSED, Contract.COMPETITION_OPENED);
 
-        //getContentResolver().insert(ContentProvider.COMPETITION_CONTENT_URI, cv);
-        long competitionId = Long.parseLong(getContentResolver().insert(ContentProvider.COMPETITION_CONTENT_URI, cv).getLastPathSegment());
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId).apply();
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, mSelectedDistanceId).apply();
-        Log.d(LOG, "Competition created with competitionId = " + competitionId + ", distanceId = " + mSelectedDistanceId);
+        long competitionId = Long.parseLong(
+                getContentResolver().insert(ContentProvider.COMPETITION_CONTENT_URI, cv).
+                        getLastPathSegment());
+        PreferenceManager.getDefaultSharedPreferences(this).edit().
+                putLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().
+                putLong(Contract.CompetitionEntry.COLUMN_DISTANCE_ID, mSelectedDistanceId).apply();
     }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, ContentProvider.TYPE_CONTENT_URI, null, null, null, null);

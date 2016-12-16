@@ -57,8 +57,6 @@ public class CompetitionCursorAdapter extends CursorAdapter {
         TextView rank = (TextView) view.findViewById(R.id.textViewItemCompRank);
         rank.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK)) + context.getString(R.string.maim_layout_rank_concat));
 
-        TextView membersCount = (TextView) view.findViewById(R.id.textViewItemCompMembersCount);
-
         TextView isClosed = (TextView) view.findViewById(R.id.textViewItemCompIsClosed);
         isClosed.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
     }

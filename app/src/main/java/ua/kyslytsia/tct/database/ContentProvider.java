@@ -270,7 +270,7 @@ public class ContentProvider extends android.content.ContentProvider {
             case COMPETITIONS:
                 Log.i(LOG, "Insert COMPETITIONS");
                 id = sqLiteDatabase.insert(Contract.CompetitionEntry.TABLE_NAME, null, values);
-                resultUri = Uri.parse(PERSON_CONTENT_URI + "/" + id);
+                resultUri = Uri.parse(COMPETITION_CONTENT_URI + "/" + id);
                 break;
 
             case PERSONS:
