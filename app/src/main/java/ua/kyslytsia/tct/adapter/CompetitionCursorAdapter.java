@@ -40,7 +40,7 @@ public class CompetitionCursorAdapter extends CursorAdapter {
         date.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE)));
 
         TextView typeName = (TextView) view.findViewById(R.id.textViewItemCompType);
-        typeName.setText(cursor.getString(cursor.getColumnIndex(Contract.TYPE_NAME_ADAPTED)));
+        typeName.setText(cursor.getString(cursor.getColumnIndex(Contract.TypeEntry.COLUMN_NAME))); //adapted
 
         TextView name = (TextView) view.findViewById(R.id.textViewItemCompName);
         name.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME)));
@@ -49,7 +49,7 @@ public class CompetitionCursorAdapter extends CursorAdapter {
         place.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_PLACE)));
 
         TextView dist = (TextView) view.findViewById(R.id.textViewItemCompDist);
-        dist.setText(cursor.getString(cursor.getColumnIndex(Contract.DISTANCE_NAME_ADAPTED)));
+        dist.setText(cursor.getString(cursor.getColumnIndex(Contract.DistanceEntry.COLUMN_NAME))); //adapted
 
         TextView distId = (TextView) view.findViewById(R.id.textViewItemCompDistId);
         distId.setText(cursor.getString(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_DISTANCE_ID)));

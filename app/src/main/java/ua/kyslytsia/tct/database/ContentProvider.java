@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 public class ContentProvider extends android.content.ContentProvider {
@@ -115,7 +116,7 @@ public class ContentProvider extends android.content.ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         // check if the caller has requested a column which does not exists
@@ -143,10 +144,10 @@ public class ContentProvider extends android.content.ContentProvider {
                 projection = new String[] {
                         Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry._ID,
                         Contract.CompetitionEntry.COLUMN_DATE,
-                        Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry.COLUMN_NAME,
+                        Contract.CompetitionEntry.COLUMN_NAME,
                         Contract.CompetitionEntry.COLUMN_PLACE,
-                        Contract.TypeEntry.TABLE_NAME + "." + Contract.TypeEntry.COLUMN_NAME + " AS " + Contract.TYPE_NAME_ADAPTED,
-                        Contract.DistanceEntry.TABLE_NAME + "." + Contract.DistanceEntry.COLUMN_NAME + " AS " + Contract.DISTANCE_NAME_ADAPTED,
+                        Contract.TypeEntry.COLUMN_NAME,
+                        Contract.DistanceEntry.COLUMN_NAME,
                         Contract.CompetitionEntry.COLUMN_RANK,
                         Contract.CompetitionEntry.COLUMN_PENALTY_COST,
                         Contract.CompetitionEntry.TABLE_NAME + "." + Contract.CompetitionEntry.COLUMN_TYPE_ID,
@@ -171,7 +172,9 @@ public class ContentProvider extends android.content.ContentProvider {
                 projection = new String[] {
                         Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID,
                         Contract.StageOnCompetitionEntry.COLUMN_POSITION,
-                        Contract.StageEntry.TABLE_NAME + "." + Contract.StageEntry.COLUMN_NAME + " AS " + Contract.STAGE_NAME_ADAPTED
+                        Contract.StageEntry.COLUMN_NAME,
+                        Contract.StageEntry.COLUMN_DESCRIPTION,
+                        Contract.StageEntry.COLUMN_PENALTY_INFO
                 };
 
                 queryBuilder.setTables(Contract.StageOnCompetitionEntry.TABLE_NAME +
@@ -200,14 +203,17 @@ public class ContentProvider extends android.content.ContentProvider {
                 projection = new String[] {
                         Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry._ID,
                         Contract.MemberEntry.COLUMN_START_NUMBER,
-                        Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_PLACE + " AS " + Contract.MEMBER_PLACE_ADAPTED,
+                        Contract.MemberEntry.COLUMN_PLACE,
                         Contract.MemberEntry.COLUMN_RESULT_TIME,
                         Contract.MemberEntry.COLUMN_SPORT_RANK,
+                        Contract.PersonEntry.TABLE_NAME + "." + Contract.PersonEntry._ID + " AS personId",
                         Contract.PersonEntry.COLUMN_LAST_NAME,
                         Contract.PersonEntry.COLUMN_FIRST_NAME,
                         Contract.PersonEntry.COLUMN_MIDDLE_NAME,
                         Contract.PersonEntry.COLUMN_BIRTHDAY,
-                        Contract.TeamEntry.TABLE_NAME + "." + Contract.TeamEntry.COLUMN_NAME + " AS " + Contract.TEAM_NAME_ADAPTED,
+                        Contract.TeamEntry.TABLE_NAME + "." + Contract.TeamEntry._ID + " AS teamId",
+                        Contract.TeamEntry.COLUMN_NAME,
+                        Contract.GenderEntry.TABLE_NAME + "." + Contract.GenderEntry._ID + " AS genderId",
                         Contract.GenderEntry.COLUMN_GENDER
                 };
 
@@ -243,6 +249,11 @@ public class ContentProvider extends android.content.ContentProvider {
                 queryBuilder.setTables(Contract.TypeEntry.TABLE_NAME);
                 break;
 
+            case TEAMS:
+                Log.i(LOG, "Query TEAMS");
+                queryBuilder.setTables(Contract.TeamEntry.TABLE_NAME);
+                break;
+
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
@@ -255,12 +266,12 @@ public class ContentProvider extends android.content.ContentProvider {
     }
 
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         return null;
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         int uriType = sURI_MATCHER.match(uri);
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         long id;
@@ -318,13 +329,13 @@ public class ContentProvider extends android.content.ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURI_MATCHER.match(uri);
-        int rowsDeleted = 0;
+        int rowsDeleted;
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         switch (uriType) {
-            case STAGE_ON_COMPETITION_ID:
-                Log.i(LOG, "Delete STAGE_ON_COMPETITION_ID");
+            case STAGES_ON_COMPETITIONS:
+                Log.i(LOG, "Delete STAGES_ON_COMPETITIONS");
                 rowsDeleted = sqLiteDatabase.delete(Contract.StageOnCompetitionEntry.TABLE_NAME, selection, selectionArgs);
                 break;
 
@@ -347,7 +358,7 @@ public class ContentProvider extends android.content.ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         int uriType = sURI_MATCHER.match(uri);
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
         int rowsUpdated = 0;

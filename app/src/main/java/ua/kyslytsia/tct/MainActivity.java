@@ -24,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.stetho.Stetho;
+
 import ua.kyslytsia.tct.adapter.CompetitionCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity
         initCompetitionsListView();
         initFAB();
         initNavigationDrawer(toolbar);
+
+        Stetho.initializeWithDefaults(this);
     }
 
     @Override
@@ -188,9 +192,9 @@ public class MainActivity extends AppCompatActivity
     }
     private void showCompetitionAlertDialog(final long id){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-        alertDialog.setTitle(R.string.main_activity_longclick_dialog_title)
-                .setNegativeButton(R.string.main_activity_longclick_dialog_negative, null)
-                .setPositiveButton(R.string.main_activity_longclick_dialog_positive, new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(R.string.main_activity_long_click_dialog_title)
+                .setNegativeButton(R.string.main_activity_long_click_dialog_negative, null)
+                .setPositiveButton(R.string.main_activity_long_click_dialog_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 deleteCompetition(id);

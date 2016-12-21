@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +22,7 @@ import android.widget.ListView;
 import ua.kyslytsia.tct.adapter.AddStageCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.database.DbHelper;
 
 public class AddStageActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private String LOG = "LOG! Add Stage";
@@ -65,9 +68,14 @@ public class AddStageActivity extends AppCompatActivity implements LoaderManager
         mListViewAddStage.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                //TODO show dialog with info about stage
-                Log.i(LOG, "Long click for id = " + id);
-                return false;
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddStageActivity.this);
+                Cursor c = mAdapterAddStage.getCursor();
+                alertDialog.setTitle(c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)));
+                String descriptionAndPenaltyInfo = DbHelper.getDescriptionAndPenaltyInfo(mAdapterAddStage.getCursor());
+                alertDialog.setMessage(descriptionAndPenaltyInfo);
+                alertDialog.setNegativeButton(R.string.add_stage_activity_dialog_list_item_negative, null);
+                alertDialog.create().show();
+                return true;
             }
         });
     }

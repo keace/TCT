@@ -54,27 +54,28 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         ListView listViewMembers = (ListView) findViewById(R.id.listViewMembers);
         getSupportLoaderManager().initLoader(Contract.MEMBERS_LOADER_ID, null, this);
         adapter = new MembersAdapter(this, null, Contract.MEMBERS_LOADER_ID);
-        listViewMembers.setAdapter(adapter);
-
-        listViewMembers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (timeIsNull(view)) {
-                    startAttemptActivityWithParameters(id);
-                } else {
-                    Toast.makeText(MembersActivity.this, R.string.members_activity_toast_error_already_finished, Toast.LENGTH_SHORT).show();
-                    Log.i(LOG, "Time not null. Can't start activity");
+        if (listViewMembers != null) {
+            listViewMembers.setAdapter(adapter);
+            listViewMembers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (timeIsNull(view)) {
+                        startAttemptActivityWithParameters(id);
+                    } else {
+                        Toast.makeText(MembersActivity.this, R.string.members_activity_toast_error_already_finished, Toast.LENGTH_SHORT).show();
+                        Log.i(LOG, "Time not null. Can't start activity");
+                    }
                 }
-            }
-        });
+            });
 
-        listViewMembers.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                showDialogForMember(id);
-                return true;
-            }
-        });
+            listViewMembers.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    showDialogForMember(id);
+                    return true;
+                }
+            });
+        }
     }
 
     private void showDialogForMember(long id) {
@@ -89,41 +90,43 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
         Button buttonToStages = (Button) findViewById(R.id.buttonMembersToStages);
         Button buttonExportToExcel = (Button) findViewById(R.id.buttonMembersExportToExcel);
 
-        if (competitionIsClosed()) {
-            buttonToNewMember.setEnabled(false);
-            buttonToStages.setEnabled(false);
-            buttonExportToExcel.setVisibility(View.VISIBLE);
-        } else {
-            buttonToNewMember.setEnabled(true);
-            buttonToStages.setEnabled(true);
-            buttonExportToExcel.setVisibility(View.GONE);
-        }
+        if (buttonToNewMember != null && buttonToStages != null && buttonExportToExcel != null) {
 
-        buttonToNewMember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNewMemberActivity();
+            if (competitionIsClosed()) {
+                buttonToNewMember.setEnabled(false);
+                buttonToStages.setEnabled(false);
+                buttonExportToExcel.setVisibility(View.VISIBLE);
+            } else {
+                buttonToNewMember.setEnabled(true);
+                buttonToStages.setEnabled(true);
+                buttonExportToExcel.setVisibility(View.GONE);
             }
-        });
 
-        buttonToStages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startStagesOnCompetitionActivity();
-            }
-        });
-
-        buttonExportToExcel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    writeFullResultToExcel();
-                } catch (IOException | WriteException e) {
-                    e.printStackTrace();
+            buttonToNewMember.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startNewMemberActivity();
                 }
-            }
-        });
+            });
 
+            buttonToStages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startStagesOnCompetitionActivity();
+                }
+            });
+
+            buttonExportToExcel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        writeFullResultToExcel();
+                    } catch (IOException | WriteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     public void startNewMemberActivity() {
@@ -150,27 +153,33 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private boolean competitionIsClosed(){
+        boolean isClosed = false;
+
         Uri uriCompetitionWithId = ContentProvider.COMPETITION_CONTENT_URI.buildUpon().appendPath(String.valueOf(competitionId)).build();
         Cursor cursor = getContentResolver().query(uriCompetitionWithId, null, null, null, null);
-        cursor.moveToFirst();
-        Log.d(LOG, "Is closed id = " + cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
-        boolean isClosed = cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)) == Contract.COMPETITION_CLOSED;
-        cursor.close();
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Log.d(LOG, "Is closed id = " + cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)));
+            isClosed = cursor.getInt(cursor.getColumnIndex(Contract.CompetitionEntry.COLUMN_IS_CLOSED)) == Contract.COMPETITION_CLOSED;
+            cursor.close();
+        }
         return isClosed;
     }
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(R.string.members_activity_toolbar_subtitle);
-        toolbar.setNavigationIcon(R.drawable.home_outline);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentToMainActivity = new Intent(MembersActivity.this, MainActivity.class);
-                startActivity(intentToMainActivity);
-            }
-        });
+        if (toolbar != null) {
+            toolbar.setSubtitle(R.string.members_activity_toolbar_subtitle);
+            toolbar.setNavigationIcon(R.drawable.home_outline);
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentToMainActivity = new Intent(MembersActivity.this, MainActivity.class);
+                    startActivity(intentToMainActivity);
+                }
+            });
+        }
     }
 
     @Override
@@ -268,8 +277,13 @@ public class MembersActivity extends AppCompatActivity implements LoaderManager.
             Log.e(LOG, "WriteException");
             e.printStackTrace();
         }
+    }
 
-    //TODO realize writeEachMemberResultToExcel
-    // stub
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent toMainActivity = new Intent(MembersActivity.this, MainActivity.class);
+        startActivity(toMainActivity);
+        finish();
     }
 }

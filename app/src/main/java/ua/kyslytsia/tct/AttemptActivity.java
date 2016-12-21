@@ -10,22 +10,24 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
 import ua.kyslytsia.tct.adapter.AttemptCursorAdapter;
 import ua.kyslytsia.tct.database.ContentProvider;
 import ua.kyslytsia.tct.database.Contract;
+import ua.kyslytsia.tct.database.DbHelper;
 import ua.kyslytsia.tct.mocks.StageOnAttempt;
 import ua.kyslytsia.tct.utils.Chronometer;
 
@@ -34,14 +36,14 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
     AttemptCursorAdapter adapter;
     private static final String LOG = "Log! Attempt Activity";
 
-    TextView textViewTime, textViewPenaltySum, textViewPenaltyCost, textViewResult;
-    int penaltyTotal;
-    String timeString, resultTimeString;
-    long timeLong, resultTimeLong;
-    long competitionId, memberId;
-    Button buttonStart, buttonStop, buttonWriteResults;
+    private TextView textViewTime, textViewPenaltySum, textViewPenaltyCost, textViewResult;
+    private int penaltyTotal;
+    private String timeString, resultTimeString;
+    private long timeLong, resultTimeLong;
+    private long competitionId, memberId;
+    private Button buttonStart, buttonStop, buttonWriteResults;
 
-    GridView mGridViewStages;
+    private GridView mGridViewStages;
     private ArrayList<StageOnAttempt> mStageOnAttemptList = new ArrayList<>();
 
     @Override
@@ -68,7 +70,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         buttonWriteResults.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonStop.performClick();  /* if user not click "Stop" button before clicking "Save results" */
+                buttonStop.performClick();  /* performClick if user not click "Stop" button before clicking "Save results" */
                 long attemptId = insertAttemptToDb();
                 insertAllStagesOnAttemptToDb(attemptId);
                 updateResultTimeInMember();
@@ -116,7 +118,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
                 chronometer.stop();
-                mGridViewStages.clearFocus(); /* Clear focus is important! For work with onChangeFocusListener in Adapter with ViewHolder (editText in listView or gridView is amazing) */
+                mGridViewStages.clearFocus(); /* Clear focus is important! For work with onChangeFocusListener in Adapter with ViewHolder (editText in mDragSortListView or gridView is amazing) */
 
                 penaltyTotal = 0;
                 textViewTime.setText(chronometer.getText());
@@ -140,6 +142,18 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         getSupportLoaderManager().initLoader(Contract.ATTEMPT_LOADER_ID, null, this);
         adapter = new AttemptCursorAdapter(this, null, Contract.ATTEMPT_LOADER_ID);
         mGridViewStages.setAdapter(adapter);
+        mGridViewStages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AttemptActivity.this);
+                alertDialog.setTitle(R.string.stage_on_competition_list_item_dialog_title);
+                String descriptionAndPenaltyInfo = DbHelper.getDescriptionAndPenaltyInfo(adapter.getCursor());
+                alertDialog.setMessage(descriptionAndPenaltyInfo);
+                alertDialog.setNegativeButton(R.string.add_stage_activity_dialog_list_item_negative, null);
+                alertDialog.create().show();
+                return true;
+            }
+        });
     }
 
     private String getPenaltyCost() {
@@ -160,7 +174,7 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         long attemptId;
         ContentValues cv = new ContentValues();
         cv.put(Contract.AttemptEntry.COLUMN_COMPETITION_ID, competitionId);
-        cv.put(Contract.AttemptEntry.COLUMN_MEMBERS_ID, memberId);
+        cv.put(Contract.AttemptEntry.COLUMN_MEMBER_ID, memberId);
         cv.put(Contract.AttemptEntry.COLUMN_TRY_NUMBER, 1);  /* Try number not handling yet */
         cv.put(Contract.AttemptEntry.COLUMN_PENALTY_TOTAL, penaltyTotal);
         cv.put(Contract.AttemptEntry.COLUMN_DISTANCE_TIME, timeString);
@@ -189,12 +203,14 @@ public class AttemptActivity extends AppCompatActivity implements LoaderManager.
         String selection = Contract.StageOnCompetitionEntry.TABLE_NAME + "." + Contract.StageOnCompetitionEntry._ID + "=?";
         String[] selectionArgs = new String[] {String.valueOf(socId)};
         Cursor c = getContentResolver().query(ContentProvider.STAGE_ON_COMPETITION_CONTENT_URI, null, selection, selectionArgs, null);
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex(Contract.STAGE_NAME_ADAPTED));
+        if (c != null) {
+            c.moveToFirst();
+        }
+        String name = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME)); //adapt
 
         mStageOnAttemptList.add(new StageOnAttempt(socId, penaltyOnStage, name));
         Log.d(LOG, "StageOnAttempt position: " + position + ", id: " + mGridViewStages.getAdapter().getItemId(position) + ", penalty: " + penaltyOnStage + "name: " + name);
-
+        c.close();
     }
 
     @Override

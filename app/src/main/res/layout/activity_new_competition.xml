@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Создать новое соревнование"
+        android:text="@string/new_competition_activity_field_create_new_competition"
         android:id="@+id/textViewNewCompetitionTitle"
         android:gravity="center_horizontal" />
 
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="Дата"
+            android:text="@string/new_competition_activity_field_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textViewNewCompetitionDate"
@@ -50,7 +50,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Название"
+            android:text="@string/new_competition_activity_field_name"
             android:id="@+id/textViewNewCompetitionName" />
 
         <EditText
@@ -68,7 +68,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Место проведения"
+            android:text="@string/new_competition_activity_field_place"
             android:id="@+id/textViewNewCompetitionPlace" />
 
         <EditText
@@ -86,7 +86,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Вид туризма"
+            android:text="@string/new_competition_activity_field_type"
             android:id="@+id/textViewNewCompetitionType" />
 
         <Spinner
@@ -105,7 +105,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Дистанция"
+            android:text="@string/new_competition_activity_field_distance"
             android:id="@+id/textViewNewCompetitionDistance" />
 
         <Spinner
@@ -123,7 +123,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Класс"
+            android:text="@string/new_competition_activity_field_rank"
             android:id="@+id/textViewNewDistanceRank" />
 
         <EditText
@@ -142,7 +142,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Штраф (сек)"
+            android:text="@string/new_competition_activity_field_penalty"
             android:id="@+id/textViewNewCompetitionPenalty" />
 
         <EditText
@@ -151,7 +151,7 @@
             android:inputType="numberSigned"
             android:ems="10"
             android:id="@+id/newCompetitionPenalty"
-            android:text="5" />
+            android:text="@string/digit_5" />
     </LinearLayout>
 
     <LinearLayout
@@ -162,16 +162,18 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Сохранить и перейти к этапам"
+            android:text="@string/new_competition_activity_button_to_stages"
             android:id="@+id/buttonNewCompetitionSaveToStage"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            style="?attr/buttonBarButtonStyle"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Сохранить и перейти к участникам"
+            android:text="@string/new_competition_activity_button_to_members"
             android:id="@+id/buttonNewCompetitionSaveToMembers"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            style="?attr/buttonBarButtonStyle"/>
     </LinearLayout>
 
 </LinearLayout>

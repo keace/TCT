@@ -2,10 +2,12 @@ package ua.kyslytsia.tct.database;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import ua.kyslytsia.tct.R;
@@ -13,7 +15,7 @@ import ua.kyslytsia.tct.R;
 public class DbHelper extends SQLiteOpenHelper {
     private static final String LOG = "Log! DbHelper";
 
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 10;
     private static final String DB_NAME = "tct.db";
     private Context mContext = null;
 
@@ -149,47 +151,65 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     private void fillStagesToRally (SQLiteDatabase db){
-        String[] rallyStages = mContext.getResources().getStringArray(R.array.import_to_db_rally_stages);
+        String[] rallyStagesNames = mContext.getResources().getStringArray(R.array.import_to_db_rally_stages);
+        String[] rallyStagesDescriptions = mContext.getResources().getStringArray(R.array.import_to_db_rally_stages_description);
+        String[] rallyStagesPenaltyInfo = mContext.getResources().getStringArray(R.array.import_to_db_rally_stages_penalty_info);
         String distanceName = mContext.getString(R.string.bike_distance_rally);
 
-        fillStagesToDistance(db, rallyStages, distanceName);
+        fillStagesToDistance(db, distanceName, rallyStagesNames, rallyStagesDescriptions, rallyStagesPenaltyInfo);
     }
 
     private void fillStagesToFigureRide (SQLiteDatabase db) {
-        String[] figureStages = mContext.getResources().getStringArray(R.array.import_to_db_figure_ride_stages);
+        String[] figureStagesNames = mContext.getResources().getStringArray(R.array.import_to_db_figure_ride_stages);
+        String[] figureStagesDescriptions = mContext.getResources().getStringArray(R.array.import_to_db_figure_ride_stages_description);
+        String[] figureStagesPenaltyInfo = new String[figureStagesNames.length+1];
+        for (int i = 0; i < figureStagesPenaltyInfo.length; i++){
+            figureStagesPenaltyInfo[i] = mContext.getResources().getString(R.string.import_to_db_bike_figure_ride_penalties);
+        }
         String distanceName = mContext.getString(R.string.bike_distance_figure_ride);
 
-        fillStagesToDistance(db, figureStages, distanceName);
+        fillStagesToDistance(db, distanceName, figureStagesNames, figureStagesDescriptions, figureStagesPenaltyInfo);
     }
 
     private void fillStagesToCross (SQLiteDatabase db){
-        String[] crossStages = mContext.getResources().getStringArray(R.array.import_to_db_cross_stages);
+        String[] crossStagesNames = mContext.getResources().getStringArray(R.array.import_to_db_bike_cross_stages);
+        String[] crossStagesDescriptions = new String[]{mContext.getResources().getString(R.string.import_to_db_bike_cross_and_trial_description)};
+        String[] crossStagesPenaltyInfo = new String[]{mContext.getResources().getString(R.string.import_to_db_bike_cross_and_trial_penalty_info)};
         String distanceName = mContext.getString(R.string.bike_distance_cross);
 
-        fillStagesToDistance(db, crossStages, distanceName);
+        fillStagesToDistance(db, distanceName, crossStagesNames, crossStagesDescriptions, crossStagesPenaltyInfo);
     }
 
     private void fillStagesToTrial (SQLiteDatabase db){
-        String[] trialStages = mContext.getResources().getStringArray(R.array.import_to_db_trial_stages);
+        String[] trialStagesNames = mContext.getResources().getStringArray(R.array.import_to_db_bike_trial_stages);
+        String[] trialStagesDescriptions = new String[]{mContext.getResources().getString(R.string.import_to_db_bike_cross_and_trial_description)};
+        String[] trialStagesPenaltyInfo = new String[]{mContext.getResources().getString(R.string.import_to_db_bike_cross_and_trial_penalty_info)};
         String distanceName = mContext.getString(R.string.bike_distance_trial);
 
-        fillStagesToDistance(db, trialStages, distanceName);
+        fillStagesToDistance(db, distanceName, trialStagesNames, trialStagesDescriptions, trialStagesPenaltyInfo);
     }
-    private void fillStagesToDistance(SQLiteDatabase db, String[] stages, String distanceName) {
+    private void fillStagesToDistance(SQLiteDatabase db, String distanceName, String[] stagesNames, String[] stagesDescriptions, String[] stagesPenaltyInfo) {
         try {
-            String sql = "INSERT INTO " + Contract.StageEntry.TABLE_NAME + " (" + Contract.StageEntry.COLUMN_DISTANCE_ID + ", " + Contract.StageEntry.COLUMN_NAME + ") " + " VALUES (?, ?)";
+            String sql = "INSERT INTO " + Contract.StageEntry.TABLE_NAME + " (" +
+                    Contract.StageEntry.COLUMN_DISTANCE_ID + ", " +
+                    Contract.StageEntry.COLUMN_NAME + "," +
+                    Contract.StageEntry.COLUMN_DESCRIPTION + "," +
+                    Contract.StageEntry.COLUMN_PENALTY_INFO + ") " +
+                    " VALUES (?, ?, ?, ?)";
             SQLiteStatement stmt = db.compileStatement(sql);
 
             long distanceId = mSharedPreferences.getLong(distanceName, 0);
             Log.i(LOG, "distance: Id= " + distanceId + ", name = " + distanceName);
 
             db.beginTransaction();
-            for (int i = 0; i < stages.length; i++) {
+            for (int i = 0; i < stagesNames.length; i++) {
                 stmt.bindString(1, String.valueOf(distanceId));
-                stmt.bindString(2, stages[i]);
+                stmt.bindString(2, stagesNames[i]);
+                stmt.bindString(3, stagesDescriptions[i]);
+                stmt.bindString(4, stagesPenaltyInfo[i]);
                 stmt.execute();
                 stmt.clearBindings();
-                Log.i(LOG, "Insert Stage: " + i + ", " + stages[i]);
+                Log.i(LOG, "Insert Stage: " + i + ", " + stagesNames[i]);
             }
             db.setTransactionSuccessful();
         } finally {
@@ -215,5 +235,30 @@ public class DbHelper extends SQLiteOpenHelper {
         Log.d(LOG, "ALL TABLE DROPPED");
 
         onCreate(db);
+    }
+
+    @NonNull
+    public static String getDescriptionAndPenaltyInfo(Cursor c) {
+        String description = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_DESCRIPTION));
+        String penalty = c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_PENALTY_INFO));
+        StringBuilder sb = new StringBuilder();
+        sb.append(description).append("\n\n").append(penalty);
+        return sb.toString();
+    }
+
+    public long findTeamIdByName (long competitionId, String teamName) {
+        long teamId = 0;
+
+        String where = Contract.TeamEntry.COLUMN_COMPETITION_ID + " =? AND " +
+                Contract.TeamEntry.COLUMN_NAME + " =?";
+        String[] whereArgs = new String[]{String.valueOf(competitionId), teamName};
+        Cursor cursor = mContext.getContentResolver().query(ContentProvider.TEAM_CONTENT_URI, null, where, whereArgs, null);
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            teamId = cursor.getLong(cursor.getColumnIndex(Contract.TeamEntry._ID));
+            cursor.close();
+        }
+        return teamId;
     }
 }

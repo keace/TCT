@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.app.DialogFragment;
 import android.app.AlertDialog;
@@ -41,9 +40,8 @@ public class MembersDialogFragment extends DialogFragment {
                     case 0:
                         Log.i(LOG, "Edit... picked");
                         Toast.makeText(getActivity().getApplicationContext(), "Edit... picked", Toast.LENGTH_SHORT).show();
-//                        PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).edit().putLong(Contract.MEMBER_ID_ADAPTED, memberId).apply();
                         Intent intentToNewMember = new Intent(getActivity(), NewMemberActivity.class);
-                        intentToNewMember.putExtra(Contract.MEMBER_ID_ADAPTED, memberId);
+                        intentToNewMember.putExtra(Contract.AttemptEntry.COLUMN_MEMBER_ID, memberId); //adapt
                         startActivity(intentToNewMember);
                         break;
                     case 1:

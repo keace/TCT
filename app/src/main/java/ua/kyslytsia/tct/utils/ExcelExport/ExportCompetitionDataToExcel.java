@@ -78,8 +78,8 @@ public class ExportCompetitionDataToExcel {
         String date = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.CompetitionEntry.COLUMN_DATE));
         String name = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.CompetitionEntry.COLUMN_NAME));
         String place = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.CompetitionEntry.COLUMN_PLACE));
-        String type = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.TYPE_NAME_ADAPTED));
-        String distance = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.DISTANCE_NAME_ADAPTED));
+        String type = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.TypeEntry.COLUMN_NAME));
+        String distance = cursorCompetition.getString(cursorCompetition.getColumnIndex(Contract.DistanceEntry.COLUMN_NAME));
         int rank = cursorCompetition.getInt(cursorCompetition.getColumnIndex(Contract.CompetitionEntry.COLUMN_RANK));
         int penaltyCost = cursorCompetition.getInt(cursorCompetition.getColumnIndex(Contract.CompetitionEntry.COLUMN_PENALTY_COST));
 
@@ -136,7 +136,7 @@ public class ExportCompetitionDataToExcel {
 
         cursorStageOnComp.moveToFirst();
         for (int i = 0; i < cursorStageOnComp.getCount(); i++) {
-            String stageName = cursorStageOnComp.getString(cursorStageOnComp.getColumnIndex(Contract.STAGE_NAME_ADAPTED));
+            String stageName = cursorStageOnComp.getString(cursorStageOnComp.getColumnIndex(Contract.StageEntry.COLUMN_NAME));
             stageNamesArrayList.add(stageName);
             mColumn++;
             cursorStageOnComp.moveToNext();
@@ -190,12 +190,12 @@ public class ExportCompetitionDataToExcel {
         cursorMembers.moveToFirst();
 
         String startNumber = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER));
-        String team = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.TEAM_NAME_ADAPTED));
+        String team = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.TeamEntry.COLUMN_NAME));
         String lastName = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME));
         String firstName = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME));
         String middleName = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_MIDDLE_NAME));
         String birthday = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.PersonEntry.COLUMN_BIRTHDAY));
-        String placeNumber = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MEMBER_PLACE_ADAPTED));
+        String placeNumber = cursorMembers.getString(cursorMembers.getColumnIndex(Contract.MemberEntry.COLUMN_PLACE));
 
         StringBuilder sb = new StringBuilder();
         sb.append(lastName).append(" ").append(firstName).append(" ").append(middleName);
@@ -216,7 +216,7 @@ public class ExportCompetitionDataToExcel {
         Log.i(LOG, "findCompetitionResultsForMember() START, memberId = " + memberId);
         long attemptId = 0;
 
-        String whereAttempt = Contract.AttemptEntry.COLUMN_COMPETITION_ID + "=? and " + Contract.AttemptEntry.COLUMN_MEMBERS_ID + "=?";
+        String whereAttempt = Contract.AttemptEntry.COLUMN_COMPETITION_ID + "=? and " + Contract.AttemptEntry.COLUMN_MEMBER_ID + "=?";
         String[] whereArgsAttempt = new String[]{String.valueOf(competitionId), String.valueOf(memberId)};
         Cursor cursorAttempt = mContext.getContentResolver().query(ContentProvider.ATTEMPT_CONTENT_URI, null, whereAttempt, whereArgsAttempt, null);
         cursorAttempt.moveToFirst();

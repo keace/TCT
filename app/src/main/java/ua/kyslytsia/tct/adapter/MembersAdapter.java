@@ -29,7 +29,7 @@ public class MembersAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView team = (TextView) view.findViewById(R.id.textViewMembersTeam);
-        team.setText(cursor.getString(cursor.getColumnIndex(Contract.TEAM_NAME_ADAPTED)));
+        team.setText(cursor.getString(cursor.getColumnIndex(Contract.TeamEntry.COLUMN_NAME))); //adapt
 
         TextView number = (TextView) view.findViewById(R.id.textViewMembersNumber);
         number.setText(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)));

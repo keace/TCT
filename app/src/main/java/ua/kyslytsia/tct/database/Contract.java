@@ -1,10 +1,6 @@
 package ua.kyslytsia.tct.database;
 
-import android.content.Context;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-
-import ua.kyslytsia.tct.R;
 
 public class Contract {
 
@@ -48,29 +44,27 @@ public class Contract {
     // for different type of tourism as bike, hike, mountain etc.
     public static final class TypeEntry implements BaseColumns {
         public static final String TABLE_NAME = "type";
-        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_NAME = "type_name";
     }
-    public static final String TYPE_NAME_ADAPTED = TypeEntry.TABLE_NAME + "_" + TypeEntry.COLUMN_NAME;
 
     public static final int TYPE_BIKE_ID = 0;
 
     public static final class DistanceEntry implements BaseColumns {
         public static final String TABLE_NAME = "distance";
         public static final String COLUMN_TYPE_ID = "type_id";
-        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_NAME = "distance_name";
     }
-    public static final String DISTANCE_NAME_ADAPTED = DistanceEntry.TABLE_NAME + "_" + DistanceEntry.COLUMN_NAME;
 
     public static final class CompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "competition";
-        public static final String COLUMN_DATE = "date";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_PLACE = "place";
+        public static final String COLUMN_DATE = "comp_date";
+        public static final String COLUMN_NAME = "comp_name";
+        public static final String COLUMN_PLACE = "comp_place";
         public static final String COLUMN_TYPE_ID = "type_id";
         public static final String COLUMN_DISTANCE_ID = "distance_id";
-        public static final String COLUMN_RANK = "rank";
-        public static final String COLUMN_PENALTY_COST = "penalty_time";
-        public static final String COLUMN_IS_CLOSED = "is_closed";
+        public static final String COLUMN_RANK = "comp_rank";
+        public static final String COLUMN_PENALTY_COST = "comp_penalty_cost";
+        public static final String COLUMN_IS_CLOSED = "comp_is_closed";
     }
     public static final int COMPETITION_OPENED = 0;
     public static final int COMPETITION_CLOSED = 1;
@@ -78,69 +72,63 @@ public class Contract {
     public static final class StageEntry implements BaseColumns {
         public static final String TABLE_NAME = "stage";
         public static final String COLUMN_DISTANCE_ID = "distance_id";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_DESCRIPTION_MOUNT = "description_mount";
-        public static final String COLUMN_DESCRIPTION_PENALTY = "description_penalty";
-        public static final String COLUMN_BITMAP = "bitmap";
+        public static final String COLUMN_NAME = "stage_name";
+        public static final String COLUMN_DESCRIPTION = "stage_description";
+        public static final String COLUMN_PENALTY_INFO = "stage_penalty_info";
+        public static final String COLUMN_BITMAP = "stage_bitmap";
     }
-    public static final String STAGE_NAME_ADAPTED = StageEntry.TABLE_NAME + "_" + StageEntry.COLUMN_NAME;
 
     public static final class JudgeEntry implements BaseColumns {
         public static final String TABLE_NAME = "judge";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_PERSON_ID = "person_id";
         public static final String COLUMN_JUDGE_RANK = "judge_rank";
-        public static final String COLUMN_POSITION = "position";
+        public static final String COLUMN_POSITION = "judge_position";
     }
 
     public static final class TeamEntry implements BaseColumns {
         public static final String TABLE_NAME = "team";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_PLACE = "place";
+        public static final String COLUMN_NAME = "team_name";
+        public static final String COLUMN_PLACE = "team_place";
     }
-    public static final String TEAM_NAME_ADAPTED = TeamEntry.TABLE_NAME + "_" + TeamEntry.COLUMN_NAME;
-    //public static final int WITHOUT_TEAM_ID = 0;
 
     public static final class MemberEntry implements BaseColumns {
         public static final String TABLE_NAME = "member";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_PERSON_ID = "person_id";
         public static final String COLUMN_TEAM_ID = "team_id";
-        public static final String COLUMN_START_NUMBER = "start_number";
-        public static final String COLUMN_SPORT_RANK = "sport_rank";
-        public static final String COLUMN_TRAINER = "trainer";
-        public static final String COLUMN_BIKE = "bike";
-        public static final String COLUMN_RESULT_TIME = "time";
-        public static final String COLUMN_PLACE = "place";
+        public static final String COLUMN_START_NUMBER = "member_start_number";
+        public static final String COLUMN_SPORT_RANK = "member_sport_rank";
+        public static final String COLUMN_TRAINER = "member_trainer";
+        public static final String COLUMN_BIKE = "members_bike";
+        public static final String COLUMN_RESULT_TIME = "member_result_time";
+        public static final String COLUMN_PLACE = "member_place";
     }
-    public static final String MEMBER_PLACE_ADAPTED = "member_place";
-    public static final String MEMBER_ID_ADAPTED = "member_id";
-
 
     public static final class AttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "attempt";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
-        public static final String COLUMN_MEMBERS_ID = "members_id";
-        public static final String COLUMN_TRY_NUMBER = "try_number";
-        public static final String COLUMN_PENALTY_TOTAL = "penalty_total";
-        public static final String COLUMN_DISTANCE_TIME = "time";
-        public static final String COLUMN_RESULT_TIME = "result_time";
-        public static final String COLUMN_IS_CLOSED = "is_closed";
+        public static final String COLUMN_MEMBER_ID = "member_id";
+        public static final String COLUMN_TRY_NUMBER = "attempt_try_number";
+        public static final String COLUMN_PENALTY_TOTAL = "attempt_penalty_total";
+        public static final String COLUMN_DISTANCE_TIME = "attempt_distance_time";
+        public static final String COLUMN_RESULT_TIME = "attempt_result_time";
+        public static final String COLUMN_IS_CLOSED = "attempt_is_closed";
     }
 
     public static final class StageOnCompetitionEntry implements BaseColumns {
         public static final String TABLE_NAME = "stage_on_competition";
         public static final String COLUMN_COMPETITION_ID = "competition_id";
         public static final String COLUMN_STAGE_ID = "stage_id";
-        public static final String COLUMN_POSITION = "position";
+        public static final String COLUMN_POSITION = "soc_position";
     }
 
     public static final class StageOnAttemptEntry implements BaseColumns {
         public static final String TABLE_NAME = "stage_on_attempt";
         public static final String COLUMN_ATTEMPT_ID = "attempt_id";
         public static final String COLUMN_STAGE_ON_COMPETITION_ID = "stage_on_competition_id";
-        public static final String COLUMN_PENALTY = "penalty";
+        public static final String COLUMN_PENALTY = "soa_penalty";
     }
 
     public static final String SQL_CREATE_GENDER_TABLE = CREATE_TABLE + GenderEntry.TABLE_NAME + SPACE_BRACKET +
@@ -160,8 +148,8 @@ public class Contract {
             StageEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             StageEntry.COLUMN_DISTANCE_ID + INTEGER + NOT_NULL + REFERENCES + DistanceEntry.TABLE_NAME + "(" + DistanceEntry._ID + ")" + COMMA_SPACE +
             StageEntry.COLUMN_NAME + TEXT + NOT_NULL + COMMA_SPACE +
-            StageEntry.COLUMN_DESCRIPTION_MOUNT + TEXT + COMMA_SPACE +
-            StageEntry.COLUMN_DESCRIPTION_PENALTY + TEXT +
+            StageEntry.COLUMN_DESCRIPTION + TEXT + COMMA_SPACE +
+            StageEntry.COLUMN_PENALTY_INFO + TEXT +
             StageEntry.COLUMN_BITMAP + TEXT + BRACKET_SEMICOLON;
 
     public static final String SQL_CREATE_COMPETITION_TABLE = CREATE_TABLE + CompetitionEntry.TABLE_NAME + SPACE_BRACKET +
@@ -211,7 +199,7 @@ public class Contract {
     public static final String SQL_CREATE_ATTEMPT_TABLE = CREATE_TABLE + AttemptEntry.TABLE_NAME + SPACE_BRACKET +
             AttemptEntry._ID + INTEGER + PRIMARY_KEY + AUTOINCREMENT + COMMA_SPACE +
             AttemptEntry.COLUMN_COMPETITION_ID + INTEGER + NOT_NULL + REFERENCES + CompetitionEntry.TABLE_NAME + "(" + CompetitionEntry._ID + ")" + COMMA_SPACE + //FK OK
-            AttemptEntry.COLUMN_MEMBERS_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
+            AttemptEntry.COLUMN_MEMBER_ID + INTEGER + NOT_NULL + REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry._ID + ")" + COMMA_SPACE + //FK OK
             AttemptEntry.COLUMN_TRY_NUMBER + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_PENALTY_TOTAL + INTEGER + NOT_NULL + COMMA_SPACE +
             AttemptEntry.COLUMN_DISTANCE_TIME + INTEGER + NOT_NULL + COMMA_SPACE +

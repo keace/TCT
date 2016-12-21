@@ -43,7 +43,7 @@ public class AttemptCursorAdapter extends CursorAdapter {
         final ViewHolder holder = (ViewHolder) view.getTag();
 
         holder.stagePosition = cursor.getInt(cursor.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION));
-        holder.stageName = cursor.getString(cursor.getColumnIndex(Contract.STAGE_NAME_ADAPTED));
+        holder.stageName = cursor.getString(cursor.getColumnIndex(Contract.StageEntry.COLUMN_NAME)); //adapt
 
         if (inputValues.get(holder.stagePosition) != null) {
             holder.stagePenaltyEditText.setText(String.valueOf(inputValues.get(holder.stagePosition)));

@@ -3,8 +3,6 @@ package ua.kyslytsia.tct;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import java.util.Arrays;
 
@@ -23,23 +20,23 @@ import ua.kyslytsia.tct.database.Contract;
 import ua.kyslytsia.tct.database.DbHelper;
 
 public class NewMemberActivity extends AppCompatActivity {
-    EditText lastName, firstName, middleName, birthday, startNumber, team;
-    RadioGroup gender;
-    long competitionId, memberId;
-
-    DbHelper dbHelper = new DbHelper(this);
-
     public static final String LOG = "Log! NewMemberActivity";
+    private static final int CREATE_NEW_MEMBER = 1;
+    private static final int EDIT_EXISTING_MEMBER = 2;
+    int createOrEditFlag;
+    private EditText lastName, firstName, middleName, birthday, startNumber, team;
+    private RadioGroup gender;
+    private long personId, teamId, genderId;
+    private long mCompetitionId, memberId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_member);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle("Добавить участника");
-        setSupportActionBar(toolbar);
+        initToolbar();
 
-        competitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        mCompetitionId = PreferenceManager.getDefaultSharedPreferences(this).getLong(Contract.MemberEntry.COLUMN_COMPETITION_ID, 0);
+        Log.i(LOG, "competitionId = " + mCompetitionId);
 
         lastName = (EditText) findViewById(R.id.editTextAddMemberLastName);
         firstName = (EditText) findViewById(R.id.editTextAddMemberFirstName);
@@ -49,46 +46,235 @@ public class NewMemberActivity extends AppCompatActivity {
         team = (EditText) findViewById(R.id.editTextAddMemberTeam);
         gender = (RadioGroup) findViewById(R.id.radioGroupAddMemberGender);
 
-        if (getIntent().hasExtra(Contract.MEMBER_ID_ADAPTED)) {
-            memberId = getIntent().getLongExtra(Contract.MEMBER_ID_ADAPTED, 0);
-            String whereMember = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry._ID + "=?";
-            String[] whereMemberArgs = new String[] {String.valueOf(memberId)};
-            Cursor cursorMember = getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, whereMember, whereMemberArgs, null);
+        /* Handle Edit Member */
+        if (isEditMember()) {
+            Log.d(LOG, "Edit member");
+            createOrEditFlag = EDIT_EXISTING_MEMBER;
+            editMember();
+        } else {
+            createOrEditFlag = CREATE_NEW_MEMBER;
+        }
+
+        initButton();
+    }
+
+    private void editMember() {
+        memberId = getIntent().getLongExtra(Contract.AttemptEntry.COLUMN_MEMBER_ID, 0);
+        String whereMember = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry._ID + "=?";
+        String[] whereMemberArgs = new String[]{String.valueOf(memberId)};
+        Cursor cursorMember = getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, whereMember, whereMemberArgs, null);
+
+        if (cursorMember != null) {
             cursorMember.moveToFirst();
             Log.i(LOG, "Cursor position = " + cursorMember.getPosition() + ", Column names: " + Arrays.asList(cursorMember.getColumnNames()).toString());
-
             lastName.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.PersonEntry.COLUMN_LAST_NAME)));
             firstName.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.PersonEntry.COLUMN_FIRST_NAME)));
             middleName.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.PersonEntry.COLUMN_MIDDLE_NAME)));
             birthday.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.PersonEntry.COLUMN_BIRTHDAY)));
             startNumber.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.MemberEntry.COLUMN_START_NUMBER)));
-            team.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.TEAM_NAME_ADAPTED)));
+            team.setText(cursorMember.getString(cursorMember.getColumnIndex(Contract.TeamEntry.COLUMN_NAME)));
+
+            genderId = cursorMember.getLong(cursorMember.getColumnIndex("genderId"));
+            if (genderId == 0) {
+                gender.check(R.id.radioButtonAddMemberGenderF);
+            } else {
+                gender.check(R.id.radioButtonAddMemberGenderM);
+            }
+
+            personId = cursorMember.getLong(cursorMember.getColumnIndex("personId"));
+            teamId = cursorMember.getLong(cursorMember.getColumnIndex("teamId"));
+            cursorMember.close();
         }
+    }
 
-//        PreferenceManager.getDefaultSharedPreferences(this).edit().remove(Contract.MEMBER_ID_ADAPTED).apply();
-
+    private void initButton() {
         final Button buttonAddNewMember = (Button) findViewById(R.id.buttonAddNewMember);
-        buttonAddNewMember.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (addNewMember()) {
-                    Intent intentToMembersActivity = new Intent(NewMemberActivity.this, MembersActivity.class);
-                    intentToMembersActivity.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId);
-                    startActivity(intentToMembersActivity);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Новый участник не добавлен", Toast.LENGTH_SHORT).show();
+        if (buttonAddNewMember != null) {
+
+            switch (createOrEditFlag) {
+                case CREATE_NEW_MEMBER: {
+                    buttonAddNewMember.setText(R.string.new_members_activity_button_new_member);
+                    break;
+                }
+                case EDIT_EXISTING_MEMBER: {
+                    buttonAddNewMember.setText(R.string.new_members_activity_button_edit_member);
+                    break;
                 }
             }
-        });
+
+            buttonAddNewMember.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (createOrEditFlag) {
+                    case CREATE_NEW_MEMBER: {
+                        addNewMember();
+                        Intent intentToMembersActivity = new Intent(NewMemberActivity.this, MembersActivity.class);
+                        intentToMembersActivity.putExtra(Contract.MemberEntry.COLUMN_COMPETITION_ID, mCompetitionId);
+                        startActivity(intentToMembersActivity);
+                        break;
+                    }
+                    case EDIT_EXISTING_MEMBER: {
+                        updatePersonTableWithNewData();
+
+                        /* update member */
+                        ContentValues cv = new ContentValues();
+                        cv.put(Contract.MemberEntry.COLUMN_START_NUMBER, startNumber.getText().toString());
+
+                        String newTeamName = team.getText().toString();
+                        if (memberWithoutTeam() && !newTeamName.equals("")) {
+                            long newTeamId = createNewTeamWithName(newTeamName);
+                            cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, newTeamId);
+
+                        } else { // member With Team
+                            long existsTeamId = getTeamIdIfExists(newTeamName);
+
+                            // team with same name already exists?
+                            if (existsTeamId > 0) {
+                                cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, existsTeamId);
+                            } else {
+                                long newTeamId = createNewTeamWithName(newTeamName);
+                                cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, newTeamId);
+                            }
+                        }
+                        String whereMember = Contract.MemberEntry._ID + "=?";
+                        String[] whereMemberArgs = new String[]{String.valueOf(memberId)};
+                        getContentResolver().update(ContentProvider.MEMBER_CONTENT_URI, cv, whereMember, whereMemberArgs);
+
+                        Intent intentToMembers = new Intent(NewMemberActivity.this, MembersActivity.class);
+                        startActivity(intentToMembers);
+                        break;
+                    }
+                }
+            }
+                                              }
+
+        );
+    }}
+
+    private long getTeamIdIfExists(String newTeamName) {
+        DbHelper dbHelper = new DbHelper(NewMemberActivity.this);
+        return dbHelper.findTeamIdByName(mCompetitionId, newTeamName);
+    }
+
+    private void updatePersonTableWithNewData() {
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.PersonEntry.COLUMN_FIRST_NAME, firstName.getText().toString());
+        cv.put(Contract.PersonEntry.COLUMN_MIDDLE_NAME, middleName.getText().toString());
+        cv.put(Contract.PersonEntry.COLUMN_LAST_NAME, lastName.getText().toString());
+        cv.put(Contract.PersonEntry.COLUMN_BIRTHDAY, birthday.getText().toString());
+        cv.put(Contract.PersonEntry.COLUMN_GENDER_ID, getGenderId());
+        String wherePerson = Contract.PersonEntry._ID + "=?";
+        String[] wherePersonArgs = new String[]{String.valueOf(personId)};
+        getContentResolver().update(ContentProvider.PERSON_CONTENT_URI, cv, wherePerson, wherePersonArgs);
+    }
+
+    private boolean memberWithoutTeam() {
+        return teamId == 0;
+    }
+
+    private long createNewTeamWithName(String newTeamName) {
+        ContentValues cv = new ContentValues();
+        cv.put(Contract.TeamEntry.COLUMN_NAME, newTeamName);
+        cv.put(Contract.TeamEntry.COLUMN_COMPETITION_ID, mCompetitionId);
+        return Long.parseLong(getContentResolver().insert(ContentProvider.TEAM_CONTENT_URI, cv).getLastPathSegment());
+    }
+
+    private boolean isEditMember() {
+        return getIntent().hasExtra(Contract.AttemptEntry.COLUMN_MEMBER_ID);
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setSubtitle(R.string.new_members_activity_toolbar_subtitle);
+        }
+        setSupportActionBar(toolbar);
     }
 
     public boolean addNewMember() {
         boolean isCreated = false;
-        int genderId = Contract.GENDER_MALE;
-        long personId, teamId = 0;
+        int genderId = getGenderId();
         ContentValues cv = new ContentValues();
 
-        switch (gender.getCheckedRadioButtonId()){
+        /* not null fields handling */
+        if (lastNameFieldIsEmpty()) {
+            lastName.setError(getResources().getString(R.string.new_members_activity_error_last_name_required));
+        } else if (firstNameFieldIsEmpty()) {
+            firstName.setError(getResources().getString(R.string.new_members_activity_error_first_name_required));
+        } else {
+            String selection = Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?";
+            String[] selectionArgs = new String[]{lastName.getText().toString(), firstName.getText().toString()};
+            Cursor cursor = getContentResolver().query(ContentProvider.PERSON_CONTENT_URI, null, selection, selectionArgs, null);
+            cv.clear();
+
+            /* New Person creating if not exists with same lastName and firstName */
+            cv.put(Contract.PersonEntry.COLUMN_LAST_NAME, lastName.getText().toString());
+            cv.put(Contract.PersonEntry.COLUMN_FIRST_NAME, firstName.getText().toString());
+            cv.put(Contract.PersonEntry.COLUMN_MIDDLE_NAME, middleName.getText().toString());
+            cv.put(Contract.PersonEntry.COLUMN_GENDER_ID, genderId);
+            cv.put(Contract.PersonEntry.COLUMN_BIRTHDAY, birthday.getText().toString());
+
+            if (cursor.getCount() == 0) { //if person not exists - create
+                personId = Long.parseLong(getContentResolver().insert(ContentProvider.PERSON_CONTENT_URI, cv).getLastPathSegment());
+                Log.d(LOG, "New Person Create. cursor.getCount = " + cursor.getCount() + "; newPersonId = " + personId);
+                /* If Member with same FirstName and LastName exists then update */
+            } else { // if person exists - update
+                cursor.moveToFirst();
+                personId = cursor.getInt(cursor.getColumnIndex(Contract.PersonEntry._ID));
+                String wherePerson = Contract.PersonEntry._ID + "=?";
+                String[] wherePersonArgs = new String[]{String.valueOf(personId)};
+                getContentResolver().update(ContentProvider.PERSON_CONTENT_URI, cv, wherePerson, wherePersonArgs);
+                Log.d(LOG, "Person exists. PersonId = " + personId);
+            }
+            cv.clear();
+
+            /* New Team Creating if user wrote team name and if not exists*/
+            String teamName = team.getText().toString();
+            if (!teamName.trim().equals("")) {
+                long existsTeamId = getTeamIdIfExists(teamName);
+                // team with same name already exists?
+                if (existsTeamId > 0) {
+                    cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, existsTeamId);
+                } else {
+                    long newTeamId = createNewTeamWithName(teamName);
+                    cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, newTeamId);
+                }
+            }
+            /* New Member Creating */
+                String where = Contract.MemberEntry.TABLE_NAME + "." + Contract.MemberEntry.COLUMN_COMPETITION_ID + "=? AND " +
+                        Contract.MemberEntry.COLUMN_PERSON_ID + "=?";
+                String[] whereArgs = new String[]{String.valueOf(mCompetitionId), String.valueOf(personId)};
+                cursor = getContentResolver().query(ContentProvider.MEMBER_CONTENT_URI, null, where, whereArgs, null);
+
+                if (cursor.getCount() == 0) { // if member not exists create it an getId
+                    cv.put(Contract.MemberEntry.COLUMN_COMPETITION_ID, mCompetitionId);
+                    cv.put(Contract.MemberEntry.COLUMN_PERSON_ID, personId);
+                    memberId = Long.parseLong(getContentResolver().insert(ContentProvider.MEMBER_CONTENT_URI, cv).getLastPathSegment());
+                    Log.d(LOG, "Добавлен новый участник");
+                } else { // if member exists getId
+                    cursor.moveToFirst();
+                    memberId = Long.parseLong(cursor.getString(cursor.getColumnIndex(Contract.MemberEntry._ID)));
+                }
+
+                if (!startNumber.getText().toString().trim().equals("")) {
+                    cv.put(Contract.MemberEntry.COLUMN_START_NUMBER, startNumber.getText().toString());
+                }
+
+                String whereMember = Contract.MemberEntry._ID + "=?";
+                String[] whereMembersArgs = new String[]{String.valueOf(memberId)};
+                getContentResolver().update(ContentProvider.MEMBER_CONTENT_URI, cv, whereMember, whereMembersArgs);
+                cv.clear();
+                cursor.close();
+                isCreated = true;
+            }
+
+        return isCreated;
+    }
+
+    private int getGenderId() {
+        int genderId = Contract.GENDER_MALE;
+
+        switch (gender.getCheckedRadioButtonId()) {
             case R.id.radioButtonAddMemberGenderM:
                 genderId = Contract.GENDER_MALE;
                 break;
@@ -96,100 +282,14 @@ public class NewMemberActivity extends AppCompatActivity {
                 genderId = Contract.GENDER_FEMALE;
                 break;
         }
+        return genderId;
+    }
 
-        /* not null fields handling */
-        if (lastName.getText().toString().trim().equals("")){
-            lastName.setError("Фамилия обязательна!");
-        } else if (firstName.getText().toString().trim().equals("")) {
-            firstName.setError("Имя обязательно!");
-//        } else if (startNumber.getText().toString().trim().equals("")) {
-//            startNumber.setError("Стартовый номер нужно ввести!");
-        } else {
-            //TODO Refactor to use ContentResolver
-            SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+    private boolean firstNameFieldIsEmpty() {
+        return firstName.getText().toString().trim().equals("");
+    }
 
-            String selection = Contract.PersonEntry.COLUMN_LAST_NAME + "=? AND " + Contract.PersonEntry.COLUMN_FIRST_NAME + "=?";
-            String[] selectionArgs = new String[] {lastName.getText().toString(), firstName.getText().toString()};
-            Cursor c = getContentResolver().query(ContentProvider.PERSON_CONTENT_URI, null, selection, selectionArgs, null);
-                cv.clear();
-            /* New Person creating if not exists with some lastName and firstName */
-                cv.put(Contract.PersonEntry.COLUMN_LAST_NAME, lastName.getText().toString());
-                cv.put(Contract.PersonEntry.COLUMN_FIRST_NAME, firstName.getText().toString());
-                cv.put(Contract.PersonEntry.COLUMN_MIDDLE_NAME, middleName.getText().toString());
-                cv.put(Contract.PersonEntry.COLUMN_GENDER_ID, genderId);
-                cv.put(Contract.PersonEntry.COLUMN_BIRTHDAY, birthday.getText().toString());
-            if (c.getCount() == 0){
-                Log.d(LOG, "Person creating... c.getCount = " + c.getCount());
-                personId = Long.parseLong(getContentResolver().insert(ContentProvider.PERSON_CONTENT_URI, cv).getLastPathSegment());
-//                sqLiteDatabase.insert(Contract.PersonEntry.TABLE_NAME, null, cv);
-                Log.d(LOG, "New Person Create. c.getCount = " + c.getCount() + "; newPersonId = " + personId);
-//                cv.clear(); NOT CLEAR FOR UPDATE
-                isCreated = true;
-
-                /* If exists then update */
-            } else {
-                Log.d(LOG, "Person exists. c.getCount = " + c.getCount());
-                c.moveToFirst();
-                personId = c.getInt(c.getColumnIndex(Contract.PersonEntry._ID));
-                String wherePerson = Contract.PersonEntry._ID + "=?";
-                String[] wherePersonArgs = new String[] {String.valueOf(personId)};
-                getContentResolver().update(ContentProvider.PERSON_CONTENT_URI, cv, wherePerson, wherePersonArgs);
-                Log.d(LOG, "Person exists. PersonId = " + personId);
-            }
-            cv.clear();
-            /* New Team Creating if user wrote it and if not exists*/
-            if (!team.getText().toString().trim().equals("")) {
-                c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.TeamEntry.TABLE_NAME + " WHERE " + Contract.TeamEntry.COLUMN_COMPETITION_ID + "=? AND " + Contract.TeamEntry.COLUMN_NAME + "=?;", new String[] {String.valueOf(competitionId), team.getText().toString()});
-                Log.d(LOG, "Field team not clear, getting teamId");
-                if (c.getCount() == 0) {
-                    Log.d(LOG, "Creating new team");
-                    cv.put(Contract.TeamEntry.COLUMN_COMPETITION_ID, competitionId);
-                    cv.put(Contract.TeamEntry.COLUMN_NAME, team.getText().toString());
-//                    teamId = sqLiteDatabase.insert(Contract.TeamEntry.TABLE_NAME, null, cv);
-                    teamId = Long.parseLong(getContentResolver().insert(ContentProvider.TEAM_CONTENT_URI, cv).getLastPathSegment());
-//                    cv.clear(); CV NOT CLEAR FOR UPDATE
-                    Log.d(LOG, "Created new team with teamId = " + teamId);
-                } else {
-                    Log.d(LOG, "Team already exists");
-                    c.moveToFirst();
-                    teamId = c.getInt(c.getColumnIndex(Contract.TeamEntry._ID));
-                    String whereTeam = Contract.TeamEntry._ID + "=?";
-                    String[] whereTeamArgs = new String[] {String.valueOf(teamId)};
-                    getContentResolver().update(ContentProvider.TEAM_CONTENT_URI, cv, whereTeam, whereTeamArgs);
-                    Log.d(LOG, "Team with this name already exists with teamId = " + teamId);
-                }
-            }
-            cv.clear();
-            /* New Member Creating */
-            //TODO Refactor to use ContentResolver
-            c = sqLiteDatabase.rawQuery("SELECT * FROM " + Contract.MemberEntry.TABLE_NAME + " WHERE " + Contract.MemberEntry.COLUMN_COMPETITION_ID + "=? AND " + Contract.MemberEntry.COLUMN_PERSON_ID + "=?;", new String[]{String.valueOf(competitionId), String.valueOf(personId)});
-            if (c.getCount() == 0) {
-                cv.put(Contract.MemberEntry.COLUMN_COMPETITION_ID, competitionId);
-                cv.put(Contract.MemberEntry.COLUMN_PERSON_ID, personId);
-                memberId = Long.parseLong(getContentResolver().insert(ContentProvider.MEMBER_CONTENT_URI, cv).getLastPathSegment());
-                Log.d(LOG, "Добавлен новый участник");
-            }  else {
-                c.moveToFirst();
-                memberId = Long.parseLong(c.getString(c.getColumnIndex(Contract.MemberEntry._ID)));
-            }
-            if (teamId != 0) {
-                cv.put(Contract.MemberEntry.COLUMN_TEAM_ID, teamId);
-            }
-            //TODO При редактировании профиля убрать команду полностью не получается
-            if (!startNumber.getText().toString().trim().equals("")){
-                cv.put(Contract.MemberEntry.COLUMN_START_NUMBER, startNumber.getText().toString());
-            }
-            String whereMember = Contract.MemberEntry._ID + "=?";
-            String[] whereMembersArgs = new String[] {String.valueOf(memberId)};
-            getContentResolver().update(ContentProvider.MEMBER_CONTENT_URI, cv, whereMember, whereMembersArgs);
-            cv.clear();
-            c.close();
-            sqLiteDatabase.close();
-            isCreated = true;
-//                Toast.makeText(getApplicationContext(), "Участник с такой фамилией и именем уже есть", Toast.LENGTH_SHORT).show();
-//                Log.d(LOG, "Member already exists and c.getCount = " + c.getCount());
-            }
-
-        return isCreated;
+    private boolean lastNameFieldIsEmpty() {
+        return lastName.getText().toString().trim().equals("");
     }
 }

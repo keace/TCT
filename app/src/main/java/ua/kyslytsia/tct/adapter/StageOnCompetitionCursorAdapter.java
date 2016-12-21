@@ -30,6 +30,6 @@ public class StageOnCompetitionCursorAdapter extends CursorAdapter {
         stagePosition.setText(String.valueOf(c.getInt(c.getColumnIndex(Contract.StageOnCompetitionEntry.COLUMN_POSITION))));
 
         TextView stageName = (TextView) view.findViewById(R.id.textViewSOCName);
-        stageName.setText(c.getString(c.getColumnIndex(Contract.STAGE_NAME_ADAPTED)));
+        stageName.setText(c.getString(c.getColumnIndex(Contract.StageEntry.COLUMN_NAME))); //adapt
     }
 }
